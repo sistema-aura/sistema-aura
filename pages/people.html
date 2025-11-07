@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pessoas - Sistema Aura</title>
+  <link rel="icon" href="../Aurinha.png" />
+  <link rel="stylesheet" href="../style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+
+  <style>
+    .people-container {
+      margin-left: 230px;
+      padding: 30px 40px;
+      color: #fff;
+    }
+
+    .people-container h1 {
+      color: #d6b2ff;
+      text-shadow: 0 0 10px rgba(180, 0, 255, 0.7);
+      margin-bottom: 20px;
+    }
+
+    .list {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 20px;
+    }
+
+    .card {
+      background: rgba(50, 0, 80, 0.4);
+      border: 1px solid rgba(200, 150, 255, 0.3);
+      border-radius: 15px;
+      box-shadow: 0 0 15px rgba(180, 0, 255, 0.2);
+      padding: 15px;
+      text-align: center;
+      transition: 0.3s;
+    }
+
+    .card:hover {
+      transform: scale(1.04);
+      box-shadow: 0 0 25px rgba(200, 150, 255, 0.3);
+    }
+
+    .card-photo {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      object-fit: cover;
+      box-shadow: 0 0 12px rgba(180, 0, 255, 0.4);
+      margin-bottom: 10px;
+    }
+
+    .card h3 {
+      font-size: 1.1rem;
+      color: #fff;
+      margin-bottom: 6px;
+    }
+
+    .card p {
+      font-size: 0.9rem;
+      color: #c8b6ff;
+      margin: 2px 0;
+    }
+
+    .card-actions {
+      margin-top: 10px;
+    }
+
+    .card-actions button {
+      background: rgba(155, 77, 255, 0.25);
+      border: 1px solid rgba(200, 150, 255, 0.3);
+      border-radius: 8px;
+      color: #fff;
+      margin: 2px;
+      padding: 5px 10px;
+      cursor: pointer;
+      transition: 0.3s;
+      font-size: 0.85rem;
+    }
+
+    .card-actions button:hover {
+      background: rgba(200, 150, 255, 0.4);
+      transform: scale(1.05);
+    }
+
+    .status {
+      text-align: center;
+      margin-top: 30px;
+      color: #caa8ff;
+      font-size: 0.9rem;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="sidebar">
+    <h2 class="logo">SISTEMA AURA</h2>
+    <ul>
+      <li><i class="icon">🏠</i><a href="../dashboard.html">Dashboard</a></li>
+      <li><i class="icon">🧍</i><a href="ver.html" class="active">Pessoas</a></li>
+      <li><i class="icon">📁</i><a href="../cases/ver.html">Casos</a></li>
+      <li><i class="icon">🕵️</i><a href="../investigations/ver.html">Investigações</a></li>
+      <li><i class="icon">📅</i><a href="../meetings/ver.html">Reuniões</a></li>
+    </ul>
+
+    <div class="active-user">
+      <img src="../Aurinha.png" alt="Avatar" class="avatar">
+      <span id="agentNameDisplay">Agente: -</span>
+    </div>
+
+    <button onclick="window.location.href='../index.html'">Sair</button>
+  </div>
+
+  <div class="people-container">
+    <h1>👥 Pessoas Registradas</h1>
+    <div id="pessoasList" class="list"></div>
+    <p id="statusMsg" class="status">Carregando pessoas...</p>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js";
+    import { getFirestore, collection, getDocs, deleteDoc, doc, orderBy, query } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
+    import { firebaseConfig } from "../firebaseConfig.js";
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    const list = document.getElementById("pessoasList");
+    const statusMsg = document.getElementById("statusMsg");
+
+    async function loadPessoas() {
+      statusMsg.textContent = "Carregando pessoas...";
+      list.innerHTML = "";
+
+      try {
+        const q = query(collection(db, "people"), orderBy("createdAt", "desc"));
+        const snap = await getDocs(q);
+
+        if (snap.empty) {
+          statusMsg.textContent = "Nenhuma pessoa cadastrada ainda.";
+          return;
+        }
+
+        statusMsg.textContent = "";
+        snap.forEach((docSnap) => {
+          const p = docSnap.data();
+          const photo = p.photoURL || "../default-avatar.png";
+          const fac = p.faction || "—";
+          const hier = p.hierarchy ? ` (${p.hierarchy})` : "";
+
+          const card = document.createElement("div");
+          card.classList.add("card");
+          card.innerHTML = `
+            <img src="${photo}" alt="${p.name}" class="card-photo">
+            <h3>${p.name}</h3>
+            <p>Facção: ${fac}${hier}</p>
+            <p>Celular: ${p.phone || "—"}</p>
+            <div class="card-actions">
+              <button onclick="verPessoa('${docSnap.id}')">👁️ Ver</button>
+              <button onclick="editarPessoa('${docSnap.id}')">✏️ Editar</button>
+              <button onclick="excluirPessoa('${docSnap.id}', '${p.name}')">❌ Excluir</button>
+            </div>
+          `;
+          list.appendChild(card);
+        });
+      } catch (err) {
+        console.error("Erro ao carregar pessoas:", err);
+        statusMsg.textContent = "❌ Erro ao carregar pessoas.";
+      }
+    }
+
+    // Funções básicas (podem ser adaptadas)
+    window.verPessoa = (id) => alert("Abrir detalhes de " + id);
+    window.editarPessoa = (id) => alert("Editar pessoa: " + id);
+    window.excluirPessoa = async (id, name) => {
+      if (!confirm(`Tem certeza que deseja excluir ${name}?`)) return;
+      try {
+        await deleteDoc(doc(db, "people", id));
+        alert(`✅ ${name} removido com sucesso!`);
+        loadPessoas();
+      } catch (err) {
+        alert(`❌ Erro ao excluir: ${err.message}`);
+      }
+    };
+
+    document.addEventListener("DOMContentLoaded", () => {
+      loadPessoas();
+      const agent = localStorage.getItem("selectedAgent");
+      if (agent) document.getElementById("agentNameDisplay").textContent = "Agente: " + agent;
+    });
+  </script>
+</body>
+</html>

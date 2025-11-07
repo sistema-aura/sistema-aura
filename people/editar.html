@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Editar Pessoa - Sistema Aura</title>
+  <link rel="icon" href="../../Aurinha.png">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      background: radial-gradient(circle at top left, #1a001f, #000);
+      font-family: 'Poppins', sans-serif;
+      color: #fff;
+      display: flex; justify-content: center; align-items: center;
+      height: 100vh; margin: 0;
+    }
+    .form-container {
+      background: rgba(50, 0, 80, 0.4);
+      border: 1px solid rgba(200, 150, 255, 0.3);
+      border-radius: 20px;
+      padding: 30px 40px;
+      width: 400px;
+      text-align: center;
+      box-shadow: 0 0 25px rgba(180, 0, 255, 0.2);
+    }
+    input {
+      width: 100%; padding: 10px; margin: 8px 0;
+      border-radius: 8px; border: none;
+      background: rgba(255,255,255,0.1); color: #fff;
+    }
+    button {
+      background: linear-gradient(90deg, #9b4dff, #b86bff);
+      border: none; padding: 10px 20px;
+      border-radius: 10px; color: #fff;
+      font-weight: 600; cursor: pointer; transition: 0.3s;
+      margin-top: 10px;
+    }
+    button:hover { transform: scale(1.05); }
+  </style>
+</head>
+<body>
+  <div class="form-container">
+    <h2>Editar Pessoa</h2>
+    <input id="name" placeholder="Nome">
+    <input id="faction" placeholder="Facção">
+    <input id="hierarchy" placeholder="Hierarquia">
+    <input id="phone" placeholder="Telefone">
+    <input type="file" id="photo" accept="image/*">
+    <button id="updateBtn">Atualizar</button>
+    <button onclick="window.location.href='ver.html'">⬅ Voltar</button>
+    <p id="msg"></p>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js";
+    import { getFirestore, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
+    import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-storage.js";
+    import { firebaseConfig } from "../../firebaseConfig.js";
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const storage = getStorage(app);
+
+    const params = new URLSearchParams(window.location.search);
+    const id = params.get("id");
+    const msg = document.getElementById("msg");
+
+    async function loadData() {
+      const snap = await getDoc(doc(db, "people", id));
+      if (snap.exists()) {
+        const p = snap.data();
+        document.getElementById("name").value = p.name;
+        document.getElementById("faction").value = p.faction;
+        document.getElementById("hierarchy").value = p.hierarchy;
+        document.getElementById("phone").value = p.phone;
+      }
+    }
+
+    document.getElementById("updateBtn").addEventListener("click", async () => {
+      msg.textContent = "Atualizando...";
+      const name = document.getElementById("name").value.trim();
+      const faction = document.getElementById("faction").value.trim();
+      const hierarchy = document.getElementById("hierarchy").value.trim();
+      const phone = document.getElementById("phone").value.trim();
+      const file = document.getElementById("photo").files[0];
+      let photoURL;
+
+      try {
+        if (file) {
+          const storageRef = ref(storage, `people/${Date.now()}_${file.name}`);
+          await uploadBytes(storageRef, file);
+          photoURL = await getDownloadURL(storageRef);
+        }
+
+        const updateData = { name, faction, hierarchy, phone };
+        if (photoURL) updateData.photoURL = photoURL;
+
+        await updateDoc(doc(db, "people", id), updateData);
+        msg.textContent = "✅ Atualizado com sucesso!";
+        setTimeout(() => window.location.href = "ver.html", 1200);
+      } catch (err) {
+        msg.textContent = "❌ Erro: " + err.message;
+      }
+    });
+
+    loadData();
+  </script>
+</body>
+</html>

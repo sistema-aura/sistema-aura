@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Editar Investigação - Sistema Aura</title>
+  <link rel="icon" href="../../Aurinha.png" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet" />
+  <style>
+    body {
+      background: radial-gradient(circle at top left,#1a001f,#000);
+      font-family: 'Poppins', sans-serif;
+      color:#fff;
+      margin:0;
+      padding:0;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      height:100vh;
+    }
+
+    .container {
+      background:rgba(50,0,80,0.45);
+      border:1px solid rgba(200,150,255,0.3);
+      border-radius:20px;
+      padding:30px;
+      box-shadow:0 0 30px rgba(180,0,255,0.4);
+      width:400px;
+    }
+
+    h2 {
+      text-align:center;
+      color:#d6b2ff;
+      text-shadow:0 0 10px rgba(180,0,255,0.7);
+      margin-bottom:20px;
+    }
+
+    label {
+      display:block;
+      margin-top:10px;
+      font-weight:500;
+    }
+
+    input, select, textarea {
+      width:100%;
+      margin-top:5px;
+      padding:10px;
+      border:none;
+      border-radius:10px;
+      background:rgba(255,255,255,0.1);
+      color:#fff;
+      resize:none;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      outline:none;
+      box-shadow:0 0 10px rgba(180,0,255,0.6);
+      background:rgba(255,255,255,0.15);
+    }
+
+    button {
+      background: linear-gradient(90deg,#9b4dff,#b86bff);
+      border:none;
+      border-radius:10px;
+      color:#fff;
+      font-weight:600;
+      padding:10px;
+      margin-top:20px;
+      width:100%;
+      cursor:pointer;
+      transition:.3s;
+      box-shadow:0 0 10px rgba(180,0,255,0.4);
+    }
+
+    button:hover {
+      transform:scale(1.05);
+      background:linear-gradient(90deg,#b86bff,#d6aaff);
+      box-shadow:0 0 15px rgba(180,0,255,0.6);
+    }
+
+    .back-btn {
+      position:absolute;
+      top:20px;
+      left:20px;
+      background:linear-gradient(90deg,#9b4dff,#b86bff);
+      border:none;
+      border-radius:8px;
+      color:#fff;
+      font-weight:600;
+      padding:8px 16px;
+      cursor:pointer;
+      box-shadow:0 0 10px rgba(180,0,255,0.4);
+    }
+
+    .neon-popup {
+      position: fixed;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: linear-gradient(90deg, #9b4dff, #b86bff);
+      padding: 12px 25px;
+      border-radius: 15px;
+      color: #fff;
+      font-weight: 500;
+      box-shadow: 0 0 20px rgba(180,0,255,0.6);
+      text-align: center;
+      z-index: 9999;
+      animation: fadeInUp 0.3s ease;
+    }
+
+    @keyframes fadeInUp {
+      from {opacity:0; transform: translate(-50%, 10px);}
+      to {opacity:1; transform: translate(-50%, 0);}
+    }
+  </style>
+</head>
+<body>
+  <button class="back-btn" onclick="window.location.href='ver.html'">⬅ Voltar</button>
+
+  <div class="container">
+    <h2>Editar Investigação</h2>
+    <form id="editForm">
+      <label>Código:</label>
+      <input type="text" id="code" disabled>
+
+      <label>Título:</label>
+      <input type="text" id="title" required>
+
+      <label>Agente Responsável:</label>
+      <select id="agent" required><option value="">Carregando...</option></select>
+
+      <label>Status:</label>
+      <select id="status">
+        <option>Ativa</option>
+        <option>Concluída</option>
+        <option>Arquivada</option>
+      </select>
+
+      <label>Data de Início:</label>
+      <input type="date" id="startDate">
+
+      <label>Data de Fim:</label>
+      <input type="date" id="endDate">
+
+      <label>Pessoas Ligadas:</label>
+      <input type="text" id="peopleLinked" placeholder="Digite nomes separados por vírgula">
+
+      <label>Casos Ligados:</label>
+      <input type="text" id="casesLinked" placeholder="Digite códigos ou nomes separados por vírgula">
+
+      <label>Descrição:</label>
+      <textarea id="description" rows="4"></textarea>
+
+      <button type="submit">💾 Salvar Alterações</button>
+    </form>
+  </div>
+
+  <script type="module">
+    import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js";
+    import { getFirestore, doc, getDoc, updateDoc, collection, getDocs } 
+      from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
+    import { firebaseConfig } from "../../firebaseConfig.js";
+
+    const app = getApps().length===0 ? initializeApp(firebaseConfig):getApps()[0];
+    const db = getFirestore(app);
+    import { addDoc, collection, serverTimestamp } 
+  from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
+
+// Nome do agente atual (usado em todos os logs)
+const currentAgent = localStorage.getItem("selectedAgent") || "Desconhecido";
+
+// Função para adicionar logs
+async function addLog(action, itemType, itemTitle = "") {
+  try {
+    await addDoc(collection(db, "logs"), {
+      user: currentAgent,
+      action,         // Ex: criou, editou, eliminou, arquivou, restaurou
+      itemType,       // Ex: caso, investigação
+      itemTitle,      // Nome ou título do item
+      timestamp: serverTimestamp()
+    });
+  } catch (err) {
+    console.error("❌ Erro ao gravar log:", err);
+  }
+}
+await updateDoc(ref, updatedFields);
+await addLog("editou", "investigação", document.getElementById("title").value);
+showPopup("✅ Investigação atualizada com sucesso!");
+
+
+    const params = new URLSearchParams(window.location.search);
+    const invId = params.get("id");
+
+    const agentSelect = document.getElementById("agent");
+
+    function showPopup(msg){
+      const popup=document.createElement("div");
+      popup.className="neon-popup";
+      popup.textContent=msg;
+      document.body.appendChild(popup);
+      setTimeout(()=>popup.remove(),3000);
+    }
+
+    // Carregar agentes
+    async function loadAgents(){
+      const snap=await getDocs(collection(db,"users"));
+      agentSelect.innerHTML='<option value="">Selecione...</option>';
+      snap.forEach(doc=>{
+        const data=doc.data();
+        if(data.name){
+          const opt=document.createElement("option");
+          opt.value=data.name;
+          opt.textContent=data.name;
+          agentSelect.appendChild(opt);
+        }
+      });
+    }
+
+    // Carregar dados da investigação
+    async function loadInvestigation(){
+      if(!invId) return;
+      try{
+        const ref=doc(db,"investigacoes",invId);
+        const snap=await getDoc(ref);
+        if(!snap.exists()){
+          showPopup("❌ Investigação não encontrada!");
+          return;
+        }
+        const inv=snap.data();
+        document.getElementById("code").value=inv.code||"";
+        document.getElementById("title").value=inv.title||"";
+        document.getElementById("agent").value=inv.agent||"";
+        document.getElementById("status").value=inv.status||"Ativa";
+        document.getElementById("startDate").value=inv.startDate||"";
+        document.getElementById("endDate").value=inv.endDate||"";
+        document.getElementById("description").value=inv.description||"";
+        document.getElementById("peopleLinked").value=(inv.peopleLinked||[]).join(", ");
+        document.getElementById("casesLinked").value=(inv.casesLinked||[]).join(", ");
+      }catch(err){
+        console.error(err);
+        showPopup("❌ Erro ao carregar dados!");
+      }
+    }
+
+    // Salvar alterações
+    document.getElementById("editForm").addEventListener("submit",async(e)=>{
+      e.preventDefault();
+      try{
+        const ref=doc(db,"investigacoes",invId);
+        await updateDoc(ref,{
+          title:document.getElementById("title").value.trim(),
+          agent:document.getElementById("agent").value,
+          status:document.getElementById("status").value,
+          startDate:document.getElementById("startDate").value,
+          endDate:document.getElementById("endDate").value,
+          description:document.getElementById("description").value.trim(),
+          peopleLinked:document.getElementById("peopleLinked").value.split(",").map(s=>s.trim()).filter(Boolean),
+          casesLinked:document.getElementById("casesLinked").value.split(",").map(s=>s.trim()).filter(Boolean),
+          updatedAt:new Date()
+        });
+        showPopup("✅ Investigação atualizada com sucesso!");
+        setTimeout(()=>window.location.href="ver.html",1500);
+      }catch(err){
+        console.error(err);
+        showPopup("❌ Erro ao salvar alterações!");
+      }
+    });
+
+    await loadAgents();
+    await loadInvestigation();
+  </script>
+</body>
+</html>

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Criar Reunião — Sistema AURA 💜</title>
+
+  <link rel="icon" href="../Aurinha.png" />
+  <link rel="stylesheet" href="../style.css" />
+
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-storage-compat.js"></script>
+  <script src="../firebaseConfig.js"></script>
+</head>
+
+<body class="fade-in">
+  <div class="main">
+    <div class="card">
+      <h2>📅 Registrar Nova Reunião</h2>
+      <form id="createForm">
+        <label>Título</label>
+        <input type="text" id="title" placeholder="Ex: Reunião Estratégica" required />
+
+        <label>Data e Hora</label>
+        <input type="datetime-local" id="datetime" required />
+
+        <label>Descrição / Pauta</label>
+        <textarea id="description" rows="5" placeholder="Detalhes da reunião..." required></textarea>
+
+        <label>Pessoas Envolvidas</label>
+        <input type="text" id="people" placeholder="Ex: Duda, Erica..." />
+
+        <label>Facções Envolvidas</label>
+        <input type="text" id="factions" placeholder="Ex: AURA, PM..." />
+
+        <label>Veículos Envolvidos</label>
+        <input type="text" id="vehicles" placeholder="Ex: Helicóptero AURA..." />
+
+        <label>Anexos</label>
+        <input type="file" id="files" multiple />
+
+        <button type="submit" class="btn">💾 Criar Reunião</button>
+        <a href="../dashboard.html" class="btn ghost">⬅️ Voltar</a>
+      </form>
+
+      <p id="result" style="margin-top:1rem;"></p>
+    </div>
+  </div>
+
+  <script>
+    const db = firebase.firestore();
+    const storage = firebase.storage();
+
+    document.getElementById("createForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const title = document.getElementById("title").value;
+      const datetime = document.getElementById("datetime").value;
+      const description = document.getElementById("description").value;
+      const people = document.getElementById("people").value;
+      const factions = document.getElementById("factions").value;
+      const vehicles = document.getElementById("vehicles").value;
+      const files = document.getElementById("files").files;
+
+      let attachments = [];
+
+      try {
+        for (const file of files) {
+          const ref = storage.ref(`meetings/${Date.now()}_${file.name}`);
+          await ref.put(file);
+          const url = await ref.getDownloadURL();
+          attachments.push(url);
+        }
+
+        await db.collection("meetings").add({
+          title,
+          datetime,
+          description,
+          people,
+          factions,
+          vehicles,
+          attachments,
+          createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+        });
+
+        document.getElementById("result").innerHTML = "✅ Reunião registrada com sucesso!";
+        document.getElementById("createForm").reset();
+      } catch (err) {
+        document.getElementById("result").innerHTML = "❌ Erro: " + err.message;
+      }
+    });
+  </script>
+</body>
+</html>

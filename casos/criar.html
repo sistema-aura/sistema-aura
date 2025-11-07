@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Criar Caso - Sistema Aura</title>
+  <link rel="icon" href="../../Aurinha.png" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet" />
+  <style>
+    body {
+      background: radial-gradient(circle at top left, #1a001f, #000);
+      font-family: 'Poppins', sans-serif;
+      color: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .form-container {
+      background: rgba(50, 0, 80, 0.45);
+      border: 1px solid rgba(200,150,255,0.3);
+      border-radius: 20px;
+      padding: 35px 45px;
+      width: 400px;
+      text-align: center;
+      box-shadow: 0 0 25px rgba(180,0,255,0.25);
+      position: relative;
+    }
+    h2 {
+      color: #d6b2ff;
+      text-shadow: 0 0 10px rgba(180,0,255,0.7);
+      margin-bottom: 20px;
+    }
+    input, textarea {
+      width: 100%;
+      padding: 10px;
+      margin: 8px 0;
+      border-radius: 10px;
+      border: none;
+      background: rgba(255,255,255,0.1);
+      color: #fff;
+      transition: 0.3s;
+    }
+    input:focus, textarea:focus {
+      outline: none;
+      box-shadow: 0 0 10px rgba(180,0,255,0.6);
+      background: rgba(255,255,255,0.15);
+    }
+    button {
+      background: linear-gradient(90deg,#9b4dff,#b86bff);
+      border: none;
+      padding: 10px 20px;
+      border-radius: 10px;
+      color: #fff;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.3s;
+      margin-top: 10px;
+      width: 100%;
+    }
+    button:hover {
+      transform: scale(1.05);
+      background: linear-gradient(90deg,#b86bff,#d6aaff);
+    }
+    .suggestions {
+      position: absolute;
+      width: calc(100% - 90px);
+      background: rgba(50,0,80,0.85);
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(200,150,255,0.3);
+      max-height: 150px;
+      overflow-y: auto;
+      z-index: 99;
+      text-align: left;
+    }
+    .suggestions div {
+      padding: 8px 12px;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+    .suggestions div:hover {
+      background: rgba(180,0,255,0.4);
+    }
+    #msg { margin-top: 10px; color: #c8b6ff; font-size: 0.9rem; }
+  </style>
+</head>
+<body>
+  <div class="form-container">
+    <h2>Criar Novo Caso</h2>
+    <input id="caseCode" readonly placeholder="Código do Caso" />
+    <input id="title" placeholder="Título do Caso" required />
+    <textarea id="description" placeholder="Descrição do Caso" rows="3"></textarea>
+    <div style="position:relative">
+      <input id="suspect" placeholder="Suspeito (opcional)" autocomplete="off" />
+      <div id="suspectList" class="suggestions" style="display:none"></div>
+    </div>
+    <div style="position:relative">
+      <input id="faction" placeholder="Facção (opcional)" autocomplete="off" />
+      <div id="factionList" class="suggestions" style="display:none"></div>
+    </div>
+    <div style="position:relative">
+      <input id="vehicle" placeholder="Veículo (opcional)" autocomplete="off" />
+      <div id="vehicleList" class="suggestions" style="display:none"></div>
+    </div>
+
+    <button id="saveBtn">Salvar</button>
+    <button onclick="window.location.href='ver.html'">⬅ Voltar</button>
+    <p id="msg"></p>
+  </div>
+
+  <script type="module">
+    import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js";
+    import { getFirestore, collection, addDoc, getDocs, query, orderBy, limit, serverTimestamp, startAt, endAt } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
+    import { firebaseConfig } from "../../firebaseConfig.js";
+
+    const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
+    const db = getFirestore(app);
+
+    const msg = document.getElementById("msg");
+    const codeInput = document.getElementById("caseCode");
+    const titleInput = document.getElementById("title");
+    const descInput = document.getElementById("description");
+    const suspectInput = document.getElementById("suspect");
+    const factionInput = document.getElementById("faction");
+    const vehicleInput = document.getElementById("vehicle");
+
+    // Gerar código automático
+    async function generateCaseCode() {
+      const q = query(collection(db, "cases"), orderBy("code", "desc"), limit(1));
+      const snap = await getDocs(q);
+      if (snap.empty) { codeInput.value = "C-01"; return; }
+      const lastCode = snap.docs[0].data().code || "C-00";
+      const nextNum = parseInt(lastCode.split("-")[1]) + 1;
+      codeInput.value = "C-" + nextNum.toString().padStart(2, "0");
+    }
+    generateCaseCode();
+
+    // Autocomplete genérico
+    async function setupAutocomplete(input, listElement, col, field1, field2) {
+      input.addEventListener("input", async () => {
+        const term = input.value.trim().toLowerCase();
+        if (!term) { listElement.style.display = "none"; return; }
+        const q = query(collection(db, col));
+        const snap = await getDocs(q);
+        let results = [];
+        snap.forEach(doc => {
+          const d = doc.data();
+          if ((d[field1] || "").toLowerCase().includes(term)) {
+            const detail = d[field2] ? ` — ${d[field2]}` : "";
+            results.push(`${d[field1]}${detail}`);
+          }
+        });
+        listElement.innerHTML = results.slice(0,10).map(r => `<div>${r}</div>`).join("");
+        listElement.style.display = results.length ? "block" : "none";
+        listElement.querySelectorAll("div").forEach(div => {
+          div.addEventListener("click", () => {
+            input.value = div.textContent.split(" — ")[0];
+            listElement.style.display = "none";
+          });
+        });
+      });
+      document.addEventListener("click", e => {
+        if (!listElement.contains(e.target) && e.target !== input) listElement.style.display = "none";
+      });
+    }
+
+    setupAutocomplete(suspectInput, document.getElementById("suspectList"), "people", "name", "faction");
+    setupAutocomplete(factionInput, document.getElementById("factionList"), "facc", "name", "leader");
+    setupAutocomplete(vehicleInput, document.getElementById("vehicleList"), "vehicles", "model", "plate");
+
+    // Salvar caso
+    document.getElementById("saveBtn").addEventListener("click", async () => {
+      const title = titleInput.value.trim();
+      if (!title) { msg.textContent = "⚠️ O título é obrigatório."; return; }
+      msg.textContent = "💾 Salvando...";
+      try {
+        await addDoc(collection(db, "cases"), {
+          code: codeInput.value,
+          title,
+          description: descInput.value.trim(),
+          suspect: suspectInput.value.trim(),
+          faction: factionInput.value.trim(),
+          vehicle: vehicleInput.value.trim(),
+          createdAt: serverTimestamp()
+        });
+        msg.textContent = "✅ Caso criado com sucesso!";
+        setTimeout(()=> window.location.href="ver.html", 1200);
+      } catch (err) {
+        console.error(err);
+        msg.textContent = "❌ Erro ao salvar: " + err.message;
+      }
+    });
+  </script>
+</body>
+</html>

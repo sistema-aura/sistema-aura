@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Criar Facção - Sistema AURA</title>
+  <link rel="icon" href="../../Aurinha.png">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      background: radial-gradient(circle at top left, #1a001f, #000);
+      font-family: 'Poppins', sans-serif;
+      color: #fff;
+      margin: 0;
+      padding: 40px;
+    }
+
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+    }
+
+    .top-bar button {
+      background: linear-gradient(90deg, #9b4dff, #b86bff);
+      border: none;
+      border-radius: 8px;
+      color: #fff;
+      font-weight: 600;
+      padding: 8px 16px;
+      cursor: pointer;
+      box-shadow: 0 0 10px rgba(180,0,255,0.5);
+      transition: .3s;
+    }
+
+    .top-bar button:hover {
+      transform: scale(1.05);
+      background: linear-gradient(90deg,#b86bff,#d6aaff);
+    }
+
+    h2 {
+      text-align: center;
+      color: #d6b2ff;
+      text-shadow: 0 0 10px rgba(180,0,255,0.7);
+      margin-bottom: 30px;
+    }
+
+    .form-container {
+      max-width: 600px;
+      margin: auto;
+      background: rgba(50, 0, 80, 0.45);
+      border: 1px solid rgba(200,150,255,0.3);
+      border-radius: 20px;
+      padding: 30px;
+      box-shadow: 0 0 30px rgba(180,0,255,0.4);
+    }
+
+    label {
+      display: block;
+      font-weight: 500;
+      margin-bottom: 6px;
+      margin-top: 10px;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 10px;
+      border: none;
+      border-radius: 10px;
+      background: rgba(255,255,255,0.1);
+      color: #fff;
+    }
+
+    input:focus, select:focus {
+      outline: none;
+      box-shadow: 0 0 10px rgba(180,0,255,0.6);
+    }
+
+    .members-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 10px;
+      margin-top: 10px;
+      background: rgba(255,255,255,0.05);
+      padding: 10px;
+      border-radius: 10px;
+      max-height: 220px;
+      overflow-y: auto;
+    }
+
+    .member-card {
+      background: rgba(100,0,160,0.3);
+      border: 1px solid rgba(200,150,255,0.3);
+      border-radius: 12px;
+      text-align: center;
+      padding: 8px;
+      cursor: pointer;
+      transition: .2s;
+    }
+
+    .member-card.selected {
+      border-color: #b86bff;
+      box-shadow: 0 0 15px rgba(180,0,255,0.6);
+      transform: scale(1.05);
+    }
+
+    .member-card img {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin-bottom: 5px;
+      border: 1px solid rgba(255,255,255,0.2);
+    }
+
+    button.save-btn {
+      width: 100%;
+      padding: 12px;
+      border: none;
+      border-radius: 10px;
+      font-weight: 600;
+      margin-top: 20px;
+      background: linear-gradient(90deg, #9b4dff, #b86bff);
+      color: #fff;
+      cursor: pointer;
+      transition: 0.3s;
+      box-shadow: 0 0 10px rgba(180, 0, 255, 0.5);
+    }
+
+    button.save-btn:hover {
+      transform: scale(1.03);
+      background: linear-gradient(90deg, #b86bff, #d6aaff);
+    }
+
+    .popup {
+      position: fixed;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: linear-gradient(90deg,#9b4dff,#b86bff);
+      padding: 12px 25px;
+      border-radius: 15px;
+      color: #fff;
+      font-weight: 500;
+      box-shadow: 0 0 20px rgba(180,0,255,0.6);
+      z-index: 999;
+      animation: fadeInUp .3s ease;
+    }
+
+    @keyframes fadeInUp {
+      from {opacity:0; transform: translate(-50%, 10px);}
+      to {opacity:1; transform: translate(-50%, 0);}
+    }
+  </style>
+</head>
+
+<body>
+  <div class="top-bar">
+    <button id="backBtn">⬅ Voltar</button>
+    <h2>Criar Nova Facção</h2>
+    <div></div>
+  </div>
+
+  <div class="form-container">
+    <label>Nome da Facção:</label>
+    <input type="text" id="name" placeholder="Ex: AURA" required>
+
+    <label>Cor:</label>
+    <input type="color" id="color" value="#9b4dff">
+
+    <label>Líder:</label>
+    <select id="leader">
+      <option value="">Selecione...</option>
+    </select>
+
+    <label>Membros:</label>
+    <div id="membersList" class="members-list"></div>
+
+    <button class="save-btn" id="saveBtn">💾 Criar Facção</button>
+  </div>
+
+  <script type="module">
+    import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js";
+    import { getFirestore, collection, getDocs, addDoc, updateDoc, doc, query } 
+      from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
+    import { firebaseConfig } from "../../firebaseConfig.js";
+
+    const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
+    const db = getFirestore(app);
+
+    const membersList = document.getElementById("membersList");
+    const leaderSelect = document.getElementById("leader");
+    let selectedMembers = [];
+
+    function popup(msg) {
+      const el = document.createElement("div");
+      el.className = "popup";
+      el.textContent = msg;
+      document.body.appendChild(el);
+      setTimeout(() => el.remove(), 3000);
+    }
+
+    document.getElementById("backBtn").addEventListener("click", () => {
+      window.location.href = "ver.html";
+    });
+
+    // Carregar pessoas
+    async function loadPeople() {
+      const qSnap = await getDocs(query(collection(db, "people")));
+      leaderSelect.innerHTML = '<option value="">Selecione...</option>';
+      membersList.innerHTML = "";
+
+      qSnap.forEach(docSnap => {
+        const p = docSnap.data();
+        const id = docSnap.id;
+
+        // dropdown de líder
+        const opt = document.createElement("option");
+        opt.value = id;
+        opt.textContent = p.name || "Sem nome";
+        leaderSelect.appendChild(opt);
+
+        // card de membro
+        const card = document.createElement("div");
+        card.className = "member-card";
+        card.innerHTML = `
+          <img src="${p.photoURL || '../../Aurinha.png'}" alt="">
+          <p>${p.name || 'Sem nome'}</p>
+        `;
+
+        card.addEventListener("click", () => {
+          card.classList.toggle("selected");
+          if (selectedMembers.includes(id)) {
+            selectedMembers = selectedMembers.filter(x => x !== id);
+          } else {
+            selectedMembers.push(id);
+          }
+        });
+
+        membersList.appendChild(card);
+      });
+    }
+
+    // Criar facção
+    document.getElementById("saveBtn").addEventListener("click", async () => {
+      const name = document.getElementById("name").value.trim();
+      const color = document.getElementById("color").value;
+      const leader = document.getElementById("leader").value;
+
+      if (!name || !leader) {
+        popup("⚠️ Preencha o nome e escolha um líder!");
+        return;
+      }
+
+      try {
+        const code = "G-" + Math.floor(Math.random() * 9000 + 1000);
+        const newFac = {
+          code,
+          name,
+          color,
+          leader,
+          members: selectedMembers,
+          createdAt: new Date()
+        };
+
+        await addDoc(collection(db, "facc"), newFac);
+
+        // Atualiza os membros e líder na coleção people
+        const all = [...selectedMembers, leader];
+        for (const id of all) {
+          await updateDoc(doc(db, "people", id), { faction: name });
+        }
+
+        popup("✅ Facção criada com sucesso!");
+        setTimeout(() => window.location.href = "ver.html", 1500);
+      } catch (err) {
+        console.error(err);
+        popup("❌ Erro ao criar facção!");
+      }
+    });
+
+    loadPeople();
+  </script>
+</body>
+</html>

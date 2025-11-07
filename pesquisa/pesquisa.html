@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pesquisa Geral — Sistema AURA 💜</title>
+
+  <link rel="icon" href="../Aurinha.png" />
+  <link rel="stylesheet" href="../style.css" />
+
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+  <script src="../firebaseConfig.js"></script>
+
+  <style>
+    body {
+      background: radial-gradient(circle at top left, #3c0064, #150026);
+      color: white;
+      font-family: 'Poppins', sans-serif;
+      margin: 0;
+      padding: 0;
+      text-align: center;
+    }
+
+    .search-box {
+      margin-top: 3rem;
+    }
+
+    .search-bar {
+      width: 70%;
+      max-width: 600px;
+      padding: 1rem;
+      border-radius: 12px;
+      border: none;
+      background: rgba(255,255,255,0.1);
+      color: white;
+      font-size: 1.1rem;
+      outline: none;
+      box-shadow: 0 0 12px rgba(180,107,255,0.3);
+    }
+
+    .filters {
+      margin-top: 1rem;
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 0.8rem;
+    }
+
+    .filters label {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 8px;
+      padding: 0.5rem 1rem;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .filters input[type="checkbox"] {
+      display: none;
+    }
+
+    .filters input[type="checkbox"]:checked + label {
+      background: rgba(180,107,255,0.2);
+      box-shadow: 0 0 10px rgba(180,107,255,0.4);
+    }
+
+    .loading {
+      margin-top: 2rem;
+      animation: pulse 1.2s infinite;
+      color: #b46bff;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 0.5; }
+      50% { opacity: 1; }
+    }
+
+    .results {
+      margin-top: 2rem;
+      display: grid;
+      gap: 1rem;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      padding: 1rem;
+    }
+
+    .card-result {
+      background: rgba(255,255,255,0.05);
+      border-radius: 12px;
+      padding: 1rem;
+      border: 1px solid rgba(255,255,255,0.1);
+      transition: 0.3s;
+    }
+
+    .card-result:hover {
+      background: rgba(176,106,255,0.1);
+      box-shadow: 0 0 15px rgba(176,106,255,0.3);
+    }
+
+    .count {
+      margin-top: 1.5rem;
+      font-size: 1rem;
+      opacity: 0.8;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="search-box">
+    <h1>🔍 Pesquisa Geral AURA</h1>
+    <input type="text" id="searchInput" class="search-bar" placeholder="Digite algo para pesquisar..." />
+    <div class="filters">
+      <input type="checkbox" id="users" checked /><label for="users">Pessoas</label>
+      <input type="checkbox" id="cases" checked /><label for="cases">Casos</label>
+      <input type="checkbox" id="factions" checked /><label for="factions">Facções</label>
+      <input type="checkbox" id="charges" checked /><label for="charges">Cobranças</label>
+      <input type="checkbox" id="auctions" checked /><label for="auctions">Leilões</label>
+      <input type="checkbox" id="investigations" checked /><label for="investigations">Investigações</label>
+      <input type="checkbox" id="meetings" checked /><label for="meetings">Reuniões</label>
+    </div>
+
+    <div id="loading" class="loading" style="display:none;">🔎 Procurando resultados...</div>
+    <div id="count" class="count"></div>
+    <div id="results" class="results"></div>
+  </div>
+
+  <script>
+    const db = firebase.firestore();
+    const input = document.getElementById("searchInput");
+    const loading = document.getElementById("loading");
+    const results = document.getElementById("results");
+    const count = document.getElementById("count");
+
+    input.addEventListener("input", async (e) => {
+      const query = e.target.value.trim().toLowerCase();
+      results.innerHTML = "";
+      count.textContent = "";
+
+      if (query.length < 2) return;
+
+      loading.style.display = "block";
+      const selected = Array.from(document.querySelectorAll(".filters input:checked")).map(el => el.id);
+      const labels = { users:"👥 Pessoa", cases:"📂 Caso", factions:"⚔️ Facção", charges:"💰 Cobrança", auctions:"🏷️ Leilão", investigations:"🕵️ Investigação", meetings:"📅 Reunião" };
+      let total = 0;
+      let allResults = [];
+
+      for (const type of selected) {
+        const snap = await db.collection(type).get();
+        snap.forEach(doc => {
+          const data = doc.data();
+          if (JSON.stringify(data).toLowerCase().includes(query)) {
+            allResults.push({ id: doc.id, data, type });
+          }
+        });
+      }
+
+      loading.style.display = "none";
+      total = allResults.length;
+      count.textContent = total ? `Encontrados ${total} resultados:` : "❌ Nenhum resultado.";
+
+      results.innerHTML = allResults.map(r => `
+        <div class="card-result">
+          <small style="opacity:0.8;">${labels[r.type]}</small>
+          <h3>${r.data.name || r.data.title || "Sem título"}</h3>
+          <p>${r.data.description ? r.data.description.slice(0,80) + "..." : ""}</p>
+          <a href="../${r.type}/ver.html?id=${r.id}" style="color:#b46bff;text-decoration:none;">👁️ Ver Detalhes</a>
+        </div>
+      `).join("");
+    });
+  </script>
+</body>
+</html>

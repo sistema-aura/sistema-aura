@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sistema AURA 💜 — Popular Banco de Dados</title>
+
+  <link rel="icon" href="Aurinha.png" />
+  <link rel="stylesheet" href="style.css" />
+
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+  <script src="firebaseConfig.js"></script>
+</head>
+
+<body class="login-body fade-in">
+  <div class="login-container card glow-hover">
+    <img src="Aurinha.png" class="logo" alt="Logo AURA💜" />
+    <h2 class="title-glow">Popular Banco de Dados</h2>
+    <p class="muted">Use esta página apenas uma vez para criar os perfis e dados iniciais.</p>
+
+    <div style="display:flex; flex-direction:column; gap:10px;">
+      <button class="btn primary" onclick="seedUsers()">💜 Criar Perfis AURA</button>
+      <a href="index.html" class="btn ghost" style="text-decoration:none;">⬅️ Voltar ao Início</a>
+    </div>
+
+    <div id="result" class="fade-in" style="margin-top:1.5rem;">Aguardando ação...</div>
+  </div>
+
+  <script>
+    const db = firebase.firestore();
+
+    function showMessage(text, type = "normal") {
+      const result = document.getElementById("result");
+      result.textContent = text;
+      result.className = type;
+    }
+
+    async function seedUsers() {
+      showMessage("💜 Criando perfis da AURA... aguarde...", "loading");
+
+      const auraProfiles = [
+        { code: "A-00", name: "Duda Solano", role: "Veterano" },
+        { code: "A-01", name: "Erica Madrazzo", role: "Recruta" },
+        { code: "A-02", name: "Himaru Black", role: "01" },
+        { code: "A-03", name: "Pedro Machado", role: "02" },
+        { code: "A-04", name: "Aisha Ferraz", role: "03" },
+        { code: "A-05", name: "Myke Solano", role: "Veterano" },
+        { code: "A-06", name: "Atlas Solano", role: "Veterano" },
+        { code: "A-07", name: "Gabriel Solano", role: "Veterano" },
+        { code: "A-08", name: "Victoria Specter", role: "Veterano" },
+        { code: "A-09", name: "Jotave", role: "Veterano" },
+        { code: "A-10", name: "Lucas Ferraz", role: "Veterano" },
+        { code: "A-11", name: "Danny Kalashnikov", role: "Veterano" },
+        { code: "A-12", name: "Sprexi Aizen", role: "Veterano" },
+        { code: "A-13", name: "Caio Ferraz", role: "Veterano" },
+        { code: "A-14", name: "Ruben Silva", role: "Veterano" },
+        { code: "A-15", name: "Isaque Alves", role: "Veterano" },
+        { code: "A-16", name: "Isa Callas", role: "Veterano" },
+        { code: "A-17", name: "Nolan Akashi", role: "Soldado" },
+        { code: "A-18", name: "Selenita Gilbert", role: "Soldado" },
+        { code: "A-19", name: "Kauã Melione", role: "Soldado" },
+        { code: "A-20", name: "Diego Brown", role: "Soldado" },
+        { code: "A-21", name: "Orfeu Dybala", role: "Soldado" },
+        { code: "A-22", name: "Baiano", role: "Membro" },
+        { code: "A-23", name: "Jamaica", role: "Membro" },
+        { code: "A-24", name: "Rodrigo Casarin", role: "Membro" },
+        { code: "A-25", name: "Rech Marino", role: "Membro" },
+        { code: "A-26", name: "John Akasi", role: "Membro" },
+        { code: "A-27", name: "Barba Rosa", role: "Recruta" },
+        { code: "A-28", name: "Erick Mendez", role: "Recruta" },
+        { code: "A-29", name: "Midnight", role: "Recruta" },
+        { code: "A-30", name: "James Stewart", role: "Recruta" },
+        { code: "A-31", name: "Kassandra Ferraz", role: "Recruta" },
+        { code: "A-32", name: "Manuela Ferrari", role: "Recruta" },
+        { code: "A-33", name: "Ayla Ferraz", role: "Recruta" },
+        { code: "A-34", name: "Fabyana Ferraz", role: "Recruta" },
+        { code: "A-35", name: "Margarida Novak", role: "Recruta" }
+      ];
+
+      try {
+        let created = 0;
+        for (const p of auraProfiles) {
+          const docRef = db.collection("users").doc(p.code);
+          const exists = await docRef.get();
+
+          if (!exists.exists) {
+            await docRef.set({
+              ...p,
+              faction: "AURA",
+              type: "AURA",
+              createdAt: firebase.firestore.FieldValue.serverTimestamp()
+            });
+            created++;
+          }
+        }
+
+        showMessage(`✅ ${created} perfis da AURA criados com sucesso!`, "success");
+      } catch (err) {
+        console.error(err);
+        showMessage(`❌ Erro ao criar perfis: ${err.message}`, "error");
+      }
+    }
+  </script>
+</body>
+</html>

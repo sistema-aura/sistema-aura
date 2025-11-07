@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Editar Perfil - Sistema AURA</title>
+  <link rel="icon" href="../../Aurinha.png">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      background: radial-gradient(circle at top left, #1a001f, #000);
+      font-family: 'Poppins', sans-serif;
+      color: #fff;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+   /* 🔹 Botão retangular fixo no canto superior esquerdo */
+.back-btn {
+  position: fixed;
+  top: 15px;
+  left: 15px;
+  background: linear-gradient(90deg, #9b4dff, #b86bff);
+  border: none;
+  border-radius: 12px;
+  color: #fff;
+  font-weight: 600;
+  padding: 6px 14px;
+  font-size: 14px;
+  cursor: pointer;
+  box-shadow: 0 0 12px rgba(180, 0, 255, 0.6);
+  transition: 0.3s;
+  z-index: 9999;
+  width: auto !important;   /* ✅ Impede de ficar largo */
+  display: inline-block;    /* ✅ Mantém o tamanho justo */
+}
+
+.back-btn:hover {
+  transform: scale(1.05);
+  background: linear-gradient(90deg, #b86bff, #d6aaff);
+  box-shadow: 0 0 15px rgba(180, 0, 255, 0.9);
+}
+    .container {
+      background: rgba(50,0,80,0.45);
+      border: 1px solid rgba(200,150,255,0.3);
+      border-radius: 20px;
+      padding: 30px;
+      box-shadow: 0 0 30px rgba(180,0,255,0.4);
+      width: 420px;
+    }
+
+    h2 {
+      text-align: center;
+      color: #d6b2ff;
+      text-shadow: 0 0 10px rgba(180,0,255,0.7);
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      margin-top: 10px;
+      font-weight: 500;
+    }
+
+    input, select {
+      width: 100%;
+      margin-top: 5px;
+      padding: 10px;
+      border: none;
+      border-radius: 10px;
+      background: rgba(255,255,255,0.1);
+      color: #fff;
+    }
+
+    input:focus, select:focus {
+      outline: none;
+      box-shadow: 0 0 10px rgba(180,0,255,0.6);
+      background: rgba(255,255,255,0.15);
+    }
+
+    .photo-preview {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .photo-preview img {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid rgba(200,150,255,0.6);
+      box-shadow: 0 0 10px rgba(180,0,255,0.4);
+      margin-bottom: 8px;
+    }
+
+    .photo-btn {
+      background: linear-gradient(90deg,#9b4dff,#b86bff);
+      border: none;
+      border-radius: 8px;
+      color: #fff;
+      padding: 6px 12px;
+      cursor: pointer;
+      transition: .3s;
+    }
+
+    .photo-btn:hover {
+      transform: scale(1.05);
+      background: linear-gradient(90deg,#b86bff,#d6aaff);
+    }
+
+    button {
+      width: 100%;
+      margin-top: 15px;
+      padding: 10px;
+      border: none;
+      border-radius: 10px;
+      font-weight: 600;
+      color: #fff;
+      background: linear-gradient(90deg,#9b4dff,#b86bff);
+      box-shadow: 0 0 10px rgba(180,0,255,0.4);
+      cursor: pointer;
+      transition: .3s;
+    }
+
+    button:hover {
+      transform: scale(1.05);
+      background: linear-gradient(90deg,#b86bff,#d6aaff);
+    }
+
+    .popup {
+      position: fixed;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: linear-gradient(90deg, #9b4dff, #b86bff);
+      padding: 12px 25px;
+      border-radius: 15px;
+      color: #fff;
+      font-weight: 500;
+      box-shadow: 0 0 20px rgba(180,0,255,0.6);
+      text-align: center;
+      z-index: 9999;
+      animation: fadeInUp 0.3s ease;
+    }
+
+    @keyframes fadeInUp {
+      from {opacity:0; transform: translate(-50%, 10px);}
+      to {opacity:1; transform: translate(-50%, 0);}
+    }
+  </style>
+</head>
+
+<body>
+  <!-- 🔹 Botão fixo no canto superior esquerdo -->
+  <button class="back-btn" onclick="window.location.href='ver.html'">⬅ Voltar</button>
+
+  <div class="container">
+    <h2>Editar Perfil</h2>
+
+    <div class="photo-preview">
+      <img id="profilePhoto" src="../../Aurinha.png" alt="Foto de Perfil">
+      <input type="file" id="photoInput" accept="image/*" hidden>
+      <button class="photo-btn" id="uploadPhotoBtn">📁 Escolher Foto</button>
+    </div>
+
+    <form id="editForm">
+      <label>Código:</label>
+      <input type="text" id="code" disabled>
+
+      <label>Nome:</label>
+      <input type="text" id="name" required>
+
+      <label>Função (Role):</label>
+      <input type="text" id="role" required>
+
+      <label>Facção:</label>
+      <input type="text" id="faction" required>
+
+      <label>Tipo:</label>
+      <input type="text" id="type" required>
+
+      <button type="submit">💾 Salvar Alterações</button>
+    </form>
+  </div>
+
+  <script type="module">
+    import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js";
+    import { getFirestore, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
+    import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-storage.js";
+    import { firebaseConfig } from "../../firebaseConfig.js";
+
+    const app = getApps().length===0 ? initializeApp(firebaseConfig) : getApps()[0];
+    const db = getFirestore(app);
+    const storage = getStorage(app);
+
+    const params = new URLSearchParams(window.location.search);
+    const userId = params.get("id");
+
+    const photoEl = document.getElementById("profilePhoto");
+    const photoInput = document.getElementById("photoInput");
+    const uploadBtn = document.getElementById("uploadPhotoBtn");
+
+    let currentPhotoURL = null;
+
+    function popup(msg){
+      const el=document.createElement("div");
+      el.className="popup";
+      el.textContent=msg;
+      document.body.appendChild(el);
+      setTimeout(()=>el.remove(),3000);
+    }
+
+    // Carregar dados do perfil
+    async function loadProfile(){
+      if(!userId) return popup("❌ ID inválido!");
+      const ref=doc(db,"users",userId);
+      const snap=await getDoc(ref);
+      if(!snap.exists()) return popup("❌ Perfil não encontrado!");
+      const data=snap.data();
+
+      document.getElementById("code").value=data.code||"";
+      document.getElementById("name").value=data.name||"";
+      document.getElementById("role").value=data.role||"";
+      document.getElementById("faction").value=data.faction||"";
+      document.getElementById("type").value=data.type||"";
+
+      if(data.photoURL){
+        photoEl.src=data.photoURL;
+        currentPhotoURL=data.photoURL;
+      }
+    }
+
+    // Escolher foto
+    uploadBtn.addEventListener("click",()=>photoInput.click());
+
+    // Upload automático da nova foto
+    photoInput.addEventListener("change", async (e)=>{
+      const file=e.target.files[0];
+      if(!file) return;
+
+      try{
+        if(currentPhotoURL){
+          const oldRef=ref(storage, currentPhotoURL);
+          try { await deleteObject(oldRef); } catch {}
+        }
+
+        const fileRef=ref(storage, `profile_photos/${userId}_${Date.now()}.jpg`);
+        await uploadBytes(fileRef, file);
+        const url=await getDownloadURL(fileRef);
+        currentPhotoURL=url;
+        photoEl.src=url;
+
+        await updateDoc(doc(db,"users",userId),{photoURL:url});
+        popup("✅ Foto atualizada!");
+      }catch(err){
+        console.error(err);
+        popup("❌ Erro ao enviar foto!");
+      }
+    });
+
+    // Salvar alterações
+    document.getElementById("editForm").addEventListener("submit", async(e)=>{
+      e.preventDefault();
+      try{
+        await updateDoc(doc(db,"users",userId),{
+          name:document.getElementById("name").value.trim(),
+          role:document.getElementById("role").value.trim(),
+          faction:document.getElementById("faction").value.trim(),
+          type:document.getElementById("type").value.trim(),
+          updatedAt:new Date()
+        });
+        popup("✅ Perfil atualizado com sucesso!");
+        setTimeout(()=>window.location.href="ver.html",1500);
+      }catch(err){
+        console.error(err);
+        popup("❌ Erro ao salvar!");
+      }
+    });
+
+    loadProfile();
+  </script>
+</body>
+</html>

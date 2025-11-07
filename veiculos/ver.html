@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ver Reunião — Sistema AURA 💜</title>
+
+  <link rel="icon" href="../Aurinha.png" />
+  <link rel="stylesheet" href="../style.css" />
+
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+  <script src="../firebaseConfig.js"></script>
+
+  <style>
+    .meeting-card {
+      background: rgba(30, 15, 50, 0.6);
+      border-radius: 16px;
+      padding: 1.2rem;
+      box-shadow: 0 0 20px rgba(176, 106, 255, 0.3);
+    }
+  </style>
+</head>
+
+<body class="fade-in">
+  <div class="main">
+    <div id="meetingCard" class="meeting-card">
+      <p>Carregando reunião...</p>
+    </div>
+    <a href="../dashboard.html" class="btn ghost" style="margin-top:1rem;">⬅️ Voltar</a>
+  </div>
+
+  <script>
+    const db = firebase.firestore();
+    const params = new URLSearchParams(window.location.search);
+    const id = params.get("id");
+
+    async function loadMeeting() {
+      const doc = await db.collection("meetings").doc(id).get();
+      if (!doc.exists) {
+        document.getElementById("meetingCard").innerHTML = "<p>❌ Reunião não encontrada.</p>";
+        return;
+      }
+
+      const m = doc.data();
+      let attachmentsHTML = "";
+      if (m.attachments && m.attachments.length) {
+        attachmentsHTML = `
+          <p><strong>Anexos:</strong></p>
+          <ul>${m.attachments.map((url) => `<li><a href="${url}" target="_blank">📎 Ver arquivo</a></li>`).join("")}</ul>
+        `;
+      }
+
+      document.getElementById("meetingCard").innerHTML = `
+        <h2>${m.title}</h2>
+        <p><strong>Data e Hora:</strong> ${m.datetime}</p>
+        <p><strong>Descrição:</strong> ${m.description}</p>
+        <p><strong>Pessoas:</strong> ${m.people || "-"}</p>
+        <p><strong>Facções:</strong> ${m.factions || "-"}</p>
+        <p><strong>Veículos:</strong> ${m.vehicles || "-"}</p>
+        ${attachmentsHTML}
+      `;
+    }
+
+    loadMeeting();
+  </script>
+</body>
+</html>

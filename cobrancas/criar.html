@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Criar Cobrança — Sistema AURA 💜</title>
+
+  <link rel="icon" href="../Aurinha.png" />
+  <link rel="stylesheet" href="../style.css" />
+
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-storage-compat.js"></script>
+  <script src="../firebaseConfig.js"></script>
+</head>
+
+<body class="fade-in">
+  <div class="main">
+    <div class="card">
+      <h2>💰 Nova Cobrança</h2>
+      <form id="createForm">
+        <label>Motivo</label>
+        <input type="text" id="reason" placeholder="Ex: Dívida de material, serviço..." required />
+
+        <label>Status</label>
+        <select id="status">
+          <option value="Pendente">Pendente</option>
+          <option value="Arquivado">Arquivado</option>
+        </select>
+
+        <label>Pessoas Envolvidas</label>
+        <input type="text" id="people" placeholder="Ex: Duda, Erick..." />
+
+        <label>Facções Envolvidas</label>
+        <input type="text" id="factions" placeholder="Ex: AURA, PM..." />
+
+        <label>Veículos Envolvidos</label>
+        <input type="text" id="vehicles" placeholder="Ex: Carro Preto..." />
+
+        <label>Anexos</label>
+        <input type="file" id="files" multiple />
+
+        <button type="submit" class="btn">💾 Criar Cobrança</button>
+        <a href="../dashboard.html" class="btn ghost">⬅️ Voltar</a>
+      </form>
+      <p id="result" style="margin-top:1rem;"></p>
+    </div>
+  </div>
+
+  <script>
+    const db = firebase.firestore();
+    const storage = firebase.storage();
+
+    document.getElementById("createForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const reason = document.getElementById("reason").value;
+      const status = document.getElementById("status").value;
+      const people = document.getElementById("people").value;
+      const factions = document.getElementById("factions").value;
+      const vehicles = document.getElementById("vehicles").value;
+      const files = document.getElementById("files").files;
+
+      let attachments = [];
+
+      try {
+        for (const file of files) {
+          const ref = storage.ref(`charges/${Date.now()}_${file.name}`);
+          await ref.put(file);
+          const url = await ref.getDownloadURL();
+          attachments.push(url);
+        }
+
+        await db.collection("charges").add({
+          reason,
+          status,
+          people,
+          factions,
+          vehicles,
+          attachments,
+          createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+        });
+
+        document.getElementById("result").innerHTML = "✅ Cobrança criada com sucesso!";
+        document.getElementById("createForm").reset();
+      } catch (err) {
+        document.getElementById("result").innerHTML = "❌ Erro: " + err.message;
+      }
+    });
+  </script>
+</body>
+</html>

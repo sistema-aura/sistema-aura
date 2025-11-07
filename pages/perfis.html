@@ -1,0 +1,98 @@
+<section class="fade-in">
+  <h1>💜 Perfis AURA</h1>
+  <div class="actions">
+    <input
+      type="text"
+      id="filterAura"
+      placeholder="Pesquisar membros AURA..."
+      class="input-glow"
+      style="width:100%;margin:10px 0;padding:10px;border-radius:8px;border:none;"
+    >
+    <button id="addMember" class="btn primary">➕ Adicionar Membro</button>
+  </div>
+
+  <div id="auraList" class="grid" style="margin-top:20px;"></div>
+</section>
+
+<script>
+  const list = document.getElementById("auraList");
+  const db = firebase.firestore();
+  const filterInput = document.getElementById("filterAura");
+
+  let allAura = [];
+
+  // Atualização em tempo real dos membros AURA
+  db.collection("users").where("faction", "==", "AURA")
+    .onSnapshot(snapshot => {
+      allAura = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      renderAuraList(allAura);
+    });
+
+  // Filtrar enquanto digita
+  filterInput.addEventListener("input", e => {
+    const termo = e.target.value.toLowerCase();
+    const filtrados = allAura.filter(p =>
+      (p.name && p.name.toLowerCase().includes(termo)) ||
+      (p.role && p.role.toLowerCase().includes(termo)) ||
+      (p.code && p.code.toLowerCase().includes(termo))
+    );
+    renderAuraList(filtrados);
+  });
+
+  // Renderizar lista
+  function renderAuraList(arr) {
+    list.innerHTML = "";
+    if (!arr.length) {
+      list.innerHTML = "<p style='opacity:0.6;'>Nenhum membro encontrado.</p>";
+      return;
+    }
+
+    arr.forEach(data => {
+      const card = document.createElement("div");
+      card.className = "card fade-in";
+      card.innerHTML = `
+        <h3>${data.name}</h3>
+        <p>${data.role || "Membro"}</p>
+        <div class="card-actions">
+          <button class="btn small ghost" onclick="editMember('${data.id}')">✏️ Editar</button>
+          <button class="btn small danger" onclick="deleteMember('${data.id}')">🗑️ Remover</button>
+        </div>
+      `;
+      list.appendChild(card);
+    });
+  }
+
+  // Adicionar novo membro
+  document.getElementById("addMember").addEventListener("click", () => {
+    const name = prompt("Nome do novo membro:");
+    if (!name) return;
+    const role = prompt("Cargo/Função:") || "Membro";
+    const code = "A-" + Math.floor(Math.random() * 9999);
+    db.collection("users").doc(code).set({
+      code, name, role, faction: "AURA", type: "AURA",
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+  });
+
+  // Editar membro
+  function editMember(id) {
+    db.collection("users").doc(id).get().then(doc => {
+      if (!doc.exists) return alert("Membro não encontrado.");
+      const data = doc.data();
+      const newName = prompt("Editar nome:", data.name);
+      const newRole = prompt("Editar cargo:", data.role);
+      if (!newName) return;
+      db.collection("users").doc(id).update({
+        name: newName,
+        role: newRole
+      });
+    });
+  }
+
+  // Remover membro
+  function deleteMember(id) {
+    if (confirm("Deseja realmente remover este membro da AURA?")) {
+      db.collection("users").doc(id).delete();
+    }
+  }
+</script>

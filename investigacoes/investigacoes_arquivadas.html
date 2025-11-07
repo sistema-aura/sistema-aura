@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Investigações Arquivadas - Sistema Aura</title>
+  <link rel="icon" href="../../Aurinha.png" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet" />
+  <style>
+    body{background:radial-gradient(circle at top left,#1a001f,#000);font-family:'Poppins',sans-serif;color:#fff;margin:0;padding:30px}
+    .top-bar{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
+    .top-bar h2{color:#d6b2ff;text-shadow:0 0 10px rgba(180,0,255,.7);margin:0;flex:1;text-align:center}
+    .top-bar button{background:linear-gradient(90deg,#9b4dff,#b86bff);border:none;border-radius:10px;color:#fff;font-weight:600;padding:8px 16px;cursor:pointer;transition:.3s;box-shadow:0 0 10px rgba(180,0,255,.4)}
+    .top-bar button:hover{transform:scale(1.05);background:linear-gradient(90deg,#b86bff,#d6aaff);box-shadow:0 0 15px rgba(180,0,255,.6)}
+    #searchBar{display:block;margin:0 auto 30px;width:300px;padding:10px;border:none;border-radius:10px;background:rgba(255,255,255,.1);color:#fff;text-align:center}
+    #searchBar:focus{outline:none;box-shadow:0 0 10px rgba(180,0,255,.6);background:rgba(255,255,255,.15)}
+    .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:20px}
+    .card{background:rgba(50,0,80,.45);border:1px solid rgba(200,150,255,.3);border-radius:20px;padding:15px;box-shadow:0 0 20px rgba(180,0,255,.3);transition:all .3s ease;overflow:hidden;position:relative}
+    .card.expanded{grid-column:span 2;box-shadow:0 0 30px rgba(200,150,255,.7);background:rgba(70,0,110,.7)}
+    .card h3{margin:0 0 5px;color:#d6b2ff;font-weight:600}
+    .card p{font-size:.85rem;line-height:1.3;margin:3px 0}
+    .card .desc{color:#ccc;margin:5px 0}
+    .buttons{margin-top:10px;display:flex;flex-wrap:wrap;gap:6px}
+    .buttons button{background:linear-gradient(90deg,#9b4dff,#b86bff);border:none;border-radius:8px;color:#fff;padding:5px 10px;cursor:pointer;transition:.3s;flex:1;min-width:100px}
+    .buttons button:hover{transform:scale(1.05);background:linear-gradient(90deg,#b86bff,#d6aaff)}
+    .fullDesc{margin-top:10px;color:#eee;font-size:.9rem;text-align:left;animation:fadeIn .3s ease}
+    @keyframes fadeIn{from{opacity:0;transform:translateY(-5px)}to{opacity:1;transform:translateY(0)}}
+    /* Modal neon */
+    .confirm-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(3px);z-index:1000;align-items:center;justify-content:center}
+    .confirm-box{background:rgba(40,0,60,.95);border:1px solid rgba(200,150,255,.4);border-radius:15px;padding:25px;box-shadow:0 0 25px rgba(180,0,255,.7);text-align:center;width:300px;animation:fadeIn .25s ease}
+    .confirm-box h3{color:#d6b2ff;margin-bottom:15px}
+    .confirm-actions{display:flex;gap:12px;justify-content:center}
+    .confirm-actions button{border:none;border-radius:8px;padding:8px 16px;font-weight:600;cursor:pointer;transition:.25s}
+    .btn-confirm{background:linear-gradient(90deg,#9b4dff,#b86bff);color:#fff}
+    .btn-cancel{background:linear-gradient(90deg,#555,#777);color:#fff}
+    .confirm-actions button:hover{transform:scale(1.05)}
+    /* Popup */
+    .neon-popup{position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:linear-gradient(90deg,#9b4dff,#b86bff);padding:12px 25px;border-radius:15px;color:#fff;font-weight:500;box-shadow:0 0 20px rgba(180,0,255,.6);z-index:1100;animation:fadeUp .3s ease}
+    .neon-popup.error{background:linear-gradient(90deg,#ff3b3b,#ff6b6b);box-shadow:0 0 20px rgba(255,0,80,.6)}
+    @keyframes fadeUp{from{opacity:0;transform:translate(-50%,10px)}to{opacity:1;transform:translate(-50%,0)}}
+  </style>
+</head>
+<body>
+  <div class="top-bar">
+    <button id="backBtn">⬅ Voltar</button>
+    <h2>Investigações Arquivadas</h2>
+    <div style="width:120px;"></div>
+  </div>
+
+  <input type="text" id="searchBar" placeholder="🔍 Pesquisar por código ou título..." />
+  <div class="grid" id="invGrid"></div>
+
+  <!-- Modal -->
+  <div class="confirm-overlay" id="confirmModal">
+    <div class="confirm-box">
+      <h3>♻️ Restaurar esta investigação?</h3>
+      <div class="confirm-actions">
+        <button class="btn-cancel" id="cancelRestore">Cancelar</button>
+        <button class="btn-confirm" id="confirmRestore">Confirmar</button>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js";
+    import { getFirestore, collection, getDocs, query, orderBy, doc, setDoc, deleteDoc } 
+      from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
+    import { firebaseConfig } from "../../firebaseConfig.js";
+
+    const app = getApps().length===0 ? initializeApp(firebaseConfig) : getApps()[0];
+    const db = getFirestore(app);
+
+    const grid = document.getElementById("invGrid");
+    const search = document.getElementById("searchBar");
+    const modal = document.getElementById("confirmModal");
+    const btnYes = document.getElementById("confirmRestore");
+    const btnNo = document.getElementById("cancelRestore");
+
+    let allInvs = [];
+    let selected = null; // { id, data, cardEl }
+
+    document.getElementById("backBtn").addEventListener("click", () => {
+      window.location.href = "../../dashboard.html";
+    });
+
+    function popup(msg, error=false){
+      const el = document.createElement("div");
+      el.className = "neon-popup" + (error ? " error" : "");
+      el.textContent = msg;
+      document.body.appendChild(el);
+      setTimeout(()=>el.remove(), 2800);
+    }
+
+    async function loadInvs(){
+      const qSnap = await getDocs(query(collection(db,"investigacoes_arquivadas"), orderBy("archivedAt","desc")));
+      allInvs = qSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+      render(allInvs);
+    }
+
+    function render(list){
+      grid.innerHTML = "";
+      if(!list.length){
+        grid.innerHTML = "<p style='text-align:center;opacity:0.7'>Nenhuma investigação arquivada.</p>";
+        return;
+      }
+      list.forEach(inv => {
+        const short = inv.description?.length > 100 ? inv.description.slice(0,100)+"..." : (inv.description || "Sem descrição");
+        const card = document.createElement("div");
+        card.className = "card";
+        card.dataset.id = inv.id;
+        card.innerHTML = `
+          <h3>${inv.code || "INV-??"} — ${inv.title || "Sem título"}</h3>
+          <p><b>Agente:</b> ${inv.agent || "—"}</p>
+          <p><b>Status:</b> ${inv.status || "—"}</p>
+          <p><b>Início:</b> ${inv.startDate || "—"} | <b>Fim:</b> ${inv.endDate || "—"}</p>
+          <p><b>Arquivado em:</b> ${inv.archivedAt?.toDate ? inv.archivedAt.toDate().toLocaleDateString() : "—"}</p>
+          <p class="desc">${short}</p>
+          <div class="buttons">
+            <button class="viewBtn">👁 Ver Detalhes</button>
+            <button class="restoreBtn">♻️ Restaurar</button>
+          </div>
+        `;
+        // detalhes
+        card.querySelector(".viewBtn").addEventListener("click", () => {
+          if(card.classList.contains("expanded")){
+            card.classList.remove("expanded");
+            const full = card.querySelector(".fullDesc");
+            if(full) full.remove();
+          } else {
+            card.classList.add("expanded");
+            const full = document.createElement("div");
+            full.className = "fullDesc";
+            full.innerHTML = `<p><b>Descrição Completa:</b><br>${inv.description || "Sem detalhes."}</p>`;
+            card.appendChild(full);
+          }
+        });
+
+        // restaurar (abre modal)
+        card.querySelector(".restoreBtn").addEventListener("click", () => {
+          selected = { id: inv.id, data: inv, cardEl: card };
+          modal.style.display = "flex";
+        });
+
+        grid.appendChild(card);
+      });
+    }
+
+    // confirmar restauração
+    btnYes.addEventListener("click", async () => {
+      if(!selected) return;
+      try{
+        const { id, data, cardEl } = selected;
+
+        // prepara payload: mantém mesmos dados, remove archivedAt e id, adiciona restoredAt
+        const payload = { ...data };
+        delete payload.archivedAt;
+        delete payload.id;
+        payload.restoredAt = new Date();
+
+        // grava na coleção ativa COM O MESMO ID
+        await setDoc(doc(db,"investigacoes", id), payload, { merge: true });
+
+        // apaga do arquivado
+        await deleteDoc(doc(db,"investigacoes_arquivadas", id));
+
+        // feedback + remove cartão do DOM
+        popup("✅ Investigação restaurada com sucesso!");
+        cardEl.remove();
+
+        // fecha modal e limpa seleção
+        modal.style.display = "none";
+        selected = null;
+
+        // se lista ficar vazia, mostra estado vazio
+        if(!grid.querySelector(".card")){
+          grid.innerHTML = "<p style='text-align:center;opacity:0.7'>Nenhuma investigação arquivada.</p>";
+        }
+      }catch(err){
+        console.error(err);
+        popup("❌ Erro ao restaurar!", true);
+      }
+    });
+
+    btnNo.addEventListener("click", () => {
+      selected = null;
+      modal.style.display = "none";
+    });
+
+    // pesquisa simples em memória
+    search.addEventListener("input", e => {
+      const t = e.target.value.toLowerCase();
+      const filtered = allInvs.filter(inv =>
+        (inv.code || "").toLowerCase().includes(t) ||
+        (inv.title || "").toLowerCase().includes(t) ||
+        (inv.agent || "").toLowerCase().includes(t)
+      );
+      render(filtered);
+    });
+
+    loadInvs();
+  </script>
+</body>
+</html>

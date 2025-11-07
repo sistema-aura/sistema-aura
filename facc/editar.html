@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Editar Facção - Sistema AURA</title>
+  <link rel="icon" href="../../Aurinha.png" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet" />
+  <style>
+    body {
+      background: radial-gradient(circle at top left, #1a001f, #000);
+      font-family: 'Poppins', sans-serif;
+      color: #fff;
+      margin: 0;
+      padding: 30px;
+    }
+
+    .back-btn {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      background: linear-gradient(90deg,#9b4dff,#b86bff);
+      border: none;
+      border-radius: 8px;
+      color: #fff;
+      font-weight: 600;
+      padding: 6px 14px;
+      cursor: pointer;
+      box-shadow: 0 0 10px rgba(180,0,255,0.4);
+      transition: .3s;
+    }
+    .back-btn:hover {
+      transform: scale(1.05);
+      background: linear-gradient(90deg,#b86bff,#d6aaff);
+    }
+
+    h2 {
+      text-align: center;
+      color: #d6b2ff;
+      text-shadow: 0 0 10px rgba(180,0,255,0.7);
+      margin-bottom: 30px;
+    }
+
+    .container {
+      max-width: 700px;
+      margin: auto;
+      background: rgba(50,0,80,0.45);
+      border-radius: 20px;
+      padding: 25px;
+      box-shadow: 0 0 25px rgba(180,0,255,0.3);
+    }
+
+    label {
+      display: block;
+      margin-top: 12px;
+      font-weight: 500;
+    }
+
+    input, textarea {
+      width: 100%;
+      padding: 10px;
+      border: none;
+      border-radius: 10px;
+      background: rgba(255,255,255,0.1);
+      color: #fff;
+      margin-top: 5px;
+    }
+
+    input:focus, textarea:focus {
+      outline: none;
+      box-shadow: 0 0 10px rgba(180,0,255,0.6);
+    }
+
+    .photo-section, .base-photos {
+      margin-top: 15px;
+    }
+
+    .photo-preview img {
+      width: 100%;
+      max-width: 200px;
+      border-radius: 10px;
+      box-shadow: 0 0 15px rgba(180,0,255,0.4);
+    }
+
+    .photo-btn {
+      background: linear-gradient(90deg,#9b4dff,#b86bff);
+      border: none;
+      border-radius: 8px;
+      color: #fff;
+      padding: 8px 12px;
+      cursor: pointer;
+      transition: .3s;
+      margin-top: 8px;
+    }
+    .photo-btn:hover {
+      transform: scale(1.05);
+      background: linear-gradient(90deg,#b86bff,#d6aaff);
+    }
+
+    .tags-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 8px;
+    }
+    .tag {
+      background: rgba(180,0,255,0.3);
+      border: 1px solid rgba(180,0,255,0.5);
+      padding: 5px 10px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .tag button {
+      background: none;
+      border: none;
+      color: #fff;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .suggestions {
+      background: rgba(40,0,70,0.95);
+      border-radius: 10px;
+      margin-top: 5px;
+      max-height: 120px;
+      overflow-y: auto;
+      box-shadow: 0 0 10px rgba(180,0,255,0.5);
+    }
+    .suggestions div {
+      padding: 8px;
+      cursor: pointer;
+    }
+    .suggestions div:hover {
+      background: rgba(180,0,255,0.2);
+    }
+
+    .base-photo-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 10px;
+    }
+    .base-photo {
+      position: relative;
+    }
+    .base-photo img {
+      width: 120px;
+      height: 80px;
+      object-fit: cover;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(180,0,255,0.4);
+    }
+    .remove-photo {
+      position: absolute;
+      top: 4px;
+      right: 4px;
+      background: rgba(0,0,0,0.7);
+      border: none;
+      color: #fff;
+      border-radius: 50%;
+      width: 20px;
+      height: 20px;
+      cursor: pointer;
+    }
+
+    .save-btn {
+      margin-top: 20px;
+      width: 100%;
+      padding: 12px;
+      border: none;
+      border-radius: 10px;
+      font-weight: 600;
+      background: linear-gradient(90deg,#9b4dff,#b86bff);
+      color: #fff;
+      cursor: pointer;
+      transition: 0.3s;
+      box-shadow: 0 0 10px rgba(180,0,255,0.5);
+    }
+    .save-btn:hover {
+      transform: scale(1.03);
+      background: linear-gradient(90deg,#b86bff,#d6aaff);
+    }
+
+    .popup {
+      position: fixed;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: linear-gradient(90deg,#9b4dff,#b86bff);
+      padding: 12px 25px;
+      border-radius: 15px;
+      color: #fff;
+      font-weight: 500;
+      box-shadow: 0 0 20px rgba(180,0,255,0.6);
+      text-align: center;
+      z-index: 9999;
+      animation: fadeInUp .3s ease;
+    }
+    @keyframes fadeInUp {
+      from {opacity:0; transform: translate(-50%, 10px);}
+      to {opacity:1; transform: translate(-50%, 0);}
+    }
+  </style>
+</head>
+<body>
+  <button class="back-btn" onclick="window.location.href='ver.html'">⬅ Voltar</button>
+  <h2>Editar Facção</h2>
+  <div class="container">
+    <form id="editForm">
+      <label>Código:</label>
+      <input type="text" id="code" disabled />
+
+      <label>Nome da Facção:</label>
+      <input type="text" id="name" required />
+
+      <label>Descrição:</label>
+      <textarea id="description" rows="3"></textarea>
+
+      <div class="photo-section">
+        <label>Foto da Facção:</label>
+        <div class="photo-preview"><img id="faccPhoto" src="../../Aurinha.png" alt="Foto da Facção" /></div>
+        <input type="file" id="faccPhotoInput" accept="image/*" hidden />
+        <button type="button" class="photo-btn" id="uploadFaccPhoto">📷 Alterar Foto</button>
+      </div>
+
+      <label>Membros:</label>
+      <input type="text" id="memberSearch" placeholder="Digite para procurar membros..." />
+      <div class="suggestions" id="suggestions"></div>
+      <div class="tags-container" id="memberTags"></div>
+
+      <div class="base-photos">
+        <label>Fotos da Base:</label>
+        <input type="file" id="basePhotosInput" accept="image/*" multiple hidden />
+        <button type="button" class="photo-btn" id="addBasePhotos">📸 Adicionar Fotos</button>
+        <div class="base-photo-grid" id="basePhotoGrid"></div>
+      </div>
+
+      <button type="submit" class="save-btn">💾 Salvar Alterações</button>
+    </form>
+  </div>
+
+  <script type="module">
+    import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js";
+    import { getFirestore, doc, getDoc, updateDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
+    import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-storage.js";
+    import { firebaseConfig } from "../../firebaseConfig.js";
+
+    const app = getApps().length===0 ? initializeApp(firebaseConfig) : getApps()[0];
+    const db = getFirestore(app);
+    const storage = getStorage(app);
+
+    const params = new URLSearchParams(window.location.search);
+    const faccId = params.get("id");
+    let currentFaccPhoto = null;
+    let basePhotos = [];
+    let allPeople = [];
+    let selectedMembers = [];
+
+    const popup = msg => {
+      const el = document.createElement("div");
+      el.className = "popup";
+      el.textContent = msg;
+      document.body.appendChild(el);
+      setTimeout(()=>el.remove(),3000);
+    };
+
+    async function loadFacData(){
+      const ref = doc(db,"facc",faccId);
+      const snap = await getDoc(ref);
+      if(!snap.exists()) return popup("❌ Facção não encontrada!");
+      const data = snap.data();
+
+      document.getElementById("code").value = data.code || "";
+      document.getElementById("name").value = data.name || "";
+      document.getElementById("description").value = data.description || "";
+      if(data.faccPhotoURL){
+        document.getElementById("faccPhoto").src = data.faccPhotoURL;
+        currentFaccPhoto = data.faccPhotoURL;
+      }
+      basePhotos = data.basePhotos || [];
+      renderBasePhotos();
+      selectedMembers = data.members || [];
+      renderMemberTags();
+    }
+
+    // Load all people
+    async function loadPeople(){
+      const snap = await getDocs(collection(db,"people"));
+      allPeople = snap.docs.map(d => d.data().name).filter(Boolean);
+    }
+
+    // Member autocomplete
+    const memberSearch = document.getElementById("memberSearch");
+    const suggestions = document.getElementById("suggestions");
+    const memberTags = document.getElementById("memberTags");
+
+    function renderMemberTags(){
+      memberTags.innerHTML = "";
+      selectedMembers.forEach(name=>{
+        const tag = document.createElement("div");
+        tag.className = "tag";
+        tag.innerHTML = `${name} <button data-name="${name}">×</button>`;
+        tag.querySelector("button").addEventListener("click",()=>{
+          selectedMembers = selectedMembers.filter(m=>m!==name);
+          renderMemberTags();
+        });
+        memberTags.appendChild(tag);
+      });
+    }
+
+    memberSearch.addEventListener("input", ()=>{
+      const term = memberSearch.value.toLowerCase();
+      suggestions.innerHTML = "";
+      if(!term) return;
+      const matches = allPeople.filter(n=>n.toLowerCase().includes(term) && !selectedMembers.includes(n));
+      matches.forEach(n=>{
+        const div = document.createElement("div");
+        div.textContent = n;
+        div.addEventListener("click", ()=>{
+          selectedMembers.push(n);
+          renderMemberTags();
+          suggestions.innerHTML = "";
+          memberSearch.value = "";
+        });
+        suggestions.appendChild(div);
+      });
+    });
+
+    // Base photos
+    const basePhotoGrid = document.getElementById("basePhotoGrid");
+    function renderBasePhotos(){
+      basePhotoGrid.innerHTML="";
+      basePhotos.forEach((url,idx)=>{
+        const div=document.createElement("div");
+        div.className="base-photo";
+        div.innerHTML=`<img src="${url}"/><button class="remove-photo" data-idx="${idx}">×</button>`;
+        div.querySelector(".remove-photo").addEventListener("click",()=>{
+          basePhotos.splice(idx,1);
+          renderBasePhotos();
+        });
+        basePhotoGrid.appendChild(div);
+      });
+    }
+
+    document.getElementById("addBasePhotos").addEventListener("click",()=>document.getElementById("basePhotosInput").click());
+    document.getElementById("basePhotosInput").addEventListener("change",async e=>{
+      const files=Array.from(e.target.files);
+      if(basePhotos.length+files.length>6) return popup("⚠️ Máximo 6 fotos permitidas!");
+      for(const file of files){
+        const fileRef=ref(storage,`facc_bases/${faccId}_${Date.now()}_${file.name}`);
+        await uploadBytes(fileRef,file);
+        const url=await getDownloadURL(fileRef);
+        basePhotos.push(url);
+      }
+      renderBasePhotos();
+      popup("✅ Fotos adicionadas!");
+    });
+
+    // Facc photo
+    const faccPhotoInput=document.getElementById("faccPhotoInput");
+    document.getElementById("uploadFaccPhoto").addEventListener("click",()=>faccPhotoInput.click());
+    faccPhotoInput.addEventListener("change",async e=>{
+      const file=e.target.files[0];
+      if(!file) return;
+      const fileRef=ref(storage,`facc_photos/${faccId}_${Date.now()}.jpg`);
+      await uploadBytes(fileRef,file);
+      const url=await getDownloadURL(fileRef);
+      document.getElementById("faccPhoto").src=url;
+      currentFaccPhoto=url;
+      popup("✅ Foto da facção atualizada!");
+    });
+
+    document.getElementById("editForm").addEventListener("submit",async e=>{
+      e.preventDefault();
+      try{
+        await updateDoc(doc(db,"facc",faccId),{
+          name:document.getElementById("name").value.trim(),
+          description:document.getElementById("description").value.trim(),
+          faccPhotoURL:currentFaccPhoto,
+          basePhotos,
+          members:selectedMembers,
+          updatedAt:new Date()
+        });
+        popup("✅ Facção atualizada com sucesso!");
+        setTimeout(()=>window.location.href="ver.html",1500);
+      }catch(err){
+        console.error(err);
+        popup("❌ Erro ao salvar!");
+      }
+    });
+
+    loadFacData();
+    loadPeople();
+  </script>
+</body>
+</html>

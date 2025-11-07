@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ver Cobrança — Sistema AURA 💜</title>
+
+  <link rel="icon" href="../Aurinha.png" />
+  <link rel="stylesheet" href="../style.css" />
+
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+  <script src="../firebaseConfig.js"></script>
+
+  <style>
+    .charge-card {
+      background: rgba(30, 15, 50, 0.6);
+      border-radius: 16px;
+      padding: 1.2rem;
+      box-shadow: 0 0 20px rgba(176, 106, 255, 0.3);
+    }
+  </style>
+</head>
+
+<body class="fade-in">
+  <div class="main">
+    <div id="chargeCard" class="charge-card">
+      <p>Carregando cobrança...</p>
+    </div>
+    <a href="../dashboard.html" class="btn ghost" style="margin-top:1rem;">⬅️ Voltar</a>
+  </div>
+
+  <script>
+    const db = firebase.firestore();
+    const params = new URLSearchParams(window.location.search);
+    const id = params.get("id");
+
+    async function loadCharge() {
+      const doc = await db.collection("charges").doc(id).get();
+      if (!doc.exists) {
+        document.getElementById("chargeCard").innerHTML = "<p>❌ Cobrança não encontrada.</p>";
+        return;
+      }
+
+      const c = doc.data();
+      let attachmentsHTML = "";
+      if (c.attachments && c.attachments.length) {
+        attachmentsHTML = `
+          <p><strong>Anexos:</strong></p>
+          <ul>${c.attachments.map((url) => `<li><a href="${url}" target="_blank">📎 Ver arquivo</a></li>`).join("")}</ul>
+        `;
+      }
+
+      document.getElementById("chargeCard").innerHTML = `
+        <h2>${c.reason}</h2>
+        <p><strong>Status:</strong> ${c.status}</p>
+        <p><strong>Pessoas:</strong> ${c.people || "-"}</p>
+        <p><strong>Facções:</strong> ${c.factions || "-"}</p>
+        <p><strong>Veículos:</strong> ${c.vehicles || "-"}</p>
+        ${attachmentsHTML}
+      `;
+    }
+
+    loadCharge();
+  </script>
+</body>
+</html>

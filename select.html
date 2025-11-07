@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sistema AURA 💜 — Seleção de Usuário</title>
+
+  <link rel="icon" href="Aurinha.png" />
+  <link rel="stylesheet" href="style.css" />
+
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+  <script src="firebaseConfig.js"></script>
+
+  <style>
+    body {
+      background: radial-gradient(circle at top left, #3c0064, #150026);
+      color: white;
+      font-family: 'Poppins', sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .select-container {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 20px;
+      box-shadow: 0 0 20px rgba(180,107,255,0.3);
+      padding: 2rem 3rem;
+      text-align: center;
+      backdrop-filter: blur(12px);
+      width: 400px;
+    }
+
+    .select-container img {
+      width: 90px;
+      filter: drop-shadow(0 0 8px rgba(180,107,255,0.6));
+    }
+
+    h1 {
+      margin-bottom: 1rem;
+      text-shadow: 0 0 8px rgba(180,107,255,0.4);
+    }
+
+    select {
+      width: 100%;
+      padding: 0.8rem 1rem;
+      border-radius: 10px;
+      border: none;
+      background: rgba(255,255,255,0.1);
+      color: white;
+      font-size: 1rem;
+      outline: none;
+      box-shadow: 0 0 10px rgba(180,107,255,0.2);
+      margin-bottom: 1.5rem;
+    }
+
+    select option {
+      background: #1a002e;
+      color: white;
+    }
+
+    button {
+      width: 100%;
+      padding: 0.8rem;
+      background: #b46bff;
+      border: none;
+      border-radius: 10px;
+      color: white;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    button:hover {
+      background: #9f4dff;
+      box-shadow: 0 0 12px rgba(180,107,255,0.4);
+    }
+
+    .muted {
+      opacity: 0.7;
+      font-size: 0.85rem;
+      margin-top: 1rem;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="select-container fade-in">
+    <img src="Aurinha.png" alt="Logo AURA" />
+    <h1>Selecione o Usuário 💜</h1>
+    <p class="muted">Escolha o seu perfil para entrar no sistema.</p>
+
+    <select id="userSelect">
+      <option value="" disabled selected>-- Escolha o usuário --</option>
+    </select>
+
+    <button onclick="entrarDashboard()">Entrar no Sistema</button>
+  </div>
+
+  <script>
+    const db = firebase.firestore();
+    const userSelect = document.getElementById("userSelect");
+
+    // 🔹 Carrega os usuários do Firestore (coleção 'users')
+    async function carregarUsuarios() {
+      try {
+        const snapshot = await db.collection("users").get();
+        snapshot.forEach(doc => {
+          const data = doc.data();
+          const opt = document.createElement("option");
+          opt.value = data.name;
+          opt.textContent = data.name;
+          userSelect.appendChild(opt);
+        });
+      } catch (err) {
+        console.error("Erro ao carregar usuários:", err);
+        alert("Erro ao carregar usuários. Verifique sua conexão com o Firebase.");
+      }
+    }
+
+    carregarUsuarios();
+
+    // 🔹 Ao clicar em entrar
+    function entrarDashboard() {
+      const username = userSelect.value;
+      if (!username) {
+        alert("Selecione um usuário primeiro!");
+        return;
+      }
+
+      // Salva o nome do usuário no localStorage
+      localStorage.setItem("username", username);
+
+      // Redireciona para o dashboard
+      window.location.href = "dashboard.html";
+    }
+  </script>
+</body>
+</html>

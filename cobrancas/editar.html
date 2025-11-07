@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Editar Cobrança — Sistema AURA 💜</title>
+
+  <link rel="icon" href="../Aurinha.png" />
+  <link rel="stylesheet" href="../style.css" />
+
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-storage-compat.js"></script>
+  <script src="../firebaseConfig.js"></script>
+</head>
+
+<body class="fade-in">
+  <div class="main">
+    <div class="card">
+      <h2>✏️ Editar Cobrança</h2>
+      <form id="editForm">
+        <label>Motivo</label>
+        <input type="text" id="reason" required />
+
+        <label>Status</label>
+        <select id="status">
+          <option value="Pendente">Pendente</option>
+          <option value="Arquivado">Arquivado</option>
+        </select>
+
+        <label>Pessoas Envolvidas</label>
+        <input type="text" id="people" />
+
+        <label>Facções Envolvidas</label>
+        <input type="text" id="factions" />
+
+        <label>Veículos Envolvidos</label>
+        <input type="text" id="vehicles" />
+
+        <label>Novos Anexos (opcional)</label>
+        <input type="file" id="files" multiple />
+
+        <button type="submit" class="btn">💾 Salvar Alterações</button>
+        <a href="../dashboard.html" class="btn ghost">⬅️ Voltar</a>
+      </form>
+      <p id="result" style="margin-top:1rem;"></p>
+    </div>
+  </div>
+
+  <script>
+    const db = firebase.firestore();
+    const storage = firebase.storage();
+    const params = new URLSearchParams(window.location.search);
+    const id = params.get("id");
+
+    async function loadData() {
+      const doc = await db.collection("charges").doc(id).get();
+      if (!doc.exists) return (document.getElementById("editForm").innerHTML = "<p>❌ Cobrança não encontrada.</p>");
+      const c = doc.data();
+
+      document.getElementById("reason").value = c.reason;
+      document.getElementById("status").value = c.status || "Pendente";
+      document.getElementById("people").value = c.people || "";
+      document.getElementById("factions").value = c.factions || "";
+      document.getElementById("vehicles").value = c.vehicles || "";
+    }
+
+    document.getElementById("editForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const reason = document.getElementById("reason").value.trim();
+      const status = document.getElementById("status").value;
+      const people = document.getElementById("people").value;
+      const factions = document.getElementById("factions").value;
+      const vehicles = document.getElementById("vehicles").value;
+      const files = document.getElementById("files").files;
+      let newAttachments = [];
+
+      try {
+        for (const file of files) {
+          const ref = storage.ref(`charges/${id}_${file.name}`);
+          await ref.put(file);
+          const url = await ref.getDownloadURL();
+          newAttachments.push(url);
+        }
+
+        await db.collection("charges").doc(id).update({
+          reason,
+          status,
+          people,
+          factions,
+          vehicles,
+          updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+          ...(newAttachments.length ? { attachments: newAttachments } : {}),
+        });
+
+        document.getElementById("result").innerHTML = "✅ Cobrança atualizada!";
+      } catch (err) {
+        document.getElementById("result").innerHTML = "❌ Erro: " + err.message;
+      }
+    });
+
+    loadData();
+  </script>
+</body>
+</html>

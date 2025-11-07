@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Criar Perfil AURA 💜</title>
+
+  <link rel="icon" href="../Aurinha.png" />
+  <link rel="stylesheet" href="../style.css" />
+
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-storage-compat.js"></script>
+  <script src="../firebaseConfig.js"></script>
+</head>
+
+<body class="fade-in">
+  <div class="main">
+    <div class="card">
+      <h2>💜 Criar Novo Perfil AURA</h2>
+      <form id="createForm">
+        <label>Código AURA</label>
+        <input type="text" id="code" placeholder="Ex: A-07" required />
+
+        <label>Nome</label>
+        <input type="text" id="name" placeholder="Digite o nome completo" required />
+
+        <label>Patente / Hierarquia</label>
+        <input type="text" id="role" placeholder="Ex: Recruta, Soldado, Veterano..." required />
+
+        <label>Data de Ingresso</label>
+        <input type="date" id="joinedAt" required />
+
+        <label>Foto</label>
+        <input type="file" id="photo" accept="image/*" />
+        <img id="preview" src="../Aurinha.png" style="width:100px;border-radius:10px;margin-top:5px;" />
+
+        <button type="submit" class="btn">💾 Criar Perfil</button>
+        <a href="../dashboard.html" class="btn ghost">⬅️ Voltar</a>
+      </form>
+      <p id="result" style="margin-top:1rem;"></p>
+    </div>
+  </div>
+
+  <script>
+    const db = firebase.firestore();
+    const storage = firebase.storage();
+
+    document.getElementById("photo").addEventListener("change", (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = (ev) => (document.getElementById("preview").src = ev.target.result);
+        reader.readAsDataURL(file);
+      }
+    });
+
+    document.getElementById("createForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const code = document.getElementById("code").value.trim();
+      const name = document.getElementById("name").value.trim();
+      const role = document.getElementById("role").value.trim();
+      const joinedAt = document.getElementById("joinedAt").value;
+      const file = document.getElementById("photo").files[0];
+      let photoURL = "../Aurinha.png";
+
+      try {
+        if (file) {
+          const ref = storage.ref("users/" + code + "_" + Date.now());
+          await ref.put(file);
+          photoURL = await ref.getDownloadURL();
+        }
+
+        await db.collection("users").doc(code).set({
+          code,
+          name,
+          role,
+          joinedAt,
+          faction: "AURA",
+          photo: photoURL,
+          type: "AURA",
+          createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+        });
+
+        document.getElementById("result").innerHTML = "✅ Perfil AURA criado com sucesso!";
+        document.getElementById("createForm").reset();
+        document.getElementById("preview").src = "../Aurinha.png";
+      } catch (err) {
+        document.getElementById("result").innerHTML = "❌ Erro: " + err.message;
+      }
+    });
+  </script>
+</body>
+</html>

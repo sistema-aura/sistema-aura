@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sistema Aura - Dashboard</title>
+  <link rel="icon" href="Aurinha.png" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+  <!-- MENU LATERAL -->
+  <div class="sidebar">
+    <h2 class="logo">SISTEMA AURA</h2>
+    <ul>
+      <li><i class="icon">🏠</i><a href="dashboard.html" class="active">Dashboard</a></li>
+      <li><i class="icon">👑</i><a href="perfis/ver.html">Perfil da Aura</a></li>
+      <li><i class="icon">🧍</i><a href="people/ver.html">Pessoas</a></li>
+      <li><i class="icon">📁</i><a href="casos/ver.html">Casos</a></li>
+      <li><i class="icon">🕵️</i><a href="investigacoes/ver.html">Investigações</a></li>
+      <li><i class="icon">🏎️</i><a href="veiculos/ver.html">Veiculos</a></li>
+      <li><i class="icon">⚔️</i><a href="facc/ver.html">Facções</a></li>
+      <li><i class="icon">🗃️</i><a href="casos/arquivados.html">Casos Arquivados</a></li>
+    </ul>
+
+    <!-- AGENTE ATIVO -->
+    <div class="active-user">
+      <img src="Aurinha.png" alt="Avatar" class="avatar">
+      <span id="agentNameDisplay">Agente: -</span>
+    </div>
+
+    <button id="logoutBtn">Sair</button>
+  </div>
+
+  <!-- CONTEÚDO PRINCIPAL -->
+  <div class="main-content">
+    <header>
+      <h1>Visão Geral</h1>
+      <input type="text" id="searchInput" placeholder="Pesquisar no sistema...">
+    </header>
+
+    <section class="stats-grid">
+      <div class="stat-card" id="cardPeople">
+        <h3>Pessoas</h3>
+        <p id="countPeople">0</p>
+      </div>
+      <div class="stat-card" id="cardCases">
+        <h3>Casos</h3>
+        <p id="countCases">0</p>
+      </div>
+      <div class="stat-card" id="cardInvestigations">
+        <h3>Investigações</h3>
+        <p id="countInvestigations">0</p>
+      </div>
+      <div class="stat-card" id="cardFacc">
+        <h3>Facções</h3>
+        <p id="countFacc">0</p>
+      </div>
+    </section>
+
+    <section class="log">
+      <h2>Log de Atividades</h2>
+      <ul id="activityLog">
+        <li>Carregando logs...</li>
+      </ul>
+    </section>
+  </div>
+
+  <script type="module">
+    import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js";
+    import { getFirestore, collection, getDocs, query, orderBy, limit } 
+      from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
+    import { firebaseConfig } from "./firebaseConfig.js";
+
+    const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
+    const db = getFirestore(app);
+
+    const agent = localStorage.getItem("selectedAgent") || "Desconhecido";
+    document.getElementById("agentNameDisplay").textContent = `Agente: ${agent}`;
+
+    // Contadores
+    async function updateCounts() {
+      const collections = [
+        { name: "people", elem: "countPeople" },
+        { name: "cases", elem: "countCases" },
+        { name: "investigacoes", elem: "countInvestigations" },
+        { name: "facc", elem: "countFacc" },
+      ];
+
+      for (const c of collections) {
+        const snap = await getDocs(collection(db, c.name));
+        document.getElementById(c.elem).textContent = snap.size;
+      }
+    }
+
+    // Logs recentes
+    async function loadLogs() {
+      const logEl = document.getElementById("activityLog");
+      const q = query(collection(db, "logs"), orderBy("timestamp", "desc"), limit(10));
+      const snap = await getDocs(q);
+      logEl.innerHTML = "";
+      if (snap.empty) {
+        logEl.innerHTML = "<li>Nenhuma atividade registada ainda.</li>";
+        return;
+      }
+      snap.forEach(doc => {
+        const data = doc.data();
+        const time = data.timestamp?.toDate ? data.timestamp.toDate().toLocaleString() : "—";
+        const li = document.createElement("li");
+        li.textContent = `${time} — ${data.user || "Desconhecido"} ${data.action} ${data.itemType}`;
+        logEl.appendChild(li);
+      });
+    }
+
+    // Tornar os cartões clicáveis
+    document.getElementById("cardPeople").addEventListener("click", () => window.location.href = "people/ver.html");
+    document.getElementById("cardCases").addEventListener("click", () => window.location.href = "casos/ver.html");
+    document.getElementById("cardInvestigations").addEventListener("click", () => window.location.href = "investigacoes/ver.html");
+    document.getElementById("cardFacc").addEventListener("click", () => window.location.href = "facc/ver.html");
+
+    updateCounts();
+    loadLogs();
+  </script>
+</body>
+</html>
