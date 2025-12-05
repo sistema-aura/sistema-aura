@@ -2,195 +2,382 @@
 <html lang="pt">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Criar Caso - Sistema Aura</title>
-  <link rel="icon" href="../../Aurinha.png" />
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Novo Caso — Sistema AURA 💜</title>
+
+  <link rel="icon" href="../Aurinha.png" />
+  <link rel="stylesheet" href="../style.css" />
+
   <style>
-    body {
-      background: radial-gradient(circle at top left, #1a001f, #000);
-      font-family: 'Poppins', sans-serif;
-      color: #fff;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      margin: 0;
+    .page-container { padding: 2rem; max-width: 980px; margin: 0 auto; }
+    .topbar { display:flex; justify-content:space-between; align-items:center; margin-bottom:1.4rem; gap:8px; flex-wrap:wrap; }
+    .card {
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.06);
+      border-radius: 16px;
+      padding: 22px;
+      box-shadow: 0 10px 22px rgba(180,107,255,.15);
     }
-    .form-container {
-      background: rgba(50, 0, 80, 0.45);
-      border: 1px solid rgba(200,150,255,0.3);
-      border-radius: 20px;
-      padding: 35px 45px;
-      width: 400px;
-      text-align: center;
-      box-shadow: 0 0 25px rgba(180,0,255,0.25);
-      position: relative;
-    }
-    h2 {
-      color: #d6b2ff;
-      text-shadow: 0 0 10px rgba(180,0,255,0.7);
-      margin-bottom: 20px;
-    }
+
+    label { font-weight:600; opacity:.95; margin-bottom:6px; display:block; }
     input, textarea {
-      width: 100%;
-      padding: 10px;
-      margin: 8px 0;
-      border-radius: 10px;
-      border: none;
-      background: rgba(255,255,255,0.1);
-      color: #fff;
-      transition: 0.3s;
+      width:100%; padding:.8rem 1rem; border-radius:12px; border:none; outline:none;
+      background:rgba(255,255,255,.08); color:#fff; box-shadow:0 0 10px rgba(180,107,255,.18);
+      margin-bottom:1rem;
     }
-    input:focus, textarea:focus {
-      outline: none;
-      box-shadow: 0 0 10px rgba(180,0,255,0.6);
-      background: rgba(255,255,255,0.15);
+    textarea { resize: vertical; min-height: 120px; }
+
+    /* Multi-select chips */
+    .ms {
+      margin-bottom: 1rem;
     }
-    button {
+    .ms .box {
+      display:flex; gap:8px; flex-wrap:wrap; align-items:center;
+      min-height: 48px; padding:8px; border-radius:12px;
+      background:rgba(255,255,255,.08); box-shadow:0 0 10px rgba(180,107,255,.18);
+    }
+    .ms .chip {
+      display:inline-flex; align-items:center; gap:6px;
+      background:linear-gradient(90deg,#9b4dff,#b86bff);
+      color:#fff; padding:6px 10px; border-radius:999px; font-weight:600; font-size:.9rem;
+      box-shadow:0 6px 14px rgba(180,107,255,.25);
+    }
+    .ms .chip button {
+      background: rgba(255,255,255,.25); border:none; color:#fff; width:20px; height:20px;
+      border-radius:50%; cursor:pointer; font-weight:700; line-height:20px;
+    }
+    .ms .input-wrap { flex:1; min-width:200px; position:relative; }
+    .ms input[type="text"] {
+      margin:0; background:transparent; box-shadow:none; padding:.5rem .6rem; width:100%;
+      color:#fff; border:none; outline:none;
+    }
+    .ms .dropdown {
+      position:absolute; left:0; right:0; top:110%;
+      background: rgba(20,0,40,.95); border:1px solid rgba(255,255,255,.08);
+      border-radius:12px; box-shadow:0 18px 34px rgba(180,107,255,.25);
+      max-height:220px; overflow:auto; z-index:50; display:none;
+    }
+    .ms .dropdown.open { display:block; }
+    .ms .opt {
+      padding:10px 12px; cursor:pointer; display:flex; justify-content:space-between; gap:10px;
+    }
+    .ms .opt:hover { background:rgba(255,255,255,.08); }
+
+    .file-row { display:flex; align-items:center; gap:12px; margin: 8px 0 4px; }
+    .preview {
+      display:flex; align-items:center; gap:10px;
+      background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.06);
+      padding:10px; border-radius:12px;
+    }
+    .preview img { width:86px; height:86px; object-fit:cover; border-radius:10px; box-shadow:0 0 12px rgba(180,107,255,.35); }
+    .preview .fileinfo { font-size:.95rem; opacity:.9; }
+
+    .btn {
       background: linear-gradient(90deg,#9b4dff,#b86bff);
-      border: none;
-      padding: 10px 20px;
-      border-radius: 10px;
-      color: #fff;
-      font-weight: 600;
-      cursor: pointer;
-      transition: 0.3s;
-      margin-top: 10px;
-      width: 100%;
+      border:none; border-radius:10px; color:#fff; font-weight:600;
+      padding:8px 14px; cursor:pointer; transition:.2s;
+      box-shadow:0 0 10px rgba(180,107,255,.25);
     }
-    button:hover {
-      transform: scale(1.05);
-      background: linear-gradient(90deg,#b86bff,#d6aaff);
+    .btn:hover { transform:translateY(-1px); box-shadow:0 10px 22px rgba(180,107,255,.35); }
+    .btn-soft{ background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.08); }
+
+    .row-actions { display:flex; gap:8px; }
+
+    .aura-toast{
+      position:fixed; right:16px; bottom:16px; z-index:1200; display:flex; gap:10px; align-items:center;
+      background:rgba(20,0,40,.95); border:1px solid rgba(255,255,255,.08);
+      padding:.7rem 1rem; border-radius:12px; color:#fff; box-shadow:0 10px 24px rgba(180,107,255,.35);
+      animation:fadeIn .15s ease;
     }
-    .suggestions {
-      position: absolute;
-      width: calc(100% - 90px);
-      background: rgba(50,0,80,0.85);
-      border-radius: 10px;
-      box-shadow: 0 0 10px rgba(200,150,255,0.3);
-      max-height: 150px;
-      overflow-y: auto;
-      z-index: 99;
-      text-align: left;
-    }
-    .suggestions div {
-      padding: 8px 12px;
-      cursor: pointer;
-      transition: 0.2s;
-    }
-    .suggestions div:hover {
-      background: rgba(180,0,255,0.4);
-    }
-    #msg { margin-top: 10px; color: #c8b6ff; font-size: 0.9rem; }
+    .aura-toast.success{ border-color:rgba(140,255,199,.35); }
+    .aura-toast.error{ border-color:rgba(255,124,107,.35); }
+    @keyframes fadeIn{from{opacity:0}to{opacity:1}}
   </style>
 </head>
-<body>
-  <div class="form-container">
-    <h2>Criar Novo Caso</h2>
-    <input id="caseCode" readonly placeholder="Código do Caso" />
-    <input id="title" placeholder="Título do Caso" required />
-    <textarea id="description" placeholder="Descrição do Caso" rows="3"></textarea>
-    <div style="position:relative">
-      <input id="suspect" placeholder="Suspeito (opcional)" autocomplete="off" />
-      <div id="suspectList" class="suggestions" style="display:none"></div>
-    </div>
-    <div style="position:relative">
-      <input id="faction" placeholder="Facção (opcional)" autocomplete="off" />
-      <div id="factionList" class="suggestions" style="display:none"></div>
-    </div>
-    <div style="position:relative">
-      <input id="vehicle" placeholder="Veículo (opcional)" autocomplete="off" />
-      <div id="vehicleList" class="suggestions" style="display:none"></div>
-    </div>
 
-    <button id="saveBtn">Salvar</button>
-    <button onclick="window.location.href='ver.html'">⬅ Voltar</button>
-    <p id="msg"></p>
+<body>
+  <!-- SIDEBAR (sem "Agente:") -->
+  <div class="sidebar">
+    <h2 class="logo">SISTEMA AURA</h2>
+    <ul>
+      <li><a href="../dashboard.html" class="navlink"><span class="icon">🏠</span><span class="label">Dashboard</span></a></li>
+      <li><a href="../perfis/ver.html" class="navlink"><span class="icon">👑</span><span class="label">Perfil da Aura</span></a></li>
+      <li><a href="ver.html" class="navlink active"><span class="icon">📁</span><span class="label">Casos</span></a></li>
+    </ul>
+    <button id="logoutBtn">Sair</button>
   </div>
 
+  <!-- CONTEÚDO -->
+  <div class="main-content">
+    <div class="page-container">
+      <div class="topbar">
+        <h1>Novo Caso</h1>
+        <div class="row-actions">
+          <button id="backBtn" class="btn btn-soft">⬅️ Voltar</button>
+          <button id="saveBtn" class="btn">💾 Guardar</button>
+        </div>
+      </div>
+
+      <form id="caseForm" class="card">
+        <label>Título</label>
+        <input id="titulo" placeholder="Ex: Operação Eclipse" required />
+
+        <label>Responsável</label>
+        <input id="responsavel" placeholder="Ex: Agente Solano" />
+
+        <!-- Envolvidos (multi-select chips users + people) -->
+        <div class="ms" id="ms-envolvidos">
+          <label>Envolvidos</label>
+          <div class="box">
+            <div class="chips"></div>
+            <div class="input-wrap">
+              <input type="text" placeholder="Pesquisar pessoas..." />
+              <div class="dropdown"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Veículos (multi-select chips veiculos) -->
+        <div class="ms" id="ms-veiculos">
+          <label>Veículos (opcional)</label>
+          <div class="box">
+            <div class="chips"></div>
+            <div class="input-wrap">
+              <input type="text" placeholder="Pesquisar veículos..." />
+              <div class="dropdown"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Facções (multi-select chips facc) -->
+        <div class="ms" id="ms-faccoes">
+          <label>Facções (opcional)</label>
+          <div class="box">
+            <div class="chips"></div>
+            <div class="input-wrap">
+              <input type="text" placeholder="Pesquisar facções..." />
+              <div class="dropdown"></div>
+            </div>
+          </div>
+        </div>
+
+        <label>Descrição</label>
+        <textarea id="descricao" placeholder="Detalhes do caso..."></textarea>
+
+        <label>Foto / Documento</label>
+        <div class="file-row">
+          <input id="fileInput" type="file" accept="image/*,.pdf" />
+        </div>
+        <div id="filePreview" class="preview" style="display:none;">
+          <!-- img ou info do ficheiro -->
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- FIREBASE -->
   <script type="module">
     import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js";
-    import { getFirestore, collection, addDoc, getDocs, query, orderBy, limit, serverTimestamp, startAt, endAt } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
-    import { firebaseConfig } from "../../firebaseConfig.js";
+    import { getFirestore, addDoc, collection, serverTimestamp, getDocs } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
+    import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-storage.js";
+    import { firebaseConfig } from "../firebaseConfig.js";
 
-    const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
-    const db = getFirestore(app);
+    const app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
+    const db  = getFirestore(app);
+    const stg = getStorage(app);
 
-    const msg = document.getElementById("msg");
-    const codeInput = document.getElementById("caseCode");
-    const titleInput = document.getElementById("title");
-    const descInput = document.getElementById("description");
-    const suspectInput = document.getElementById("suspect");
-    const factionInput = document.getElementById("faction");
-    const vehicleInput = document.getElementById("vehicle");
+    const tituloEl = document.getElementById("titulo");
+    const responsavelEl = document.getElementById("responsavel");
+    const descricaoEl = document.getElementById("descricao");
+    const fileInput = document.getElementById("fileInput");
+    const filePreview = document.getElementById("filePreview");
+    const btnSave = document.getElementById("saveBtn");
+    const btnBack = document.getElementById("backBtn");
 
-    // Gerar código automático
-    async function generateCaseCode() {
-      const q = query(collection(db, "cases"), orderBy("code", "desc"), limit(1));
-      const snap = await getDocs(q);
-      if (snap.empty) { codeInput.value = "C-01"; return; }
-      const lastCode = snap.docs[0].data().code || "C-00";
-      const nextNum = parseInt(lastCode.split("-")[1]) + 1;
-      codeInput.value = "C-" + nextNum.toString().padStart(2, "0");
-    }
-    generateCaseCode();
+    btnBack.onclick = ()=> window.location.href="ver.html";
 
-    // Autocomplete genérico
-    async function setupAutocomplete(input, listElement, col, field1, field2) {
-      input.addEventListener("input", async () => {
-        const term = input.value.trim().toLowerCase();
-        if (!term) { listElement.style.display = "none"; return; }
-        const q = query(collection(db, col));
-        const snap = await getDocs(q);
-        let results = [];
-        snap.forEach(doc => {
-          const d = doc.data();
-          if ((d[field1] || "").toLowerCase().includes(term)) {
-            const detail = d[field2] ? ` — ${d[field2]}` : "";
-            results.push(`${d[field1]}${detail}`);
-          }
-        });
-        listElement.innerHTML = results.slice(0,10).map(r => `<div>${r}</div>`).join("");
-        listElement.style.display = results.length ? "block" : "none";
-        listElement.querySelectorAll("div").forEach(div => {
-          div.addEventListener("click", () => {
-            input.value = div.textContent.split(" — ")[0];
-            listElement.style.display = "none";
-          });
-        });
-      });
-      document.addEventListener("click", e => {
-        if (!listElement.contains(e.target) && e.target !== input) listElement.style.display = "none";
-      });
+    function toast(msg,type="success"){
+      const t=document.createElement("div");
+      t.className=`aura-toast ${type}`;
+      t.innerHTML=`<span>${type==="success"?"✅":"⚠️"}</span><span>${msg}</span>`;
+      document.body.appendChild(t);
+      setTimeout(()=>{ t.style.opacity="0"; setTimeout(()=>t.remove(),260); }, 1900);
     }
 
-    setupAutocomplete(suspectInput, document.getElementById("suspectList"), "people", "name", "faction");
-    setupAutocomplete(factionInput, document.getElementById("factionList"), "facc", "name", "leader");
-    setupAutocomplete(vehicleInput, document.getElementById("vehicleList"), "vehicles", "model", "plate");
-
-    // Salvar caso
-    document.getElementById("saveBtn").addEventListener("click", async () => {
-      const title = titleInput.value.trim();
-      if (!title) { msg.textContent = "⚠️ O título é obrigatório."; return; }
-      msg.textContent = "💾 Salvando...";
-      try {
-        await addDoc(collection(db, "cases"), {
-          code: codeInput.value,
-          title,
-          description: descInput.value.trim(),
-          suspect: suspectInput.value.trim(),
-          faction: factionInput.value.trim(),
-          vehicle: vehicleInput.value.trim(),
-          createdAt: serverTimestamp()
-        });
-        msg.textContent = "✅ Caso criado com sucesso!";
-        setTimeout(()=> window.location.href="ver.html", 1200);
-      } catch (err) {
-        console.error(err);
-        msg.textContent = "❌ Erro ao salvar: " + err.message;
+    // ---------- PREVIEW DO FICHEIRO ----------
+    fileInput.addEventListener("change", ()=>{
+      const f = fileInput.files?.[0];
+      if(!f){ filePreview.style.display="none"; filePreview.innerHTML=""; return; }
+      filePreview.style.display="flex";
+      if(f.type.startsWith("image/")){
+        const url = URL.createObjectURL(f);
+        filePreview.innerHTML = `<img src="${url}" alt="preview"><span class="fileinfo">${f.name} • ${(f.size/1024).toFixed(1)} KB</span>`;
+      } else {
+        filePreview.innerHTML = `<span class="fileinfo">📄 ${f.name} • ${(f.size/1024).toFixed(1)} KB</span>`;
       }
     });
+
+    // ---------- MULTI-SELECT CHIPS ----------
+    function makeChipSelect(rootEl, options){
+      const chipsEl = rootEl.querySelector(".chips");
+      const inputEl = rootEl.querySelector("input");
+      const ddEl    = rootEl.querySelector(".dropdown");
+      const selected = [];
+
+      function renderChips(){
+        chipsEl.innerHTML = "";
+        selected.forEach((lbl, idx)=>{
+          const chip = document.createElement("span");
+          chip.className="chip";
+          chip.innerHTML = `${lbl} <button type="button" aria-label="Remover">&times;</button>`;
+          chip.querySelector("button").onclick = ()=>{ selected.splice(idx,1); renderChips(); };
+          chipsEl.appendChild(chip);
+        });
+      }
+
+      function openDD(filter=""){
+        ddEl.classList.add("open");
+        const f = filter.toLowerCase().trim();
+        const avail = options
+          .map(o => (typeof o === "string" ? o : (o.label || o.name || o.titulo || o.modelo || o.placa || "")))
+          .filter(lbl => lbl && !selected.includes(lbl) && (!f || lbl.toLowerCase().includes(f)));
+        ddEl.innerHTML = avail.length ? "" : `<div class="opt">Sem resultados…</div>`;
+        avail.forEach(lbl=>{
+          const opt = document.createElement("div");
+          opt.className="opt";
+          opt.innerHTML = `<span>${lbl}</span>`;
+          opt.onclick = ()=>{ selected.push(lbl); renderChips(); inputEl.value=""; closeDD(); };
+          ddEl.appendChild(opt);
+        });
+      }
+      function closeDD(){ ddEl.classList.remove("open"); }
+
+      inputEl.addEventListener("focus", ()=> openDD(inputEl.value));
+      inputEl.addEventListener("input", ()=> openDD(inputEl.value));
+      document.addEventListener("click", (e)=>{ if(!rootEl.contains(e.target)) closeDD(); });
+
+      return {
+        getSelected: ()=> [...selected],
+        setOptions: (ops)=>{ options = ops || []; },
+      };
+    }
+
+    // Instanciar três selects
+    const msEnvolvidos = makeChipSelect(document.getElementById("ms-envolvidos"), []);
+    const msVeiculos   = makeChipSelect(document.getElementById("ms-veiculos"), []);
+    const msFaccoes    = makeChipSelect(document.getElementById("ms-faccoes"), []);
+
+    // ---------- CARREGAR OPÇÕES DO FIRESTORE ----------
+    function labelFrom(docData, fallbackId){
+      // tenta vários campos comuns
+      return (
+        docData.name ||
+        docData.titulo ||
+        docData.modelo ||
+        docData.placa ||
+        docData.alias ||
+        docData.code ||
+        fallbackId
+      );
+    }
+
+    async function loadOptions(){
+      try{
+        // users + people => options de envolvidos
+        const [usersSnap, peopleSnap] = await Promise.all([
+          getDocs(collection(db,"users")),
+          getDocs(collection(db,"people"))
+        ]);
+        const envolv = [
+          ...usersSnap.docs.map(d=>labelFrom(d.data(), d.id)),
+          ...peopleSnap.docs.map(d=>labelFrom(d.data(), d.id)),
+        ].filter(Boolean).sort((a,b)=>a.localeCompare(b));
+        msEnvolvidos.setOptions(envolv);
+
+        // veiculos
+        try{
+          const vSnap = await getDocs(collection(db,"veiculos"));
+          const vOps  = vSnap.docs.map(d=>labelFrom(d.data(), d.id)).filter(Boolean).sort((a,b)=>a.localeCompare(b));
+          msVeiculos.setOptions(vOps);
+        }catch{ msVeiculos.setOptions([]); }
+
+        // facções
+        try{
+          const fSnap = await getDocs(collection(db,"facc"));
+          const fOps  = fSnap.docs.map(d=>labelFrom(d.data(), d.id)).filter(Boolean).sort((a,b)=>a.localeCompare(b));
+          msFaccoes.setOptions(fOps);
+        }catch{ msFaccoes.setOptions([]); }
+
+      }catch(e){
+        console.error(e);
+        toast("Erro a carregar listas (users/people/veículos/facções).","error");
+      }
+    }
+    loadOptions();
+
+    // ---------- PERMISSÕES ----------
+    const isAdmin = localStorage.getItem("isAdmin")==="true";
+    const role = (localStorage.getItem("userRole")||"").toLowerCase();
+    const canEdit = isAdmin || role==="investigador";
+    if(!canEdit){
+      btnSave.style.display="none";
+      document.querySelectorAll("input, textarea").forEach(e=>e.disabled=true);
+    }
+
+    // ---------- GUARDAR ----------
+    btnSave.addEventListener("click", async (e)=>{
+      e.preventDefault();
+      if(!canEdit){ toast("Sem permissão para criar casos.","error"); return; }
+
+      const titulo = (tituloEl.value||"").trim();
+      if(!titulo){ toast("Título é obrigatório.","error"); return; }
+
+      const payload = {
+        titulo,
+        responsavel: (responsavelEl.value||"").trim(),
+        envolvidos: msEnvolvidos.getSelected(),
+        veiculos: msVeiculos.getSelected(),
+        faccoes: msFaccoes.getSelected(),
+        descricao: (descricaoEl.value||"").trim(),
+        estado: "ativo",
+        createdAt: serverTimestamp()
+      };
+
+      try{
+        // cria o doc sem arquivo primeiro para obter id
+        const refDoc = await addDoc(collection(db,"casos"), payload);
+
+        // upload do ficheiro se houver
+        const f = fileInput.files?.[0];
+        if (f) {
+          const safeName = f.name.replace(/[^\w.\-]+/g, "_");
+          const path = `casos/${refDoc.id}/${Date.now()}_${safeName}`;
+          const sref = ref(stg, path);
+          await uploadBytes(sref, f);
+          const url = await getDownloadURL(sref);
+          // atualizar doc com photoURL
+          await (await import("https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js"))
+            .updateDoc(refDoc, { photoURL: url, fileName: f.name, fileType: f.type || "" });
+        }
+
+        toast("Caso criado com sucesso!");
+        setTimeout(()=> window.location.href="ver.html", 900);
+      }catch(e){
+        console.error(e);
+        toast("Erro ao criar caso: " + e.message, "error");
+      }
+    });
+  </script>
+
+  <!-- PERFIL + SAIR -->
+  <script>
+    (function(){
+      const logoutBtn=document.getElementById("logoutBtn");
+      if(logoutBtn) logoutBtn.onclick=()=>{
+        ["username","selectedAgent","userRole","userCode","isAdmin"].forEach(k=>localStorage.removeItem(k));
+        window.location.href="../select.html";
+      };
+    })();
   </script>
 </body>
 </html>

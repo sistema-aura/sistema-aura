@@ -2,397 +2,560 @@
 <html lang="pt">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Editar Facção - Sistema AURA</title>
-  <link rel="icon" href="../../Aurinha.png" />
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Editar Facção — Sistema AURA 💜</title>
+
+  <link rel="icon" href="../Aurinha.png" />
+  <link rel="stylesheet" href="../style.css" />
+
   <style>
-    body {
-      background: radial-gradient(circle at top left, #1a001f, #000);
-      font-family: 'Poppins', sans-serif;
-      color: #fff;
-      margin: 0;
-      padding: 30px;
+    .page-container { padding: 2rem; max-width: 980px; margin: 0 auto; }
+    .topbar { display:flex; justify-content:space-between; align-items:center; margin-bottom:1.4rem; gap:8px; flex-wrap:wrap; }
+    .card { background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.06); border-radius: 16px; padding: 22px; box-shadow: 0 10px 22px rgba(180,107,255,.15); }
+
+    label { font-weight:600; opacity:.95; margin-bottom:6px; display:block; }
+    input, textarea, select { width:100%; padding:.8rem 1rem; border-radius:12px; border:none; outline:none; background:rgba(255,255,255,.08); color:#fff; box-shadow:0 0 10px rgba(180,107,255,.18); margin-bottom:1rem; }
+    textarea { resize: vertical; min-height: 120px; }
+    select { cursor:pointer; }
+
+    .row-2 {
+      display:grid;
+      grid-template-columns: repeat(auto-fit,minmax(230px,1fr));
+      gap:12px;
     }
 
-    .back-btn {
-      position: absolute;
-      top: 20px;
-      left: 20px;
-      background: linear-gradient(90deg,#9b4dff,#b86bff);
-      border: none;
-      border-radius: 8px;
-      color: #fff;
-      font-weight: 600;
-      padding: 6px 14px;
-      cursor: pointer;
-      box-shadow: 0 0 10px rgba(180,0,255,0.4);
-      transition: .3s;
-    }
-    .back-btn:hover {
-      transform: scale(1.05);
-      background: linear-gradient(90deg,#b86bff,#d6aaff);
+    .btn { background: linear-gradient(90deg,#9b4dff,#b86bff); border:none; border-radius:10px; color:#fff; font-weight:600; padding:8px 14px; cursor:pointer; transition:.2s; box-shadow:0 0 10px rgba(180,107,255,.25); }
+    .btn:hover { transform:translateY(-1px); box-shadow:0 10px 22px rgba(180,107,255,.35); }
+    .btn-soft{ background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.08); }
+
+    .form-actions{
+      margin-top:18px;
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      justify-content:flex-end;
     }
 
-    h2 {
-      text-align: center;
-      color: #d6b2ff;
-      text-shadow: 0 0 10px rgba(180,0,255,0.7);
-      margin-bottom: 30px;
-    }
+    /* Multi-select chips */
+    .ms { margin-bottom: 1rem; }
+    .ms .label-row{ display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;}
+    .ms .box { display:flex; gap:8px; flex-wrap:wrap; align-items:center; min-height:48px; padding:8px; border-radius:12px; background:rgba(255,255,255,.08); box-shadow:0 0 10px rgba(180,107,255,.18); }
+    .ms .chips{ display:flex; gap:6px; flex-wrap:wrap; }
+    .ms .chip { display:inline-flex; align-items:center; gap:6px; background:linear-gradient(90deg,#9b4dff,#b86bff); color:#fff; padding:6px 10px; border-radius:999px; font-weight:600; font-size:.9rem; box-shadow:0 6px 14px rgba(180,107,255,.25); }
+    .ms .chip button { background: rgba(255,255,255,.25); border:none; color:#fff; width:20px; height:20px; border-radius:50%; cursor:pointer; font-weight:700; line-height:20px; }
+    .ms .input-wrap { flex:1; min-width:200px; position:relative; }
+    .ms input[type="text"] { margin:0; background:transparent; box-shadow:none; padding:.5rem .6rem; width:100%; color:#fff; border:none; outline:none; }
+    .ms .dropdown { position:absolute; left:0; right:0; top:110%; background: rgba(20,0,40,.95); border:1px solid rgba(255,255,255,.08); border-radius:12px; box-shadow:0 18px 34px rgba(180,107,255,.25); max-height:220px; overflow:auto; z-index:50; display:none; }
+    .ms .dropdown.open { display:block; }
+    .ms .opt { padding:10px 12px; cursor:pointer; display:flex; justify-content:space-between; gap:10px; font-size:.9rem;}
+    .ms .opt span.tag{ opacity:.7; font-size:.8rem; }
+    .ms .opt:hover { background:rgba(255,255,255,.08); }
 
-    .container {
-      max-width: 700px;
-      margin: auto;
-      background: rgba(50,0,80,0.45);
-      border-radius: 20px;
-      padding: 25px;
-      box-shadow: 0 0 25px rgba(180,0,255,0.3);
-    }
+    .file-row { display:flex; align-items:center; gap:12px; margin: 8px 0 4px; flex-wrap:wrap; }
+    .preview { display:flex; align-items:center; gap:10px; background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.06); padding:10px; border-radius:12px; margin-top:6px;}
+    .preview img { width:86px; height:86px; object-fit:cover; border-radius:10px; box-shadow:0 0 12px rgba(180,107,255,.35); }
+    .preview .colorbox{ width:40px;height:40px;border-radius:10px; }
 
-    label {
-      display: block;
-      margin-top: 12px;
-      font-weight: 500;
-    }
+    .muted{opacity:.8; font-size:.85rem;}
 
-    input, textarea {
-      width: 100%;
-      padding: 10px;
-      border: none;
-      border-radius: 10px;
-      background: rgba(255,255,255,0.1);
-      color: #fff;
-      margin-top: 5px;
-    }
-
-    input:focus, textarea:focus {
-      outline: none;
-      box-shadow: 0 0 10px rgba(180,0,255,0.6);
-    }
-
-    .photo-section, .base-photos {
-      margin-top: 15px;
-    }
-
-    .photo-preview img {
-      width: 100%;
-      max-width: 200px;
-      border-radius: 10px;
-      box-shadow: 0 0 15px rgba(180,0,255,0.4);
-    }
-
-    .photo-btn {
-      background: linear-gradient(90deg,#9b4dff,#b86bff);
-      border: none;
-      border-radius: 8px;
-      color: #fff;
-      padding: 8px 12px;
-      cursor: pointer;
-      transition: .3s;
-      margin-top: 8px;
-    }
-    .photo-btn:hover {
-      transform: scale(1.05);
-      background: linear-gradient(90deg,#b86bff,#d6aaff);
-    }
-
-    .tags-container {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-      margin-top: 8px;
-    }
-    .tag {
-      background: rgba(180,0,255,0.3);
-      border: 1px solid rgba(180,0,255,0.5);
-      padding: 5px 10px;
-      border-radius: 12px;
-      display: flex;
-      align-items: center;
-      gap: 5px;
-    }
-    .tag button {
-      background: none;
-      border: none;
-      color: #fff;
-      cursor: pointer;
-      font-weight: bold;
-    }
-
-    .suggestions {
-      background: rgba(40,0,70,0.95);
-      border-radius: 10px;
-      margin-top: 5px;
-      max-height: 120px;
-      overflow-y: auto;
-      box-shadow: 0 0 10px rgba(180,0,255,0.5);
-    }
-    .suggestions div {
-      padding: 8px;
-      cursor: pointer;
-    }
-    .suggestions div:hover {
-      background: rgba(180,0,255,0.2);
-    }
-
-    .base-photo-grid {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin-top: 10px;
-    }
-    .base-photo {
-      position: relative;
-    }
-    .base-photo img {
-      width: 120px;
-      height: 80px;
-      object-fit: cover;
-      border-radius: 10px;
-      box-shadow: 0 0 10px rgba(180,0,255,0.4);
-    }
-    .remove-photo {
-      position: absolute;
-      top: 4px;
-      right: 4px;
-      background: rgba(0,0,0,0.7);
-      border: none;
-      color: #fff;
-      border-radius: 50%;
-      width: 20px;
-      height: 20px;
-      cursor: pointer;
-    }
-
-    .save-btn {
-      margin-top: 20px;
-      width: 100%;
-      padding: 12px;
-      border: none;
-      border-radius: 10px;
-      font-weight: 600;
-      background: linear-gradient(90deg,#9b4dff,#b86bff);
-      color: #fff;
-      cursor: pointer;
-      transition: 0.3s;
-      box-shadow: 0 0 10px rgba(180,0,255,0.5);
-    }
-    .save-btn:hover {
-      transform: scale(1.03);
-      background: linear-gradient(90deg,#b86bff,#d6aaff);
-    }
-
-    .popup {
-      position: fixed;
-      bottom: 30px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: linear-gradient(90deg,#9b4dff,#b86bff);
-      padding: 12px 25px;
-      border-radius: 15px;
-      color: #fff;
-      font-weight: 500;
-      box-shadow: 0 0 20px rgba(180,0,255,0.6);
-      text-align: center;
-      z-index: 9999;
-      animation: fadeInUp .3s ease;
-    }
-    @keyframes fadeInUp {
-      from {opacity:0; transform: translate(-50%, 10px);}
-      to {opacity:1; transform: translate(-50%, 0);}
-    }
+    /* Toast */
+    .aura-toast{ position:fixed; right:16px; bottom:16px; z-index:1200; display:flex; gap:10px; align-items:center; background:rgba(20,0,40,.95); border:1px solid rgba(255,255,255,.08); padding:.7rem 1rem; border-radius:12px; color:#fff; box-shadow:0 10px 24px rgba(180,107,255,.35); animation:fadeIn .15s ease; }
+    .aura-toast.success{ border-color:rgba(140,255,199,.35); }
+    .aura-toast.error{ border-color:rgba(255,124,107,.35); }
+    @keyframes fadeIn{from{opacity:0}to{opacity:1}}
   </style>
 </head>
+
 <body>
-  <button class="back-btn" onclick="window.location.href='ver.html'">⬅ Voltar</button>
-  <h2>Editar Facção</h2>
-  <div class="container">
-    <form id="editForm">
-      <label>Código:</label>
-      <input type="text" id="code" disabled />
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <h2 class="logo">SISTEMA AURA</h2>
+    <ul>
+      <li><a href="../dashboard.html" class="navlink"><span class="icon">🏠</span><span class="label">Dashboard</span></a></li>
+      <li><a href="../perfis/ver.html" class="navlink"><span class="icon">👑</span><span class="label">Perfil da Aura</span></a></li>
+      <li><a href="../people/ver.html" class="navlink"><span class="icon">🧍</span><span class="label">Pessoas</span></a></li>
+      <li><a href="../casos/ver.html" class="navlink"><span class="icon">📁</span><span class="label">Casos</span></a></li>
+      <li><a href="../investigacoes/ver.html" class="navlink"><span class="icon">🕵️‍♀️</span><span class="label">Investigações</span></a></li>
+      <li><a href="ver.html" class="navlink active"><span class="icon">⚔️</span><span class="label">Facções</span></a></li>
+      <li><a href="../veiculos/ver.html" class="navlink"><span class="icon">🏎️</span><span class="label">Veículos</span></a></li>
+      <li><a href="../pesquisa/pesquisa.html" class="navlink"><span class="icon">🔍</span><span class="label">Pesquisa Geral</span></a></li>
+      <li><a href="../reunioes/ver.html" class="navlink"><span class="icon">🗓️</span><span class="label">Reuniões</span></a></li>
+      <li><a href="../casos/arquivados.html" class="navlink"><span class="icon">🗃️</span><span class="label">Casos Arquivados</span></a></li>
+    </ul>
+    <button id="logoutBtn">Sair</button>
+  </div>
 
-      <label>Nome da Facção:</label>
-      <input type="text" id="name" required />
-
-      <label>Descrição:</label>
-      <textarea id="description" rows="3"></textarea>
-
-      <div class="photo-section">
-        <label>Foto da Facção:</label>
-        <div class="photo-preview"><img id="faccPhoto" src="../../Aurinha.png" alt="Foto da Facção" /></div>
-        <input type="file" id="faccPhotoInput" accept="image/*" hidden />
-        <button type="button" class="photo-btn" id="uploadFaccPhoto">📷 Alterar Foto</button>
+  <div class="main-content">
+    <div class="page-container">
+      <div class="topbar">
+        <h1>Editar Facção</h1>
+        <div style="display:flex; gap:8px;">
+          <button id="backBtn" class="btn btn-soft">⬅️ Voltar</button>
+          <button id="saveBtn" class="btn">💾 Guardar Alterações</button>
+        </div>
       </div>
 
-      <label>Membros:</label>
-      <input type="text" id="memberSearch" placeholder="Digite para procurar membros..." />
-      <div class="suggestions" id="suggestions"></div>
-      <div class="tags-container" id="memberTags"></div>
+      <form id="faccForm" class="card" style="display:none;">
+        <div class="row-2">
+          <div>
+            <label>Nome da Facção</label>
+            <input id="nome" required />
+          </div>
+          <div>
+            <label>Sigla / Tag</label>
+            <input id="sigla" />
+          </div>
+        </div>
 
-      <div class="base-photos">
-        <label>Fotos da Base:</label>
-        <input type="file" id="basePhotosInput" accept="image/*" multiple hidden />
-        <button type="button" class="photo-btn" id="addBasePhotos">📸 Adicionar Fotos</button>
-        <div class="base-photo-grid" id="basePhotoGrid"></div>
-      </div>
+        <div class="row-2">
+          <div>
+            <label>Tipo</label>
+            <input id="tipo" />
+          </div>
+          <div>
+            <label>Líder (opcional)</label>
+            <select id="liderSelect">
+              <option value="">Sem líder / não definido</option>
+            </select>
+          </div>
+        </div>
 
-      <button type="submit" class="save-btn">💾 Salvar Alterações</button>
-    </form>
+        <div class="row-2">
+          <div>
+            <label>Estado</label>
+            <select id="estado">
+              <option value="ativo">Ativo</option>
+              <option value="inativo">Inativo</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="ms" id="ms-membros">
+          <div class="label-row">
+            <label>Membros (users + people)</label>
+          </div>
+          <div class="box">
+            <div class="chips"></div>
+            <div class="input-wrap">
+              <input type="text" placeholder="Pesquisar pessoas..." />
+              <div class="dropdown"></div>
+            </div>
+          </div>
+          <div class="muted">Se adicionares alguém que já está noutra facção, vais receber um alerta com o nome da(s) facção(ões).</div>
+        </div>
+
+        <div class="ms" id="ms-aliancas">
+          <div class="label-row">
+            <label>Alianças (outras facções)</label>
+          </div>
+          <div class="box">
+            <div class="chips"></div>
+            <div class="input-wrap">
+              <input type="text" placeholder="Pesquisar facções..." />
+              <div class="dropdown"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="ms" id="ms-amizades">
+          <div class="label-row">
+            <label>Amizades (outras facções)</label>
+          </div>
+          <div class="box">
+            <div class="chips"></div>
+            <div class="input-wrap">
+              <input type="text" placeholder="Pesquisar facções..." />
+              <div class="dropdown"></div>
+            </div>
+          </div>
+        </div>
+
+        <label>Descrição</label>
+        <textarea id="descricao"></textarea>
+
+        <label>Cor da Facção (usada se não tiver foto)</label>
+        <div class="file-row">
+          <input id="corHex" type="color" value="#9b4dff" style="width:80px; padding:0; height:40px; border-radius:12px; border:none; background:transparent; box-shadow:0 0 10px rgba(180,107,255,.18);" />
+          <span class="muted">Esta cor será usada no avatar caso não seja carregada nenhuma foto.</span>
+        </div>
+
+        <label>Foto (opcional)</label>
+        <div class="file-row">
+          <input id="fileInput" type="file" accept="image/*" />
+          <span class="muted" id="currentFileInfo"></span>
+        </div>
+        <div id="filePreview" class="preview" style="display:none;"></div>
+
+        <div class="form-actions">
+          <button type="button" class="btn btn-soft" id="cancelBtn">Cancelar</button>
+          <button type="submit" class="btn">💾 Guardar Alterações</button>
+        </div>
+      </form>
+
+      <p id="loadingMsg" class="muted">A carregar facção...</p>
+    </div>
   </div>
 
   <script type="module">
     import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js";
-    import { getFirestore, doc, getDoc, updateDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
-    import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-storage.js";
-    import { firebaseConfig } from "../../firebaseConfig.js";
+    import { getFirestore, collection, getDocs, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
+    import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-storage.js";
+    import { firebaseConfig } from "../firebaseConfig.js";
 
-    const app = getApps().length===0 ? initializeApp(firebaseConfig) : getApps()[0];
-    const db = getFirestore(app);
-    const storage = getStorage(app);
+    const app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
+    const db  = getFirestore(app);
+    const stg = getStorage(app);
 
     const params = new URLSearchParams(window.location.search);
     const faccId = params.get("id");
-    let currentFaccPhoto = null;
-    let basePhotos = [];
-    let allPeople = [];
-    let selectedMembers = [];
 
-    const popup = msg => {
-      const el = document.createElement("div");
-      el.className = "popup";
-      el.textContent = msg;
-      document.body.appendChild(el);
-      setTimeout(()=>el.remove(),3000);
-    };
+    const form = document.getElementById("faccForm");
+    const btnSave = document.getElementById("saveBtn");
+    const btnBack = document.getElementById("backBtn");
+    const btnCancel = document.getElementById("cancelBtn");
+    const loadingMsg = document.getElementById("loadingMsg");
 
-    async function loadFacData(){
-      const ref = doc(db,"facc",faccId);
-      const snap = await getDoc(ref);
-      if(!snap.exists()) return popup("❌ Facção não encontrada!");
-      const data = snap.data();
+    const nomeEl   = document.getElementById("nome");
+    const siglaEl  = document.getElementById("sigla");
+    const tipoEl   = document.getElementById("tipo");
+    const liderSelect = document.getElementById("liderSelect");
+    const estadoEl = document.getElementById("estado");
+    const descEl   = document.getElementById("descricao");
+    const corHexEl = document.getElementById("corHex");
+    const fileInput = document.getElementById("fileInput");
+    const filePreview = document.getElementById("filePreview");
+    const currentFileInfo = document.getElementById("currentFileInfo");
 
-      document.getElementById("code").value = data.code || "";
-      document.getElementById("name").value = data.name || "";
-      document.getElementById("description").value = data.description || "";
-      if(data.faccPhotoURL){
-        document.getElementById("faccPhoto").src = data.faccPhotoURL;
-        currentFaccPhoto = data.faccPhotoURL;
+    btnBack.onclick = ()=> window.location.href="ver.html";
+    btnCancel.onclick = ()=> window.location.href="ver.html";
+
+    let selectedFile = null;
+    let currentData = null;
+    let memberToFacc = {};
+
+    function toast(msg,type="success"){
+      const t=document.createElement("div");
+      t.className=`aura-toast ${type}`;
+      t.innerHTML=`<span>${type==="success"?"✅":"⚠️"}</span><span>${msg}</span>`;
+      document.body.appendChild(t);
+      setTimeout(()=>{ t.style.opacity="0"; setTimeout(()=>t.remove(),260); }, 2200);
+    }
+
+    fileInput.addEventListener("change", ()=>{
+      const f=fileInput.files?.[0];
+      selectedFile = f || null;
+      if(!f){
+        filePreview.style.display="none";
+        filePreview.innerHTML="";
+        return;
       }
-      basePhotos = data.basePhotos || [];
-      renderBasePhotos();
-      selectedMembers = data.members || [];
-      renderMemberTags();
-    }
-
-    // Load all people
-    async function loadPeople(){
-      const snap = await getDocs(collection(db,"people"));
-      allPeople = snap.docs.map(d => d.data().name).filter(Boolean);
-    }
-
-    // Member autocomplete
-    const memberSearch = document.getElementById("memberSearch");
-    const suggestions = document.getElementById("suggestions");
-    const memberTags = document.getElementById("memberTags");
-
-    function renderMemberTags(){
-      memberTags.innerHTML = "";
-      selectedMembers.forEach(name=>{
-        const tag = document.createElement("div");
-        tag.className = "tag";
-        tag.innerHTML = `${name} <button data-name="${name}">×</button>`;
-        tag.querySelector("button").addEventListener("click",()=>{
-          selectedMembers = selectedMembers.filter(m=>m!==name);
-          renderMemberTags();
-        });
-        memberTags.appendChild(tag);
-      });
-    }
-
-    memberSearch.addEventListener("input", ()=>{
-      const term = memberSearch.value.toLowerCase();
-      suggestions.innerHTML = "";
-      if(!term) return;
-      const matches = allPeople.filter(n=>n.toLowerCase().includes(term) && !selectedMembers.includes(n));
-      matches.forEach(n=>{
-        const div = document.createElement("div");
-        div.textContent = n;
-        div.addEventListener("click", ()=>{
-          selectedMembers.push(n);
-          renderMemberTags();
-          suggestions.innerHTML = "";
-          memberSearch.value = "";
-        });
-        suggestions.appendChild(div);
-      });
+      filePreview.style.display="flex";
+      const url = URL.createObjectURL(f);
+      filePreview.innerHTML = `<img src="${url}" alt="preview"><span class="muted">${f.name} • ${(f.size/1024).toFixed(1)} KB</span>`;
     });
 
-    // Base photos
-    const basePhotoGrid = document.getElementById("basePhotoGrid");
-    function renderBasePhotos(){
-      basePhotoGrid.innerHTML="";
-      basePhotos.forEach((url,idx)=>{
-        const div=document.createElement("div");
-        div.className="base-photo";
-        div.innerHTML=`<img src="${url}"/><button class="remove-photo" data-idx="${idx}">×</button>`;
-        div.querySelector(".remove-photo").addEventListener("click",()=>{
-          basePhotos.splice(idx,1);
-          renderBasePhotos();
-        });
-        basePhotoGrid.appendChild(div);
-      });
-    }
+    // Multi-select genérico
+    function makeChipSelect(rootEl, options){
+      const chipsEl = rootEl.querySelector(".chips");
+      const inputEl = rootEl.querySelector("input");
+      const ddEl    = rootEl.querySelector(".dropdown");
+      let selected = []; // {id,label}
 
-    document.getElementById("addBasePhotos").addEventListener("click",()=>document.getElementById("basePhotosInput").click());
-    document.getElementById("basePhotosInput").addEventListener("change",async e=>{
-      const files=Array.from(e.target.files);
-      if(basePhotos.length+files.length>6) return popup("⚠️ Máximo 6 fotos permitidas!");
-      for(const file of files){
-        const fileRef=ref(storage,`facc_bases/${faccId}_${Date.now()}_${file.name}`);
-        await uploadBytes(fileRef,file);
-        const url=await getDownloadURL(fileRef);
-        basePhotos.push(url);
+      function renderChips(){
+        chipsEl.innerHTML = "";
+        selected.forEach((item, idx)=>{
+          const chip = document.createElement("span");
+          chip.className="chip";
+          chip.innerHTML = `${item.label} <button type="button">&times;</button>`;
+          chip.querySelector("button").onclick = ()=>{ selected.splice(idx,1); renderChips(); };
+          chipsEl.appendChild(chip);
+        });
       }
-      renderBasePhotos();
-      popup("✅ Fotos adicionadas!");
-    });
 
-    // Facc photo
-    const faccPhotoInput=document.getElementById("faccPhotoInput");
-    document.getElementById("uploadFaccPhoto").addEventListener("click",()=>faccPhotoInput.click());
-    faccPhotoInput.addEventListener("change",async e=>{
-      const file=e.target.files[0];
-      if(!file) return;
-      const fileRef=ref(storage,`facc_photos/${faccId}_${Date.now()}.jpg`);
-      await uploadBytes(fileRef,file);
-      const url=await getDownloadURL(fileRef);
-      document.getElementById("faccPhoto").src=url;
-      currentFaccPhoto=url;
-      popup("✅ Foto da facção atualizada!");
-    });
+      function openDD(filter=""){
+        ddEl.classList.add("open");
+        const f = filter.toLowerCase().trim();
+        const avail = options.filter(o =>
+          !selected.some(s => s.id === o.id) &&
+          (!f || o.label.toLowerCase().includes(f))
+        );
+        ddEl.innerHTML = avail.length ? "" : `<div class="opt">Sem resultados…</div>`;
+        avail.forEach(o=>{
+          const opt = document.createElement("div");
+          opt.className="opt";
+          opt.innerHTML = `<span>${o.label}</span>${o.tag ? `<span class="tag">${o.tag}</span>`:""}`;
+          opt.onclick = ()=>{
+            if(o.warnFaccoes && o.warnFaccoes.length){
+              toast(`Esta pessoa já está nas facções: ${o.warnFaccoes.join(", ")}`,"error");
+            }
+            selected.push({ id:o.id, label:o.label });
+            renderChips();
+            inputEl.value="";
+            closeDD();
+          };
+          ddEl.appendChild(opt);
+        });
+      }
 
-    document.getElementById("editForm").addEventListener("submit",async e=>{
-      e.preventDefault();
+      function closeDD(){ ddEl.classList.remove("open"); }
+
+      inputEl.addEventListener("focus", ()=> openDD(inputEl.value));
+      inputEl.addEventListener("input", ()=> openDD(inputEl.value));
+      document.addEventListener("click", (e)=>{ if(!rootEl.contains(e.target)) closeDD(); });
+
+      return {
+        getSelected: ()=> [...selected],
+        setOptions: (ops)=>{ options = ops || []; },
+        setSelectedByIds: (ids)=> {
+          selected = options.filter(o => ids.includes(o.id)).map(o=>({id:o.id,label:o.label}));
+          renderChips();
+        }
+      };
+    }
+
+    const msMembros   = makeChipSelect(document.getElementById("ms-membros"), []);
+    const msAliancas  = makeChipSelect(document.getElementById("ms-aliancas"), []);
+    const msAmizades  = makeChipSelect(document.getElementById("ms-amizades"), []);
+
+    function labelFromPerson(p, id){
+      return p.name || p.displayName || p.alias || p.code || p.username || p.nome || id;
+    }
+
+    async function loadFaccData(){
+      if(!faccId){
+        loadingMsg.textContent = "ID de facção em falta.";
+        return null;
+      }
+      const refDoc = doc(db,"facc", faccId);
+      const snap = await getDoc(refDoc);
+      if(!snap.exists()){
+        loadingMsg.textContent = "Facção não encontrada.";
+        return null;
+      }
+      return { id:snap.id, ...snap.data() };
+    }
+
+    async function loadOptionsAndFill(){
       try{
-        await updateDoc(doc(db,"facc",faccId),{
-          name:document.getElementById("name").value.trim(),
-          description:document.getElementById("description").value.trim(),
-          faccPhotoURL:currentFaccPhoto,
-          basePhotos,
-          members:selectedMembers,
-          updatedAt:new Date()
+        const [usersSnap, peopleSnap, faccSnap] = await Promise.all([
+          getDocs(collection(db,"users")),
+          getDocs(collection(db,"people")),
+          getDocs(collection(db,"facc"))
+        ]);
+
+        const pessoas = [
+          ...usersSnap.docs.map(d=>({ id:d.id, src:"user",  label:labelFromPerson(d.data(), d.id) })),
+          ...peopleSnap.docs.map(d=>({ id:d.id, src:"people",label:labelFromPerson(d.data(), d.id) }))
+        ].filter(p=>p.label).sort((a,b)=>a.label.localeCompare(b.label));
+
+        // líder
+        liderSelect.innerHTML = '<option value="">Sem líder / não definido</option>';
+        pessoas.forEach(p=>{
+          const opt = document.createElement("option");
+          opt.value = p.id;
+          opt.textContent = p.label;
+          opt.dataset.nome = p.label;
+          liderSelect.appendChild(opt);
         });
-        popup("✅ Facção atualizada com sucesso!");
-        setTimeout(()=>window.location.href="ver.html",1500);
-      }catch(err){
-        console.error(err);
-        popup("❌ Erro ao salvar!");
+
+        // membros
+        msMembros.setOptions(
+          pessoas.map(p=>({
+            id:p.id,
+            label:p.label,
+            tag:p.src,
+            get warnFaccoes(){ return memberToFacc[p.id] || []; }
+          }))
+        );
+        const existingMembros = currentData.membrosIds || [];
+        msMembros.setSelectedByIds(existingMembros);
+
+        // facções para alianças / amizades (exclui a própria)
+        const faccOptions = faccSnap.docs
+          .filter(d=>d.id !== currentData.id)
+          .map(d=>{
+            const data = d.data() || {};
+            const nome = data.nome || data.sigla || d.id;
+            return { id:d.id, label:nome, tag:"facção" };
+          })
+          .filter(f=>f.label)
+          .sort((a,b)=>a.label.localeCompare(b.label));
+
+        msAliancas.setOptions(faccOptions);
+        msAmizades.setOptions(faccOptions);
+
+        msAliancas.setSelectedByIds(currentData.aliancasIds || []);
+        msAmizades.setSelectedByIds(currentData.amizadesIds || []);
+
+        // marcar líder
+        if(currentData.liderId && liderSelect.querySelector(`option[value='${currentData.liderId}']`)){
+          liderSelect.value = currentData.liderId;
+        }
+
+        // mapa membro -> facções (excluindo esta)
+        memberToFacc = {};
+        faccSnap.docs.forEach(docSnap=>{
+          if(docSnap.id === currentData.id) return;
+          const data = docSnap.data() || {};
+          const nomeF = data.nome || data.sigla || docSnap.id;
+          (data.membrosIds || []).forEach(mid=>{
+            if(!mid) return;
+            if(!memberToFacc[mid]) memberToFacc[mid] = [];
+            if(!memberToFacc[mid].includes(nomeF)) memberToFacc[mid].push(nomeF);
+          });
+        });
+
+      }catch(e){
+        console.error(e);
+        toast("Erro ao carregar pessoas/facções: " + e.message, "error");
+      }
+    }
+
+    async function init(){
+      try{
+        const data = await loadFaccData();
+        if(!data) return;
+        currentData = data;
+
+        nomeEl.value  = data.nome  || "";
+        siglaEl.value = data.sigla || "";
+        tipoEl.value  = data.tipo  || "";
+        descEl.value  = data.descricao || "";
+        corHexEl.value = data.corHex || "#9b4dff";
+        estadoEl.value = (data.estado || "ativo");
+
+        if(data.photoURL){
+          filePreview.style.display = "flex";
+          filePreview.innerHTML = `<img src="${data.photoURL}" alt="preview"><span class="muted">${data.fileName || "imagem"} (guardado)</span>`;
+          currentFileInfo.textContent = "";
+        }else{
+          filePreview.style.display = "flex";
+          filePreview.innerHTML = `<div class="colorbox" style="background:${corHexEl.value};"></div><span class="muted">Sem imagem, apenas cor ${corHexEl.value}</span>`;
+          currentFileInfo.textContent = "Nenhuma foto guardada.";
+        }
+
+        await loadOptionsAndFill();
+
+        loadingMsg.style.display = "none";
+        form.style.display = "block";
+      }catch(e){
+        console.error(e);
+        loadingMsg.textContent = "Erro ao carregar facção.";
+        toast("Erro ao carregar facção: " + e.message, "error");
+      }
+    }
+
+    init();
+
+    async function uploadSelectedFileIfAny(){
+      if(!selectedFile){
+        return {
+          photoURL: currentData.photoURL || null,
+          fileName: currentData.fileName || null,
+          fileType: currentData.fileType || null
+        };
+      }
+      const safe = selectedFile.name.replace(/[^\w.\-]+/g,"_");
+      const path = `facc_files/${currentData.id}/${Date.now()}_${safe}`;
+      const sref = ref(stg, path);
+      await uploadBytes(sref, selectedFile);
+      const url = await getDownloadURL(sref);
+      return {
+        photoURL:url,
+        fileName:selectedFile.name,
+        fileType:selectedFile.type || ""
+      };
+    }
+
+    // permissões
+    const isAdmin = localStorage.getItem("isAdmin")==="true";
+    const role = (localStorage.getItem("userRole")||"").toLowerCase();
+    const canEdit = isAdmin || role==="investigador";
+    if(!canEdit){
+      btnSave.style.display="none";
+      document.querySelectorAll("input, textarea, select").forEach(e=>e.disabled=true);
+    }
+
+    form.addEventListener("submit", async (e)=>{
+      e.preventDefault();
+      if(!canEdit){ toast("Sem permissão para editar.","error"); return; }
+
+      const nome = (nomeEl.value||"").trim();
+      if(!nome){ toast("Nome da facção é obrigatório.","error"); return; }
+
+      const sigla = (siglaEl.value||"").trim();
+      const tipo  = (tipoEl.value||"").trim();
+      const descricao = (descEl.value||"").trim();
+      const corHex = corHexEl.value || "#9b4dff";
+      const estado = estadoEl.value || "ativo";
+
+      const liderId = liderSelect.value || null;
+      let liderNome = null;
+      if(liderId){
+        const opt = liderSelect.options[liderSelect.selectedIndex];
+        liderNome = opt.dataset.nome || opt.textContent;
+      }
+
+      const membrosSel = msMembros.getSelected();
+      const membrosIds   = membrosSel.map(m=>m.id);
+      const membrosNomes = membrosSel.map(m=>m.label);
+
+      const aliSel = msAliancas.getSelected();
+      const aliancasIds   = aliSel.map(a=>a.id);
+      const aliancasNomes = aliSel.map(a=>a.label);
+
+      const amiSel = msAmizades.getSelected();
+      const amizadesIds   = amiSel.map(a=>a.id);
+      const amizadesNomes = amiSel.map(a=>a.label);
+
+      btnSave.disabled = true;
+      btnSave.textContent = "A guardar...";
+
+      try{
+        const fileData = await uploadSelectedFileIfAny();
+
+        await updateDoc(doc(db,"facc", currentData.id), {
+          nome,
+          sigla,
+          tipo,
+          descricao,
+          corHex,
+          estado,
+          liderId,
+          liderNome,
+          membrosIds,
+          membrosNomes,
+          aliancasIds,
+          aliancasNomes,
+          amizadesIds,
+          amizadesNomes,
+          photoURL:fileData.photoURL || null,
+          fileName:fileData.fileName || null,
+          fileType:fileData.fileType || null
+        });
+
+        toast("Facção atualizada!");
+        setTimeout(()=> window.location.href="ver.html", 900);
+      }catch(e){
+        console.error(e);
+        toast("Erro ao atualizar facção: " + e.message, "error");
+        btnSave.disabled = false;
+        btnSave.textContent = "💾 Guardar Alterações";
       }
     });
+  </script>
 
-    loadFacData();
-    loadPeople();
+  <!-- LOGOUT -->
+  <script>
+    (function(){
+      const logoutBtn = document.getElementById("logoutBtn");
+      if (logoutBtn) {
+        logoutBtn.addEventListener("click", () => {
+          ["username","selectedAgent","userRole","userCode","isAdmin"].forEach(k => localStorage.removeItem(k));
+          window.location.href = "../select.html";
+        });
+      }
+    })();
   </script>
 </body>
 </html>

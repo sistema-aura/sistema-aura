@@ -1,273 +1,405 @@
 <!DOCTYPE html>
 <html lang="pt">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Editar Investigação - Sistema Aura</title>
-  <link rel="icon" href="../../Aurinha.png" />
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet" />
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Editar Investigação — Sistema AURA 💜</title>
+
+  <link rel="icon" href="../Aurinha.png"/>
+  <link rel="stylesheet" href="../style.css"/>
+
   <style>
-    body {
-      background: radial-gradient(circle at top left,#1a001f,#000);
-      font-family: 'Poppins', sans-serif;
-      color:#fff;
-      margin:0;
-      padding:0;
-      display:flex;
-      justify-content:center;
-      align-items:center;
-      height:100vh;
-    }
+    .page-container { padding:2rem; max-width:1100px; margin:0 auto; }
+    .topbar { display:flex; justify-content:space-between; align-items:center; gap:8px; flex-wrap:wrap; margin-bottom:1.4rem; }
+    .row-actions { display:flex; gap:8px; flex-wrap:wrap; }
+    .card { background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.06); border-radius:16px; padding:22px; box-shadow:0 10px 22px rgba(180,107,255,.15); }
 
-    .container {
-      background:rgba(50,0,80,0.45);
-      border:1px solid rgba(200,150,255,0.3);
-      border-radius:20px;
-      padding:30px;
-      box-shadow:0 0 30px rgba(180,0,255,0.4);
-      width:400px;
-    }
+    label { font-weight:600; opacity:.95; margin-bottom:6px; display:block; }
+    input, textarea { width:100%; padding:.8rem 1rem; border-radius:12px; border:none; outline:none; background:rgba(255,255,255,.08); color:#fff; box-shadow:0 0 10px rgba(180,107,255,.18); margin-bottom:1rem; }
+    textarea { resize:vertical; min-height:120px; }
 
-    h2 {
-      text-align:center;
-      color:#d6b2ff;
-      text-shadow:0 0 10px rgba(180,0,255,0.7);
-      margin-bottom:20px;
-    }
+    .btn { background:linear-gradient(90deg,#9b4dff,#b86bff); border:none; border-radius:10px; color:#fff; font-weight:600; padding:8px 14px; cursor:pointer; transition:.2s; box-shadow:0 0 10px rgba(180,107,255,.25); }
+    .btn:hover { transform:translateY(-1px); box-shadow:0 10px 22px rgba(180,107,255,.35); }
+    .btn-soft { background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.08); }
+    .btn-danger{ background:linear-gradient(90deg,#ff4d6d,#ff7c6b); }
+    .hidden{display:none}
 
-    label {
-      display:block;
-      margin-top:10px;
-      font-weight:500;
-    }
+    /* Chips multi-select */
+    .ms { margin-bottom:1rem; }
+    .ms .box { display:flex; gap:8px; flex-wrap:wrap; align-items:center; min-height:48px; padding:8px; border-radius:12px; background:rgba(255,255,255,.08); box-shadow:0 0 10px rgba(180,107,255,.18); }
+    .ms .chip { display:inline-flex; align-items:center; gap:6px; background:linear-gradient(90deg,#9b4dff,#b86bff); color:#fff; padding:6px 10px; border-radius:999px; font-weight:600; font-size:.9rem; box-shadow:0 6px 14px rgba(180,107,255,.25); }
+    .ms .chip button { background:rgba(255,255,255,.25); border:none; color:#fff; width:20px; height:20px; border-radius:50%; cursor:pointer; font-weight:700; line-height:20px; }
+    .ms .input-wrap { flex:1; min-width:200px; position:relative; }
+    .ms input[type="text"] { margin:0; background:transparent; box-shadow:none; padding:.5rem .6rem; width:100%; color:#fff; border:none; outline:none; }
+    .ms .dropdown { position:absolute; left:0; right:0; top:110%; background:rgba(20,0,40,.95); border:1px solid rgba(255,255,255,.08); border-radius:12px; box-shadow:0 18px 34px rgba(180,107,255,.25); max-height:220px; overflow:auto; z-index:50; display:none; }
+    .ms .dropdown.open { display:block; }
+    .ms .opt { padding:10px 12px; cursor:pointer; display:flex; justify-content:space-between; gap:10px; }
+    .ms .opt:hover { background:rgba(255,255,255,.08); }
 
-    input, select, textarea {
-      width:100%;
-      margin-top:5px;
-      padding:10px;
-      border:none;
-      border-radius:10px;
-      background:rgba(255,255,255,0.1);
-      color:#fff;
-      resize:none;
-    }
-
-    input:focus, select:focus, textarea:focus {
-      outline:none;
-      box-shadow:0 0 10px rgba(180,0,255,0.6);
-      background:rgba(255,255,255,0.15);
-    }
-
-    button {
-      background: linear-gradient(90deg,#9b4dff,#b86bff);
-      border:none;
-      border-radius:10px;
-      color:#fff;
-      font-weight:600;
-      padding:10px;
-      margin-top:20px;
-      width:100%;
-      cursor:pointer;
-      transition:.3s;
-      box-shadow:0 0 10px rgba(180,0,255,0.4);
-    }
-
-    button:hover {
-      transform:scale(1.05);
-      background:linear-gradient(90deg,#b86bff,#d6aaff);
-      box-shadow:0 0 15px rgba(180,0,255,0.6);
-    }
-
-    .back-btn {
-      position:absolute;
-      top:20px;
-      left:20px;
-      background:linear-gradient(90deg,#9b4dff,#b86bff);
-      border:none;
-      border-radius:8px;
-      color:#fff;
-      font-weight:600;
-      padding:8px 16px;
-      cursor:pointer;
-      box-shadow:0 0 10px rgba(180,0,255,0.4);
-    }
-
-    .neon-popup {
-      position: fixed;
-      bottom: 30px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: linear-gradient(90deg, #9b4dff, #b86bff);
-      padding: 12px 25px;
-      border-radius: 15px;
-      color: #fff;
-      font-weight: 500;
-      box-shadow: 0 0 20px rgba(180,0,255,0.6);
-      text-align: center;
-      z-index: 9999;
-      animation: fadeInUp 0.3s ease;
-    }
-
-    @keyframes fadeInUp {
-      from {opacity:0; transform: translate(-50%, 10px);}
-      to {opacity:1; transform: translate(-50%, 0);}
-    }
+    .file-row { display:flex; align-items:center; gap:12px; margin:8px 0 4px; }
+    .preview { display:flex; align-items:center; gap:10px; background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.06); padding:10px; border-radius:12px; margin-top:6px; }
+    .preview img { width:86px; height:86px; object-fit:cover; border-radius:10px; box-shadow:0 0 12px rgba(180,107,255,.35); }
+    .preview .fileinfo { font-size:.95rem; opacity:.9; }
   </style>
 </head>
+
 <body>
-  <button class="back-btn" onclick="window.location.href='ver.html'">⬅ Voltar</button>
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <h2 class="logo">SISTEMA AURA</h2>
+    <ul>
+      <li><a href="../dashboard.html" class="navlink"><span class="icon">🏠</span><span class="label">Dashboard</span></a></li>
+      <li><a href="../perfis/ver.html" class="navlink"><span class="icon">👑</span><span class="label">Perfil da Aura</span></a></li>
+      <li><a href="ver.html" class="navlink"><span class="icon">🕵️‍♀️</span><span class="label">Investigações</span></a></li>
+      <li><a href="arquivadas.html" class="navlink"><span class="icon">🗃️</span><span class="label">Arquivadas</span></a></li>
+    </ul>
+    <button id="logoutBtn">Sair</button>
+  </div>
 
-  <div class="container">
-    <h2>Editar Investigação</h2>
-    <form id="editForm">
-      <label>Código:</label>
-      <input type="text" id="code" disabled>
+  <div class="main-content">
+    <div class="page-container">
+      <div class="topbar">
+        <h1>Editar Investigação</h1>
+        <div class="row-actions">
+          <button id="backBtn" class="btn btn-soft">⬅️ Voltar</button>
+          <button id="archiveBtn" class="btn btn-soft only-editor">📦 Arquivar</button>
+          <button id="reopenBtn"  class="btn btn-soft only-editor hidden">🗃 Reabrir</button>
+          <button id="deleteBtn"  class="btn btn-danger only-editor">🗑 Eliminar</button>
+          <button id="saveBtn"    class="btn only-editor">💾 Guardar</button>
+        </div>
+      </div>
 
-      <label>Título:</label>
-      <input type="text" id="title" required>
+      <form id="invForm" class="card">
+        <label>Título</label>
+        <input id="titulo" placeholder="Ex: Operação Enigma" required />
 
-      <label>Agente Responsável:</label>
-      <select id="agent" required><option value="">Carregando...</option></select>
+        <label>Responsável</label>
+        <input id="responsavel" placeholder="Ex: Agente Solano" />
 
-      <label>Status:</label>
-      <select id="status">
-        <option>Ativa</option>
-        <option>Concluída</option>
-        <option>Arquivada</option>
-      </select>
+        <div class="ms" id="ms-envolvidos">
+          <label>Envolvidos</label>
+          <div class="box">
+            <div class="chips"></div>
+            <div class="input-wrap">
+              <input type="text" placeholder="Pesquisar pessoas..." />
+              <div class="dropdown"></div>
+            </div>
+          </div>
+        </div>
 
-      <label>Data de Início:</label>
-      <input type="date" id="startDate">
+        <div class="ms" id="ms-veiculos">
+          <label>Veículos (opcional)</label>
+          <div class="box">
+            <div class="chips"></div>
+            <div class="input-wrap">
+              <input type="text" placeholder="Pesquisar veículos..." />
+              <div class="dropdown"></div>
+            </div>
+          </div>
+        </div>
 
-      <label>Data de Fim:</label>
-      <input type="date" id="endDate">
+        <div class="ms" id="ms-faccoes">
+          <label>Facções (opcional)</label>
+          <div class="box">
+            <div class="chips"></div>
+            <div class="input-wrap">
+              <input type="text" placeholder="Pesquisar facções..." />
+              <div class="dropdown"></div>
+            </div>
+          </div>
+        </div>
 
-      <label>Pessoas Ligadas:</label>
-      <input type="text" id="peopleLinked" placeholder="Digite nomes separados por vírgula">
+        <label>Descrição</label>
+        <textarea id="descricao" placeholder="Detalhes da investigação..."></textarea>
 
-      <label>Casos Ligados:</label>
-      <input type="text" id="casesLinked" placeholder="Digite códigos ou nomes separados por vírgula">
-
-      <label>Descrição:</label>
-      <textarea id="description" rows="4"></textarea>
-
-      <button type="submit">💾 Salvar Alterações</button>
-    </form>
+        <label>Anexo (imagem ou PDF)</label>
+        <div class="file-row">
+          <input id="fileInput" type="file" accept="image/*,.pdf"/>
+          <button id="removeFileBtn" type="button" class="btn btn-soft hidden">Remover anexo</button>
+        </div>
+        <div id="filePreview" class="preview" style="display:none;"></div>
+      </form>
+    </div>
   </div>
 
   <script type="module">
     import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js";
-    import { getFirestore, doc, getDoc, updateDoc, collection, getDocs } 
-      from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
-    import { firebaseConfig } from "../../firebaseConfig.js";
+    import { getFirestore, doc, getDoc, updateDoc, deleteDoc, collection, getDocs, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
+    import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-storage.js";
+    import { firebaseConfig } from "../firebaseConfig.js";
 
-    const app = getApps().length===0 ? initializeApp(firebaseConfig):getApps()[0];
-    const db = getFirestore(app);
-    import { addDoc, collection, serverTimestamp } 
-  from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
+    const app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
+    const db  = getFirestore(app);
+    const stg = getStorage(app);
 
-// Nome do agente atual (usado em todos os logs)
-const currentAgent = localStorage.getItem("selectedAgent") || "Desconhecido";
+    const qs = new URLSearchParams(location.search);
+    const id = qs.get("id");
+    if(!id) location.href = "ver.html";
 
-// Função para adicionar logs
-async function addLog(action, itemType, itemTitle = "") {
-  try {
-    await addDoc(collection(db, "logs"), {
-      user: currentAgent,
-      action,         // Ex: criou, editou, eliminou, arquivou, restaurou
-      itemType,       // Ex: caso, investigação
-      itemTitle,      // Nome ou título do item
-      timestamp: serverTimestamp()
-    });
-  } catch (err) {
-    console.error("❌ Erro ao gravar log:", err);
-  }
-}
-await updateDoc(ref, updatedFields);
-await addLog("editou", "investigação", document.getElementById("title").value);
-showPopup("✅ Investigação atualizada com sucesso!");
+    const tituloEl = document.getElementById("titulo");
+    const responsavelEl = document.getElementById("responsavel");
+    const descricaoEl = document.getElementById("descricao");
+    const fileInput  = document.getElementById("fileInput");
+    const filePreview= document.getElementById("filePreview");
+    const removeFileBtn = document.getElementById("removeFileBtn");
 
+    const archiveBtn = document.getElementById("archiveBtn");
+    const reopenBtn  = document.getElementById("reopenBtn");
+    const deleteBtn  = document.getElementById("deleteBtn");
+    const saveBtn    = document.getElementById("saveBtn");
+    const backBtn    = document.getElementById("backBtn");
 
-    const params = new URLSearchParams(window.location.search);
-    const invId = params.get("id");
-
-    const agentSelect = document.getElementById("agent");
-
-    function showPopup(msg){
-      const popup=document.createElement("div");
-      popup.className="neon-popup";
-      popup.textContent=msg;
-      document.body.appendChild(popup);
-      setTimeout(()=>popup.remove(),3000);
+    function toast(msg,type="success"){
+      const t=document.createElement("div");
+      t.className=`aura-toast ${type}`;
+      t.innerHTML=`<span>${type==="success"?"✅":"⚠️"}</span><span>${msg}</span>`;
+      document.body.appendChild(t);
+      setTimeout(()=>{ t.style.opacity="0"; setTimeout(()=>t.remove(),260); }, 1900);
     }
-
-    // Carregar agentes
-    async function loadAgents(){
-      const snap=await getDocs(collection(db,"users"));
-      agentSelect.innerHTML='<option value="">Selecione...</option>';
-      snap.forEach(doc=>{
-        const data=doc.data();
-        if(data.name){
-          const opt=document.createElement("option");
-          opt.value=data.name;
-          opt.textContent=data.name;
-          agentSelect.appendChild(opt);
-        }
+    function confirmModal({title="Confirmar", message="Tens a certeza?", okText="Confirmar", variant="primary"}){
+      return new Promise(resolve=>{
+        const wrap=document.createElement("div");
+        wrap.className="aura-modal-wrap";
+        wrap.innerHTML=`
+          <div class="aura-modal">
+            <h3>${title}</h3>
+            <p>${message}</p>
+            <div class="row">
+              <button class="aura-btn">Cancelar</button>
+              <button class="aura-btn ${variant==='danger'?'danger':'primary'}">${okText}</button>
+            </div>
+          </div>`;
+        document.body.appendChild(wrap);
+        const [c,o]=wrap.querySelectorAll("button");
+        const close=v=>{ wrap.remove(); resolve(v); };
+        c.onclick=()=>close(false); o.onclick=()=>close(true);
+        wrap.addEventListener("click",(e)=>{ if(e.target===wrap) close(false); });
       });
     }
 
-    // Carregar dados da investigação
-    async function loadInvestigation(){
-      if(!invId) return;
+    // chips
+    function makeChipSelect(rootEl, options){
+      const chipsEl = rootEl.querySelector(".chips");
+      const inputEl = rootEl.querySelector("input");
+      const ddEl    = rootEl.querySelector(".dropdown");
+      const selected = [];
+      function renderChips(){
+        chipsEl.innerHTML = "";
+        selected.forEach((lbl, idx)=>{
+          const chip = document.createElement("span");
+          chip.className="chip";
+          chip.innerHTML = `${lbl} <button type="button">&times;</button>`;
+          chip.querySelector("button").onclick = ()=>{ selected.splice(idx,1); renderChips(); };
+          chipsEl.appendChild(chip);
+        });
+      }
+      function openDD(filter=""){
+        ddEl.classList.add("open");
+        const f = filter.toLowerCase().trim();
+        const avail = options
+          .map(o => (typeof o==="string" ? o : (o.label || o.name || o.titulo || o.modelo || o.placa || "")))
+          .filter(lbl => lbl && !selected.includes(lbl) && (!f || lbl.toLowerCase().includes(f)));
+        ddEl.innerHTML = avail.length ? "" : `<div class="opt">Sem resultados…</div>`;
+        avail.forEach(lbl=>{
+          const opt=document.createElement("div");
+          opt.className="opt";
+          opt.innerHTML = `<span>${lbl}</span>`;
+          opt.onclick = ()=>{ selected.push(lbl); renderChips(); inputEl.value=""; closeDD(); };
+          ddEl.appendChild(opt);
+        });
+      }
+      function closeDD(){ ddEl.classList.remove("open"); }
+      inputEl.addEventListener("focus", ()=> openDD(inputEl.value));
+      inputEl.addEventListener("input", ()=> openDD(inputEl.value));
+      document.addEventListener("click", (e)=>{ if(!rootEl.contains(e.target)) closeDD(); });
+      return { getSelected: ()=> [...selected], setOptions: (ops)=>{ options = ops || []; }, setSelected: (labels=[])=>{ selected.splice(0,selected.length,...labels); renderChips(); } };
+    }
+
+    const msEnvolvidos = makeChipSelect(document.getElementById("ms-envolvidos"), []);
+    const msVeiculos   = makeChipSelect(document.getElementById("ms-veiculos"), []);
+    const msFaccoes    = makeChipSelect(document.getElementById("ms-faccoes"), []);
+
+    function labelFrom(docData, fallbackId){
+      return (docData.name || docData.titulo || docData.modelo || docData.placa || docData.alias || docData.code || fallbackId);
+    }
+
+    async function loadOptions(){
       try{
-        const ref=doc(db,"investigacoes",invId);
-        const snap=await getDoc(ref);
-        if(!snap.exists()){
-          showPopup("❌ Investigação não encontrada!");
-          return;
+        const [usersSnap, peopleSnap] = await Promise.all([
+          getDocs(collection(db,"users")),
+          getDocs(collection(db,"people"))
+        ]);
+        const envolv = [
+          ...usersSnap.docs.map(d=>labelFrom(d.data(), d.id)),
+          ...peopleSnap.docs.map(d=>labelFrom(d.data(), d.id)),
+        ].filter(Boolean).sort((a,b)=>a.localeCompare(b));
+        msEnvolvidos.setOptions(envolv);
+      }catch(e){ console.warn("envolvidos falhou", e); }
+
+      try{
+        const vSnap = await getDocs(collection(db,"veiculos"));
+        msVeiculos.setOptions(vSnap.docs.map(d=>labelFrom(d.data(), d.id)).filter(Boolean).sort((a,b)=>a.localeCompare(b)));
+      }catch{ msVeiculos.setOptions([]); }
+
+      try{
+        const fSnap = await getDocs(collection(db,"facc"));
+        msFaccoes.setOptions(fSnap.docs.map(d=>labelFrom(d.data(), d.id)).filter(Boolean).sort((a,b)=>a.localeCompare(b)));
+      }catch{ msFaccoes.setOptions([]); }
+    }
+
+    // permissões
+    const isAdmin = localStorage.getItem("isAdmin")==="true";
+    const role = (localStorage.getItem("userRole")||"").toLowerCase();
+    const canEdit = isAdmin || role==="investigador";
+    if(!canEdit){
+      document.querySelectorAll(".only-editor").forEach(el=>el.style.display="none");
+      document.querySelectorAll("input, textarea").forEach(el=>el.disabled=true);
+    }
+
+    backBtn.onclick = ()=> window.location.href="ver.html";
+
+    // preview local
+    fileInput.addEventListener("change", ()=>{
+      const f=fileInput.files?.[0];
+      if(!f){ filePreview.style.display="none"; filePreview.innerHTML=""; return; }
+      filePreview.style.display="flex";
+      if(f.type.startsWith("image/")){
+        const url=URL.createObjectURL(f);
+        filePreview.innerHTML = `<img src="${url}" alt="preview"><span class="fileinfo">${f.name} • ${(f.size/1024).toFixed(1)} KB</span>`;
+      }else{
+        filePreview.innerHTML = `<span class="fileinfo">📄 ${f.name} • ${(f.size/1024).toFixed(1)} KB</span>`;
+      }
+      document.getElementById("removeFileBtn").classList.add("hidden");
+    });
+
+    // carregar investigação
+    let currentData = null;
+    async function loadItem(){
+      await loadOptions();
+      const snap = await getDoc(doc(db,"investigacoes",id));
+      if(!snap.exists()){ toast("Investigação não encontrada.","error"); setTimeout(()=>location.href="ver.html",900); return; }
+      currentData = snap.data();
+
+      tituloEl.value = currentData.titulo || "";
+      responsavelEl.value = currentData.responsavel || "";
+      descricaoEl.value = currentData.descricao || "";
+
+      // estado
+      const estado = (currentData.estado || "ativo").toLowerCase();
+      if(estado==="arquivado"){ archiveBtn.classList.add("hidden"); reopenBtn.classList.remove("hidden"); }
+      else { archiveBtn.classList.remove("hidden"); reopenBtn.classList.add("hidden"); }
+
+      msEnvolvidos.setSelected(currentData.envolvidos || []);
+      msVeiculos.setSelected(currentData.veiculos || []);
+      msFaccoes.setSelected(currentData.faccoes || []);
+
+      if(currentData.photoURL){
+        const prev = document.getElementById("filePreview");
+        prev.style.display="flex";
+        const isImg = /\.(png|jpe?g|gif|webp|bmp|svg)$/i.test(currentData.photoURL);
+        if(isImg){
+          prev.innerHTML = `<img src="${currentData.photoURL}" alt="anexo"><span class="fileinfo">${currentData.fileName || "imagem"}</span>`;
+        }else{
+          prev.innerHTML = `<span class="fileinfo">📄 ${currentData.fileName || "documento"} — <a href="${currentData.photoURL}" target="_blank" style="color:#bfa7ff; text-decoration:underline;">Abrir</a></span>`;
         }
-        const inv=snap.data();
-        document.getElementById("code").value=inv.code||"";
-        document.getElementById("title").value=inv.title||"";
-        document.getElementById("agent").value=inv.agent||"";
-        document.getElementById("status").value=inv.status||"Ativa";
-        document.getElementById("startDate").value=inv.startDate||"";
-        document.getElementById("endDate").value=inv.endDate||"";
-        document.getElementById("description").value=inv.description||"";
-        document.getElementById("peopleLinked").value=(inv.peopleLinked||[]).join(", ");
-        document.getElementById("casesLinked").value=(inv.casesLinked||[]).join(", ");
-      }catch(err){
-        console.error(err);
-        showPopup("❌ Erro ao carregar dados!");
+        document.getElementById("removeFileBtn").classList.remove("hidden");
       }
     }
 
-    // Salvar alterações
-    document.getElementById("editForm").addEventListener("submit",async(e)=>{
-      e.preventDefault();
+    // remover anexo (apenas limpa no doc)
+    document.getElementById("removeFileBtn").addEventListener("click", async ()=>{
+      if(!canEdit){ toast("Sem permissão.","error"); return; }
+      const ok = await confirmModal({ title:"Remover anexo", message:"Desejas remover o anexo desta investigação?", okText:"Remover", variant:"danger" });
+      if(!ok) return;
       try{
-        const ref=doc(db,"investigacoes",invId);
-        await updateDoc(ref,{
-          title:document.getElementById("title").value.trim(),
-          agent:document.getElementById("agent").value,
-          status:document.getElementById("status").value,
-          startDate:document.getElementById("startDate").value,
-          endDate:document.getElementById("endDate").value,
-          description:document.getElementById("description").value.trim(),
-          peopleLinked:document.getElementById("peopleLinked").value.split(",").map(s=>s.trim()).filter(Boolean),
-          casesLinked:document.getElementById("casesLinked").value.split(",").map(s=>s.trim()).filter(Boolean),
-          updatedAt:new Date()
-        });
-        showPopup("✅ Investigação atualizada com sucesso!");
-        setTimeout(()=>window.location.href="ver.html",1500);
-      }catch(err){
-        console.error(err);
-        showPopup("❌ Erro ao salvar alterações!");
-      }
+        await updateDoc(doc(db,"investigacoes",id), { photoURL:"", fileName:"", fileType:"" });
+        fileInput.value = "";
+        filePreview.style.display="none";
+        filePreview.innerHTML = "";
+        document.getElementById("removeFileBtn").classList.add("hidden");
+        toast("Anexo removido.");
+      }catch(e){ console.error(e); toast("Erro ao remover: "+e.message,"error"); }
     });
 
-    await loadAgents();
-    await loadInvestigation();
+    // guardar
+    saveBtn?.addEventListener("click", async (e)=>{
+      e.preventDefault();
+      if(!canEdit){ toast("Sem permissão.","error"); return; }
+      const ok = await confirmModal({ title:"Guardar alterações", message:"Confirmas guardar as alterações desta investigação?", okText:"Guardar" });
+      if(!ok) return;
+
+      try{
+        const upd = {
+          titulo: (tituloEl.value||"").trim(),
+          responsavel: (responsavelEl.value||"").trim(),
+          envolvidos: msEnvolvidos.getSelected(),
+          veiculos: msVeiculos.getSelected(),
+          faccoes: msFaccoes.getSelected(),
+          descricao: (descricaoEl.value||"").trim(),
+          updatedAt: serverTimestamp()
+        };
+
+        const f = fileInput.files?.[0];
+        if(f){
+          const safe=f.name.replace(/[^\w.\-]+/g,"_");
+          const path=`investigacoes_files/${id}/${Date.now()}_${safe}`;
+          const sref=ref(stg, path);
+          await uploadBytes(sref, f);
+          const url=await getDownloadURL(sref);
+          upd.photoURL = url;
+          upd.fileName = f.name;
+          upd.fileType = f.type || "";
+        }
+
+        await updateDoc(doc(db,"investigacoes",id), upd);
+        toast("Alterações guardadas!");
+      }catch(e){ console.error(e); toast("Erro ao guardar: "+e.message,"error"); }
+    });
+
+    // arquivar
+    archiveBtn?.addEventListener("click", async ()=>{
+      if(!canEdit){ toast("Sem permissão.","error"); return; }
+      const ok = await confirmModal({ title:"Arquivar investigação", message:"Queres arquivar esta investigação?", okText:"Arquivar" });
+      if(!ok) return;
+      try{
+        await updateDoc(doc(db,"investigacoes",id), { estado:"arquivado", updatedAt: serverTimestamp() });
+        toast("Investigação arquivada!");
+        archiveBtn.classList.add("hidden"); reopenBtn.classList.remove("hidden");
+      }catch(e){ console.error(e); toast("Erro ao arquivar: "+e.message,"error"); }
+    });
+
+    // reabrir
+    reopenBtn?.addEventListener("click", async ()=>{
+      if(!canEdit){ toast("Sem permissão.","error"); return; }
+      const ok = await confirmModal({ title:"Reabrir investigação", message:"Desejas reabrir esta investigação?", okText:"Reabrir" });
+      if(!ok) return;
+      try{
+        await updateDoc(doc(db,"investigacoes",id), { estado:"ativo", updatedAt: serverTimestamp() });
+        toast("Investigação reaberta!");
+        reopenBtn.classList.add("hidden"); archiveBtn.classList.remove("hidden");
+      }catch(e){ console.error(e); toast("Erro ao reabrir: "+e.message,"error"); }
+    });
+
+    // eliminar
+    deleteBtn?.addEventListener("click", async ()=>{
+      if(!canEdit){ toast("Sem permissão.","error"); return; }
+      const ok = await confirmModal({ title:"Eliminar investigação", message:"Esta ação é permanente. Eliminar esta investigação?", okText:"Eliminar", variant:"danger" });
+      if(!ok) return;
+      try{
+        await deleteDoc(doc(db,"investigacoes",id));
+        toast("Investigação eliminada!");
+        setTimeout(()=> location.href="ver.html", 900);
+      }catch(e){ console.error(e); toast("Erro ao eliminar: "+e.message, "error"); }
+    });
+
+    // start
+    loadItem();
+
+    // logout
+    document.getElementById("logoutBtn").onclick=()=>{
+      ["username","selectedAgent","userRole","userCode","isAdmin"].forEach(k=>localStorage.removeItem(k));
+      window.location.href="../select.html";
+    };
   </script>
 </body>
 </html>

@@ -1,136 +1,316 @@
 <!DOCTYPE html>
 <html lang="pt">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Pessoas - Sistema Aura</title>
-  <link rel="icon" href="../../Aurinha.png">
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Pessoas — Sistema AURA 💜</title>
+
+  <link rel="icon" href="../Aurinha.png" />
+  <link rel="stylesheet" href="../style.css" />
 
   <style>
-    body {
-      background: radial-gradient(circle at top left, #1a001f, #000);
-      font-family: 'Poppins', sans-serif;
-      color: #fff;
-      margin: 0;
-      padding: 40px;
-      text-align: center;
+    .page-container { padding: 2rem; }
+    .topbar { display:flex; justify-content:space-between; align-items:center; margin-bottom:1.4rem; gap:8px; flex-wrap:wrap; }
+    .actions { display:flex; gap:8px; flex-wrap:wrap; }
+    .btn {
+      background: linear-gradient(90deg,#9b4dff,#b86bff);
+      border:none; border-radius:10px; color:#fff; font-weight:600;
+      padding:8px 14px; cursor:pointer; transition:.2s;
+      box-shadow:0 0 10px rgba(180,107,255,.25);
     }
-    h1 {
-      color: #d6b2ff;
-      text-shadow: 0 0 10px rgba(180, 0, 255, 0.7);
+    .btn:hover { transform:translateY(-1px); box-shadow:0 10px 22px rgba(180,107,255,.35); }
+    .btn-soft { background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.08); }
+    .btn-danger { background: linear-gradient(90deg,#ff4d6d,#ff7c6b); }
+
+    .searchbar { margin:.5rem 0 1rem; display:flex; gap:8px; }
+    .searchbar input {
+      flex:1; padding:.8rem 1rem; border-radius:12px; border:none;
+      background:rgba(255,255,255,.08); color:#fff; outline:none;
+      box-shadow:0 0 10px rgba(180,107,255,.25);
     }
-    .top-buttons {
-      display: flex;
-      justify-content: space-between;
-      max-width: 1000px;
-      margin: 20px auto;
-    }
-    button {
-      background: linear-gradient(90deg, #9b4dff, #b86bff);
-      border: none;
-      border-radius: 10px;
-      padding: 10px 20px;
-      color: #fff;
-      font-weight: 600;
-      cursor: pointer;
-      transition: 0.3s;
-    }
-    button:hover {
-      transform: scale(1.05);
-      background: linear-gradient(90deg, #b86bff, #d6aaff);
-    }
-    .list {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 20px;
-      max-width: 1000px;
-      margin: 30px auto;
+
+    .grid {
+      display:grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px,1fr));
+      gap: 16px;
     }
     .card {
-      background: rgba(50, 0, 80, 0.4);
-      border: 1px solid rgba(200, 150, 255, 0.3);
-      border-radius: 15px;
-      box-shadow: 0 0 15px rgba(180, 0, 255, 0.2);
-      padding: 20px;
-      transition: 0.3s;
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.06);
+      border-radius: 16px;
+      padding: 14px;
+      box-shadow: 0 10px 22px rgba(180,107,255,.15);
+      transition:.2s;
     }
-    .card:hover { transform: scale(1.04); }
-    .card img {
-      width: 80px; height: 80px;
-      border-radius: 50%;
-      object-fit: cover;
-      box-shadow: 0 0 12px rgba(180, 0, 255, 0.4);
-      margin-bottom: 10px;
+    .card:hover{ transform:translateY(-3px); box-shadow:0 12px 24px rgba(180,107,255,.25); }
+    .avatar {
+      width: 84px; height: 84px; border-radius: 12px; object-fit: cover;
+      box-shadow: 0 0 12px rgba(180,107,255,.35);
+      display:block; margin: 2px auto 10px;
     }
-    .card h3 { margin: 0; color: #fff; }
-    .card p { color: #c8b6ff; font-size: 0.9rem; margin: 3px 0; }
-    .card-actions button { margin: 3px; font-size: 0.85rem; }
-    .status { color: #caa8ff; margin-top: 20px; }
+    .card h3 { margin:.3rem 0 .2rem; text-align:center; color:#fff; }
+    .meta { text-align:center; font-size:.95rem; color:#ddd; }
+    .meta b{ color:#fff; }
+    .buttons { display:flex; gap:8px; margin-top:.7rem; flex-wrap:wrap; justify-content:center; }
+
+    /* Toast */
+    .aura-toast{
+      position:fixed; right:16px; bottom:16px; z-index:1200; display:flex; gap:10px; align-items:center;
+      background:rgba(20,0,40,.95); border:1px solid rgba(255,255,255,.08);
+      padding:.7rem 1rem; border-radius:12px; color:#fff; box-shadow:0 10px 24px rgba(180,107,255,.35);
+      animation:fadeIn .15s ease;
+    }
+    .aura-toast.success{ border-color:rgba(140,255,199,.35); }
+    .aura-toast.error{ border-color:rgba(255,124,107,.35); }
+    @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+
+    /* Modal */
+    .aura-modal-wrap{ position:fixed; inset:0; background:rgba(0,0,0,.55); display:flex; align-items:center; justify-content:center; padding:20px; z-index:1400; animation:fadeIn .15s ease;}
+    .aura-modal{ width:min(520px,95vw); background:rgba(20,0,40,.92); border:1px solid rgba(255,255,255,.08); border-radius:16px; padding:18px; color:#fff; box-shadow:0 18px 40px rgba(180,107,255,.35);}
+    .aura-modal h3{ margin:0 0 6px; }
+    .aura-modal p{ margin:.25rem 0 1rem; opacity:.9;}
+    .aura-modal .row{ display:flex; gap:10px; justify-content:flex-end;}
+    .aura-btn{ background:rgba(255,255,255,.08); color:#fff; border:1px solid rgba(255,255,255,.08); padding:.6rem .9rem; border-radius:10px; cursor:pointer; font-weight:600;}
+    .aura-btn.primary{ background: linear-gradient(135deg,#b46bff,#9f4dff); border:none;}
+    .aura-btn.danger{ background: linear-gradient(135deg,#ff4d6d,#ff7c6b); border:none;}
+
+    .muted{opacity:.8;}
+    .hidden{display:none;}
   </style>
 </head>
+
 <body>
-  <h1>👥 Pessoas Registradas</h1>
-  <div class="top-buttons">
-    <button onclick="window.location.href='../../dashboard.html'">⬅ Voltar</button>
-    <button onclick="window.location.href='criar.html'">➕ Novo</button>
+  <!-- MENU LATERAL -->
+  <div class="sidebar">
+    <h2 class="logo">SISTEMA AURA</h2>
+    <span id="agentNameDisplay" class="agent-display">Agente: -</span>
+
+    <ul>
+      <li><a href="../dashboard.html" class="navlink active"><span class="icon">🏠</span><span class="label">Dashboard</span></a></li>
+      <li><a href="../pesquisa/ver.html" class="navlink"><span class="icon">🔍</span><span class="label">Pesquisa Geral</span></a></li>
+      <li><a href="../perfis/ver.html" class="navlink"><span class="icon">👑</span><span class="label">Perfil da Aura</span></a></li>
+      <li><a href="../people/ver.html" class="navlink"><span class="icon">🧍</span><span class="label">Pessoas</span></a></li>
+      <li><a href="../casos/ver.html" class="navlink"><span class="icon">📁</span><span class="label">Casos</span></a></li>
+      <li><a href="../investigacoes/ver.html" class="navlink"><span class="icon">🕵️</span><span class="label">Investigações</span></a></li>
+      <li><a href="../veiculos/ver.html" class="navlink"><span class="icon">🏎️</span><span class="label">Veículos</span></a></li>
+      <li><a href="../facc/ver.html" class="navlink"><span class="icon">⚔️</span><span class="label">Facções</span></a></li>
+      <li><a href="../perimetro/ver.html" class="navlink"><span class="icon">📍</span><span class="label">Perímetro de Ações</span></a></li>
+      <li><a href="../reunioes/ver.html" class="navlink"><span class="icon">🗓️</span><span class="label">Reuniões</span></a></li>
+    </ul>
+
+    <button id="logoutBtn">Sair</button>
   </div>
-  <div id="pessoasList" class="list"></div>
-  <p id="statusMsg" class="status">Carregando...</p>
 
+
+  <!-- CONTEÚDO -->
+  <div class="main-content">
+    <div class="page-container">
+      <div class="topbar">
+        <h1>Pessoas</h1>
+        <div class="actions">
+          <button id="newBtn" class="btn only-editor">➕ Nova Pessoa</button>
+        </div>
+      </div>
+
+      <div class="searchbar">
+        <input id="searchBar" placeholder="Pesquisar por nome, telefone, tipo ou cargo..." />
+      </div>
+
+      <div id="peopleGrid" class="grid"></div>
+    </div>
+  </div>
+
+  <!-- FIREBASE -->
   <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js";
-    import { getFirestore, collection, getDocs, deleteDoc, doc, orderBy, query } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
-    import { firebaseConfig } from "../../firebaseConfig.js";
+    import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js";
+    import {
+      getFirestore, collection, getDocs, deleteDoc, doc,
+      query, orderBy
+    } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
+    import { firebaseConfig } from "../firebaseConfig.js";
 
-    const app = initializeApp(firebaseConfig);
+    const app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    const list = document.getElementById("pessoasList");
-    const statusMsg = document.getElementById("statusMsg");
+    const grid   = document.getElementById("peopleGrid");
+    const search = document.getElementById("searchBar");
+    let allPeople = [];
 
-    async function loadPessoas() {
-      list.innerHTML = "";
-      statusMsg.textContent = "Carregando...";
-      try {
-        const q = query(collection(db, "people"), orderBy("createdAt", "desc"));
-        const snap = await getDocs(q);
-        if (snap.empty) {
-          statusMsg.textContent = "Nenhuma pessoa cadastrada.";
-          return;
-        }
-        statusMsg.textContent = "";
-        snap.forEach((docSnap) => {
-          const p = docSnap.data();
-          const photo = p.photoURL || "../../default-avatar.png";
-          const fac = p.faction || "—";
-          const hier = p.hierarchy ? ` (${p.hierarchy})` : "";
-          const card = document.createElement("div");
-          card.classList.add("card");
-          card.innerHTML = `
-            <img src="${photo}" alt="${p.name}">
-            <h3>${p.name}</h3>
-            <p>Facção: ${fac}${hier}</p>
-            <p>Telefone: ${p.phone || "—"}</p>
-            <div class="card-actions">
-              <button onclick="editarPessoa('${docSnap.id}')">✏️ Editar</button>
-              <button onclick="excluirPessoa('${docSnap.id}', '${p.name}')">❌ Excluir</button>
-            </div>`;
-          list.appendChild(card);
-        });
-      } catch (err) {
-        statusMsg.textContent = "❌ Erro: " + err.message;
-      }
+    // Permissões
+    const isAdmin = localStorage.getItem("isAdmin") === "true";
+    const roleStr = (localStorage.getItem("userRole") || "").toLowerCase();
+    const canEdit = isAdmin || roleStr === "investigador";
+
+    // Toast
+    function toast(msg,type="success"){
+      const t=document.createElement("div");
+      t.className=`aura-toast ${type}`;
+      t.innerHTML=`<span>${type==="success"?"✅":"⚠️"}</span><span>${msg}</span>`;
+      document.body.appendChild(t);
+      setTimeout(()=>{ t.style.opacity="0"; setTimeout(()=>t.remove(),260); }, 1900);
     }
 
-    window.editarPessoa = (id) => window.location.href = `editar.html?id=${id}`;
-    window.excluirPessoa = async (id, name) => {
-      if (!confirm(`Excluir ${name}?`)) return;
-      await deleteDoc(doc(db, "people", id));
-      loadPessoas();
-    };
+    // Modal confirmar
+    function confirmModal({title="Confirmar", message="Tens a certeza?", okText="Confirmar", variant="primary"}){
+      return new Promise(resolve=>{
+        const wrap=document.createElement("div");
+        wrap.className="aura-modal-wrap";
+        wrap.innerHTML=`
+          <div class="aura-modal">
+            <h3>${title}</h3>
+            <p>${message}</p>
+            <div class="row">
+              <button class="aura-btn">Cancelar</button>
+              <button class="aura-btn ${variant==='danger'?'danger':'primary'}">${okText}</button>
+            </div>
+          </div>`;
+        document.body.appendChild(wrap);
+        const [cancelBtn, okBtn] = wrap.querySelectorAll("button");
+        const close = (v)=>{ wrap.remove(); resolve(v); };
+        cancelBtn.onclick = ()=> close(false);
+        okBtn.onclick     = ()=> close(true);
+        wrap.addEventListener("click",(e)=>{ if(e.target===wrap) close(false); });
+        window.addEventListener("keydown", function esc(ev){ if(ev.key==="Escape"){ close(false); window.removeEventListener("keydown", esc);} });
+      });
+    }
 
-    loadPessoas();
+    // Navegação
+    document.getElementById("newBtn").onclick = ()=> window.location.href = "criar.html";
+
+    // Carregar (mais recentes primeiro)
+    async function loadPeople(){
+      // se alguns docs não tiverem createdAt, o Firestore ainda ordena (os "sem campo" podem vir primeiro)
+      try{
+        const q = query(collection(db,"people"), orderBy("createdAt","desc"));
+        const snap = await getDocs(q);
+        allPeople = snap.docs.map(d => ({ id:d.id, ...d.data() }));
+      }catch{
+        // fallback se ainda não existir o campo createdAt/index
+        const snap = await getDocs(collection(db,"people"));
+        allPeople = snap.docs.map(d => ({ id:d.id, ...d.data() }));
+        // ord. manual por createdAt (timestamp) se existir
+        allPeople.sort((a,b)=>{
+          const ta = a.createdAt?.seconds || 0;
+          const tb = b.createdAt?.seconds || 0;
+          return tb - ta;
+        });
+      }
+      render(allPeople);
+    }
+
+    function personCard(p){
+      const imgSrc = p.photoURL || "../Aurinha.png";
+      const cargo  = (p.type==="PM" || p.type==="fac") && p.role ? `<div class="meta"><b>Cargo:</b> ${p.role}</div>` : "";
+      const editBtns = canEdit ? `
+        <button class="btn btn-soft editBtn">🖊 Editar</button>
+        <button class="btn btn-danger delBtn">🗑 Eliminar</button>
+      ` : "";
+      const card = document.createElement("div");
+      card.className="card";
+      card.innerHTML = `
+        <img class="avatar" src="${imgSrc}" alt="foto">
+        <h3>${p.name || "Sem nome"}</h3>
+        <div class="meta"><b>Telefone:</b> ${p.phone || "-"}</div>
+        <div class="meta"><b>Tipo:</b> ${p.type || "-"}</div>
+        ${cargo}
+        <div class="buttons">
+          <button class="btn btn-soft viewBtn">👁 Ver</button>
+          ${editBtns}
+        </div>
+      `;
+
+      // Ver (modal leitura)
+      card.querySelector(".viewBtn").onclick = ()=>{
+        const wrap = document.createElement("div");
+        wrap.className="aura-modal-wrap";
+        wrap.innerHTML=`
+          <div class="aura-modal">
+            <h3>${p.name || "Sem nome"}</h3>
+            <p><b>Telefone:</b> ${p.phone || "-"}</p>
+            <p><b>Tipo:</b> ${p.type || "-"}</p>
+            ${ (p.type==="PM" || p.type==="fac") && p.role ? `<p><b>Cargo:</b> ${p.role}</p>` : "" }
+            ${ p.notes ? `<p><b>Notas:</b><br>${p.notes}</p>` : "" }
+            ${ p.photoURL ? `<p><img src="${p.photoURL}" alt="foto" style="max-width:100%; border-radius:10px; box-shadow:0 0 12px rgba(180,107,255,.35);" /></p>` : "" }
+            <div class="row"><button class="aura-btn primary">Fechar</button></div>
+          </div>`;
+        wrap.querySelector("button").onclick = ()=> wrap.remove();
+        wrap.addEventListener("click",(e)=>{ if(e.target===wrap) wrap.remove(); });
+        document.body.appendChild(wrap);
+      };
+
+      // Editar
+      card.querySelector(".editBtn")?.addEventListener("click", ()=> window.location.href = `editar.html?id=${p.id}`);
+
+      // Eliminar (com modal bonito)
+      card.querySelector(".delBtn")?.addEventListener("click", async ()=>{
+        const ok = await confirmModal({
+          title: "Eliminar pessoa",
+          message: `Esta ação é permanente. Queres eliminar <b>${p.name || p.id}</b>?`,
+          okText: "Eliminar",
+          variant: "danger"
+        });
+        if(!ok) return;
+
+        try{
+          await deleteDoc(doc(db,"people",p.id));
+          card.remove();
+          toast("Registo eliminado!");
+        }catch(e){
+          console.error(e);
+          toast("Erro ao eliminar: " + e.message, "error");
+        }
+      });
+
+      return card;
+    }
+
+    function render(list){
+      grid.innerHTML = "";
+      if(!list.length){
+        grid.innerHTML = "<p class='muted'>Nenhuma pessoa registada.</p>";
+        return;
+      }
+      list.forEach(p => grid.appendChild(personCard(p)));
+    }
+
+    // Pesquisa
+    search.addEventListener("input", (e)=>{
+      const t=(e.target.value||"").toLowerCase().trim();
+      const filtered = allPeople.filter(p=>{
+        return (p.name||"").toLowerCase().includes(t) ||
+               (p.phone||"").toLowerCase().includes(t) ||
+               (p.type||"").toLowerCase().includes(t) ||
+               (p.role||"").toLowerCase().includes(t);
+      });
+      render(filtered);
+    });
+
+    loadPeople();
+  </script>
+
+  <!-- PERFIL + SAIR + PERMISSÕES VISUAIS -->
+  <script>
+    (function(){
+      const agent = localStorage.getItem("selectedAgent") || "Desconhecido";
+      const el = document.getElementById("agentNameDisplay");
+      if (el) el.textContent = `Agente: ${agent}`;
+
+      const logoutBtn = document.getElementById("logoutBtn");
+      if (logoutBtn) {
+        logoutBtn.addEventListener("click", () => {
+          ["username","selectedAgent","userRole","userCode","isAdmin"].forEach(k => localStorage.removeItem(k));
+          window.location.href = "../select.html";
+        });
+      }
+
+      const isAdmin = localStorage.getItem("isAdmin")==="true";
+      const role = (localStorage.getItem("userRole")||"").toLowerCase();
+      const canEdit = isAdmin || role==="investigador";
+
+      if (!canEdit) {
+        document.querySelectorAll(".only-editor").forEach(el => el.style.display = "none");
+      }
+    })();
   </script>
 </body>
 </html>

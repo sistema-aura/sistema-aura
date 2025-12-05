@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Editar Perímetro — Sistema AURA 💜</title>
+
+  <link rel="icon" href="../Aurinha.png" />
+  <link rel="stylesheet" href="../style.css" />
+
+  <style>
+    .page-container { padding: 2rem; max-width: 980px; margin:0 auto; }
+    .topbar {
+      display:flex; justify-content:space-between; align-items:center;
+      margin-bottom:1.4rem; gap:8px; flex-wrap:wrap;
+    }
+
+    .card {
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.06);
+      border-radius: 16px;
+      padding: 22px;
+      box-shadow: 0 10px 22px rgba(180,107,255,.15);
+    }
+
+    label {
+      font-weight:600;
+      opacity:.95;
+      margin-bottom:6px;
+      display:block;
+    }
+
+    input, textarea, select {
+      width:100%;
+      padding:.8rem 1rem;
+      border-radius:12px;
+      border:none;
+      outline:none;
+      background:rgba(255,255,255,.08);
+      color:#fff;
+      box-shadow:0 0 10px rgba(180,107,255,.18);
+      margin-bottom:1rem;
+      font-size:.95rem;
+    }
+    textarea { resize: vertical; min-height: 140px; }
+
+    .row-2 {
+      display:grid;
+      grid-template-columns: repeat(auto-fit,minmax(220px,1fr));
+      gap:14px;
+    }
+
+    .btn {
+      background: linear-gradient(90deg,#9b4dff,#b86bff);
+      border:none; border-radius:10px; color:#fff; font-weight:600;
+      padding:8px 14px; cursor:pointer; transition:.2s;
+      box-shadow:0 0 10px rgba(180,107,255,.25);
+    }
+    .btn:hover { transform:translateY(-1px); box-shadow:0 10px 22px rgba(180,107,255,.35); }
+    .btn-soft{ background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.08); }
+
+    .file-row { display:flex; align-items:center; gap:12px; margin: 8px 0 4px; flex-wrap:wrap; }
+    .preview {
+      display:flex; align-items:center; gap:10px;
+      background:rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.06);
+      padding:10px; border-radius:12px;
+      margin-top:6px;
+    }
+    .preview img {
+      width:120px; height:120px; object-fit:cover;
+      border-radius:10px;
+      box-shadow:0 0 12px rgba(180,107,255,.35);
+    }
+    .preview .fileinfo { font-size:.95rem; opacity:.9; }
+
+    .muted{ opacity:.8; font-size:.9rem; margin-bottom:8px; }
+    .loading-msg{ margin-bottom:1rem; }
+
+    /* Toast */
+    .aura-toast{
+      position:fixed; right:16px; bottom:16px; z-index:1200; display:flex; gap:10px; align-items:center;
+      background:rgba(20,0,40,.95); border:1px solid rgba(255,255,255,.08);
+      padding:.7rem 1rem; border-radius:12px; color:#fff; box-shadow:0 10px 24px rgba(180,107,255,.35);
+      animation:fadeIn .15s ease;
+    }
+    .aura-toast.success{ border-color:rgba(140,255,199,.35); }
+    .aura-toast.error{ border-color:rgba(255,124,107,.35); }
+    @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+  </style>
+</head>
+
+<body>
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <h2 class="logo">SISTEMA AURA</h2>
+    <ul>
+      <li><a href="../dashboard.html" class="navlink"><span class="icon">🏠</span><span class="label">Dashboard</span></a></li>
+      <li><a href="../perfis/ver.html" class="navlink"><span class="icon">👑</span><span class="label">Perfil da Aura</span></a></li>
+      <li><a href="../people/ver.html" class="navlink"><span class="icon">🧍</span><span class="label">Pessoas</span></a></li>
+      <li><a href="../casos/ver.html" class="navlink"><span class="icon">📁</span><span class="label">Casos</span></a></li>
+      <li><a href="../investigacoes/ver.html" class="navlink"><span class="icon">🕵️‍♀️</span><span class="label">Investigações</span></a></li>
+      <li><a href="../veiculos/ver.html" class="navlink"><span class="icon">🏎️</span><span class="label">Veículos</span></a></li>
+      <li><a href="../facc/ver.html" class="navlink"><span class="icon">⚔️</span><span class="label">Facções</span></a></li>
+      <li><a href="ver.html" class="navlink active"><span class="icon">📍</span><span class="label">Perímetros</span></a></li>
+      <li><a href="../pesquisa/pesquisa.html" class="navlink"><span class="icon">🔍</span><span class="label">Pesquisa Geral</span></a></li>
+      <li><a href="../reunioes/ver.html" class="navlink"><span class="icon">🗓️</span><span class="label">Reuniões</span></a></li>
+      <li><a href="../casos/arquivados.html" class="navlink"><span class="icon">🗃️</span><span class="label">Casos Arquivados</span></a></li>
+    </ul>
+    <button id="logoutBtn">Sair</button>
+  </div>
+
+  <div class="main-content">
+    <div class="page-container">
+      <div class="topbar">
+        <h1>Editar Perímetro</h1>
+        <div style="display:flex; gap:8px;">
+          <button id="backBtn" class="btn btn-soft">⬅️ Voltar</button>
+          <button id="saveBtn" class="btn">💾 Guardar Alterações</button>
+        </div>
+      </div>
+
+      <div id="loadingMsg" class="muted loading-msg">A carregar dados do perímetro...</div>
+
+      <form id="actForm" class="card" style="display:none;">
+        <label>Título da ação</label>
+        <input id="titulo" placeholder="Ex: Perímetro do Banco Central" required />
+
+        <div class="row-2">
+          <div>
+            <label>Categoria / Pasta</label>
+            <input id="categoria" list="catList" placeholder="Ex: Lojinhas, Banco Central, Fleeca..." />
+            <datalist id="catList">
+              <option value="Lojinhas"></option>
+              <option value="Banco Central"></option>
+              <option value="Fleeca"></option>
+              <option value="Joalheria"></option>
+              <option value="Correios"></option>
+              <option value="Ferro-Velho"></option>
+            </datalist>
+            <p class="muted">A categoria é o nome da “pasta” onde esta ação aparece.</p>
+          </div>
+          <div>
+            <label>Tipo (opcional)</label>
+            <input id="tipo" placeholder="Ex: Roubo a banco, Lojinha, Sequestro..." />
+          </div>
+        </div>
+
+        <div class="row-2">
+          <div>
+            <label>Estado</label>
+            <select id="estado">
+              <option value="ativo">Ativo</option>
+              <option value="inativo">Inativo</option>
+            </select>
+          </div>
+        </div>
+
+        <label>Descrição / Briefing</label>
+        <textarea id="descricao" placeholder="Texto que aparece por cima da imagem."></textarea>
+
+        <label>Ficheiro atual</label>
+        <div id="currentFile" class="preview" style="display:none;"></div>
+
+        <label>Substituir anexo (imagem ou PDF)</label>
+        <div class="file-row">
+          <input id="fileInput" type="file" accept="image/*,.pdf" />
+          <span class="muted">Se não escolheres nada, mantém o ficheiro atual.</span>
+        </div>
+        <div id="filePreview" class="preview" style="display:none;"></div>
+      </form>
+    </div>
+  </div>
+
+  <script type="module">
+    import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js";
+    import {
+      getFirestore, getDoc, updateDoc, doc
+    } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
+    import {
+      getStorage, ref, uploadBytes, getDownloadURL
+    } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-storage.js";
+    import { firebaseConfig } from "../firebaseConfig.js";
+
+    const app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
+    const db  = getFirestore(app);
+    const stg = getStorage(app);
+
+    const params = new URLSearchParams(window.location.search);
+    const actId = params.get("id");
+
+    const tituloEl     = document.getElementById("titulo");
+    const categoriaEl  = document.getElementById("categoria");
+    const tipoEl       = document.getElementById("tipo");
+    const estadoEl     = document.getElementById("estado");
+    const descricaoEl  = document.getElementById("descricao");
+
+    const fileInput    = document.getElementById("fileInput");
+    const filePreview  = document.getElementById("filePreview");
+    const currentFile  = document.getElementById("currentFile");
+
+    const btnSave      = document.getElementById("saveBtn");
+    const btnBack      = document.getElementById("backBtn");
+    const loadingMsg   = document.getElementById("loadingMsg");
+    const formEl       = document.getElementById("actForm");
+
+    let selectedFile = null;
+    let currentData  = null;
+
+    btnBack.onclick = ()=> window.location.href="ver.html";
+
+    function toast(msg,type="success"){
+      const t=document.createElement("div");
+      t.className=`aura-toast ${type}`;
+      t.innerHTML=`<span>${type==="success"?"✅":"⚠️"}</span><span>${msg}</span>`;
+      document.body.appendChild(t);
+      setTimeout(()=>{ t.style.opacity="0"; setTimeout(()=>t.remove(),260); }, 1900);
+    }
+
+    if(!actId){
+      loadingMsg.textContent = "ID do perímetro em falta.";
+    }else{
+      init();
+    }
+
+    async function loadAct(){
+      const refDoc = doc(db,"perimetros", actId);
+      const snap = await getDoc(refDoc);
+      if(!snap.exists()){
+        loadingMsg.textContent = "Perímetro não encontrado.";
+        return null;
+      }
+      return { id:snap.id, ...snap.data() };
+    }
+
+    async function init(){
+      try{
+        const act = await loadAct();
+        if(!act) return;
+        currentData = act;
+
+        tituloEl.value    = act.titulo    || act.nome || "";
+        categoriaEl.value = act.categoria || "";
+        tipoEl.value      = act.tipo      || "";
+        estadoEl.value    = act.estado    || "ativo";
+        descricaoEl.value = act.descricao || "";
+
+        if(act.photoURL || act.fileName){
+          currentFile.style.display = "flex";
+          if(act.fileType && act.fileType.startsWith("image/")){
+            currentFile.innerHTML = `
+              <img src="${act.photoURL}" alt="atual">
+              <span class="fileinfo">${act.fileName || "imagem"} (já guardado)</span>`;
+          }else if(act.photoURL){
+            currentFile.innerHTML = `
+              <span class="fileinfo">📄 ${act.fileName || "anexo"} — <a href="${act.photoURL}" target="_blank" style="color:#bfa7ff;text-decoration:underline;">Abrir</a></span>`;
+          }else{
+            currentFile.innerHTML = `<span class="fileinfo">Sem ficheiro associado.</span>`;
+          }
+        }else{
+          currentFile.style.display = "none";
+        }
+
+        loadingMsg.style.display = "none";
+        formEl.style.display = "block";
+      }catch(e){
+        console.error(e);
+        loadingMsg.textContent = "Erro ao carregar perímetro.";
+        toast("Erro ao carregar perímetro: " + e.message, "error");
+      }
+    }
+
+    // preview novo ficheiro
+    fileInput.addEventListener("change", ()=>{
+      const f=fileInput.files?.[0];
+      selectedFile = f || null;
+
+      if(!f){
+        filePreview.style.display="none";
+        filePreview.innerHTML="";
+        return;
+      }
+
+      filePreview.style.display="flex";
+      if(f.type.startsWith("image/")){
+        const url = URL.createObjectURL(f);
+        filePreview.innerHTML = `<img src="${url}" alt="preview"><span class="fileinfo">${f.name} • ${(f.size/1024).toFixed(1)} KB</span>`;
+      } else {
+        filePreview.innerHTML = `<span class="fileinfo">📄 ${f.name} • ${(f.size/1024).toFixed(1)} KB</span>`;
+      }
+    });
+
+    async function uploadSelectedFileIfAny(){
+      if(!selectedFile){
+        return {
+          photoURL: currentData?.photoURL || null,
+          fileName: currentData?.fileName || null,
+          fileType: currentData?.fileType || null
+        };
+      }
+
+      const safe = selectedFile.name.replace(/[^\w.\-]+/g,"_");
+      const path = `perimetros_files/${actId}/${Date.now()}_${safe}`;
+      const sref = ref(stg, path);
+      await uploadBytes(sref, selectedFile);
+      const url = await getDownloadURL(sref);
+      return {
+        photoURL: url,
+        fileName: selectedFile.name,
+        fileType: selectedFile.type || ""
+      };
+    }
+
+    // permissões
+    const isAdmin = localStorage.getItem("isAdmin")==="true";
+    const role = (localStorage.getItem("userRole")||"").toLowerCase();
+    const canEdit = isAdmin || role==="investigador";
+
+    if(!canEdit){
+      // se não pode editar, volta para ver
+      window.location.href = "ver.html";
+    }
+
+    btnSave.addEventListener("click", async (e)=>{
+      e.preventDefault();
+      if(!canEdit){
+        toast("Sem permissão para editar.","error");
+        return;
+      }
+
+      const titulo = (tituloEl.value||"").trim();
+      if(!titulo){
+        toast("Título é obrigatório.","error");
+        return;
+      }
+
+      const payload = {
+        titulo,
+        categoria: (categoriaEl.value||"").trim() || "Outros",
+        tipo: (tipoEl.value||"").trim(),
+        estado: estadoEl.value || "ativo",
+        descricao: (descricaoEl.value||"").trim()
+      };
+
+      btnSave.disabled = true;
+      btnSave.textContent = "A guardar...";
+
+      try{
+        const fileData = await uploadSelectedFileIfAny();
+
+        await updateDoc(doc(db,"perimetros", actId), {
+          ...payload,
+          photoURL: fileData.photoURL || null,
+          fileName: fileData.fileName || null,
+          fileType: fileData.fileType || null
+        });
+
+        toast("Perímetro atualizado!");
+        setTimeout(()=> window.location.href="ver.html", 900);
+      }catch(e){
+        console.error(e);
+        toast("Erro ao atualizar: " + e.message, "error");
+        btnSave.disabled = false;
+        btnSave.textContent = "💾 Guardar Alterações";
+      }
+    });
+
+    // logout
+    document.getElementById("logoutBtn").onclick=()=>{
+      ["username","selectedAgent","userRole","userCode","isAdmin"].forEach(k=>localStorage.removeItem(k));
+      window.location.href="../select.html";
+    };
+  </script>
+</body>
+</html>

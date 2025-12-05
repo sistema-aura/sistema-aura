@@ -2,403 +2,354 @@
 <html lang="pt">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Casos - Sistema Aura</title>
-  <link rel="icon" href="../../Aurinha.png" />
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Casos — Sistema AURA 💜</title>
+
+  <link rel="icon" href="../Aurinha.png" />
+  <link rel="stylesheet" href="../style.css" />
+
   <style>
-    body {
-      background: radial-gradient(circle at top left,#1a001f,#000);
-      font-family: 'Poppins', sans-serif;
-      color:#fff;
-      margin:0;
-      padding:30px;
-    }
-
-    .top-bar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 20px;
-    }
-
-    .left-buttons {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .top-bar h2 {
-      color:#d6b2ff;
-      text-shadow:0 0 10px rgba(180,0,255,0.7);
-      margin: 0;
-      text-align:center;
-      flex:1;
-    }
-
-    .top-bar button {
+    .page-container { padding: 2rem; }
+    .topbar { display:flex; justify-content:space-between; align-items:center; margin-bottom:1.4rem; gap:8px; flex-wrap:wrap; }
+    .actions { display:flex; gap:8px; flex-wrap:wrap; }
+    .btn {
       background: linear-gradient(90deg,#9b4dff,#b86bff);
-      border: none;
-      border-radius: 10px;
-      color: #fff;
-      font-weight: 600;
-      padding: 8px 16px;
-      cursor: pointer;
-      transition: 0.3s;
-      box-shadow: 0 0 10px rgba(180,0,255,0.4);
+      border:none; border-radius:10px; color:#fff; font-weight:600;
+      padding:8px 14px; cursor:pointer; transition:.2s;
+      box-shadow:0 0 10px rgba(180,107,255,.25);
+    }
+    .btn:hover { transform:translateY(-1px); box-shadow:0 10px 22px rgba(180,107,255,.35); }
+    .btn-soft { background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.08); }
+    .btn-danger { background: linear-gradient(90deg,#ff4d6d,#ff7c6b); }
+
+    .searchbar { margin:.5rem 0 1rem; display:flex; gap:8px; }
+    .searchbar input {
+      flex:1; padding:.8rem 1rem; border-radius:12px; border:none;
+      background:rgba(255,255,255,.08); color:#fff; outline:none;
+      box-shadow:0 0 10px rgba(180,107,255,.25);
     }
 
-    .top-bar button:hover {
-      transform: scale(1.05);
-      background: linear-gradient(90deg,#b86bff,#d6aaff);
-      box-shadow: 0 0 15px rgba(180,0,255,0.6);
-    }
-
-    #searchBar {
-      display:block;
-      margin:0 auto 30px;
-      width:300px;
-      padding:10px;
-      border:none;
-      border-radius:10px;
-      background:rgba(255,255,255,0.1);
-      color:#fff;
-      text-align:center;
-    }
-
-    #searchBar:focus {
-      outline:none;
-      box-shadow:0 0 10px rgba(180,0,255,0.6);
-      background:rgba(255,255,255,0.15);
-    }
-
-    .grid {
-      display:grid;
-      grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
-      gap:20px;
-    }
-
+    .grid { display:grid; grid-template-columns: repeat(auto-fill, minmax(300px,1fr)); gap: 16px; }
     .card {
-      background:rgba(50,0,80,0.45);
-      border:1px solid rgba(200,150,255,0.3);
-      border-radius:20px;
-      padding:15px;
-      box-shadow:0 0 20px rgba(180,0,255,0.3);
-      transition:all .3s ease;
-      overflow:hidden;
-      position:relative;
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.06);
+      border-radius: 16px;
+      padding: 14px;
+      box-shadow: 0 10px 22px rgba(180,107,255,.15);
+      transition:.2s;
+    }
+    .card:hover { transform:translateY(-3px); box-shadow:0 12px 24px rgba(180,107,255,.25); }
+
+    .thumb {
+      width: 80px; height: 80px; border-radius: 10px; object-fit: cover;
+      display:block; margin: 2px auto 10px; box-shadow:0 0 12px rgba(180,107,255,.35);
+      background:#1d0a33;
+    }
+    .thumb-file {
+      width: 80px; height: 80px; border-radius: 10px; display:flex; align-items:center; justify-content:center;
+      margin: 2px auto 10px; box-shadow:0 0 12px rgba(180,107,255,.35);
+      background:rgba(255,255,255,.08); font-weight:700;
+    }
+    .file-name {
+      text-align:center; font-size:.85rem; opacity:.9; margin-top:-6px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
     }
 
-    .card.expanded {
-      grid-column:span 2;
-      box-shadow:0 0 30px rgba(200,150,255,0.7);
-      background:rgba(70,0,110,0.7);
+    .card h3 { margin:.35rem 0 .2rem; color:#fff; text-align:center; }
+    .meta { font-size:.95rem; color:#ddd; margin:2px 0; text-align:center; }
+    .meta b{ color:#fff; }
+    .estado { margin-top:6px; font-weight:600; text-transform:uppercase; letter-spacing:.5px; color:#b86bff; text-align:center; }
+    .buttons { display:flex; gap:8px; margin-top:.8rem; flex-wrap:wrap; justify-content:center; }
+
+    /* Toast */
+    .aura-toast{
+      position:fixed; right:16px; bottom:16px; z-index:1200; display:flex; gap:10px; align-items:center;
+      background:rgba(20,0,40,.95); border:1px solid rgba(255,255,255,.08);
+      padding:.7rem 1rem; border-radius:12px; color:#fff; box-shadow:0 10px 24px rgba(180,107,255,.35);
+      animation:fadeIn .15s ease;
     }
+    .aura-toast.success{ border-color:rgba(140,255,199,.35); }
+    .aura-toast.error{ border-color:rgba(255,124,107,.35); }
+    @keyframes fadeIn{from{opacity:0}to{opacity:1}}
 
-    .card h3 {
-      margin:0 0 5px;
-      color:#d6b2ff;
-      font-weight:600;
-    }
+    /* Modal */
+    .aura-modal-wrap{ position:fixed; inset:0; background:rgba(0,0,0,.55); display:flex; align-items:center; justify-content:center; padding:20px; z-index:1400; animation:fadeIn .15s ease;}
+    .aura-modal{ width:min(560px,95vw); background:rgba(20,0,40,.92); border:1px solid rgba(255,255,255,.08); border-radius:16px; padding:18px; color:#fff; box-shadow:0 18px 40px rgba(180,107,255,.35);}
+    .aura-modal h3{ margin:0 0 6px; }
+    .aura-modal p{ margin:.25rem 0 .8rem; opacity:.9;}
+    .aura-modal .row{ display:flex; gap:10px; justify-content:flex-end;}
+    .aura-btn{ background:rgba(255,255,255,.08); color:#fff; border:1px solid rgba(255,255,255,.08); padding:.6rem .9rem; border-radius:10px; cursor:pointer; font-weight:600;}
+    .aura-btn.primary{ background: linear-gradient(135deg,#b46bff,#9f4dff); border:none;}
+    .aura-btn.danger{ background: linear-gradient(135deg,#ff4d6d,#ff7c6b); border:none;}
 
-    .card p {
-      font-size:0.85rem;
-      line-height:1.3;
-      margin:3px 0;
-    }
-
-    .card .desc {
-      color:#ccc;
-      margin:5px 0;
-    }
-
-    .buttons {
-      margin-top:10px;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-    }
-
-    .buttons button {
-      background:linear-gradient(90deg,#9b4dff,#b86bff);
-      border:none;
-      border-radius:8px;
-      color:#fff;
-      padding:5px 10px;
-      cursor:pointer;
-      transition:.3s;
-      flex: 1;
-      min-width: 100px;
-    }
-
-    .buttons button:hover {
-      transform:scale(1.05);
-      background:linear-gradient(90deg,#b86bff,#d6aaff);
-    }
-
-    .fullDesc {
-      margin-top:10px;
-      color:#eee;
-      font-size:0.9rem;
-      text-align:left;
-      animation:fadeIn .3s ease;
-    }
-
-    @keyframes fadeIn{from{opacity:0;transform:translateY(-5px);}to{opacity:1;transform:translateY(0);}}
-
-
-    /* Popup neon */
-    .neon-popup {
-      position: fixed;
-      bottom: 30px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: linear-gradient(90deg, #9b4dff, #b86bff);
-      padding: 12px 25px;
-      border-radius: 15px;
-      color: #fff;
-      font-weight: 500;
-      box-shadow: 0 0 20px rgba(180,0,255,0.6);
-      text-align: center;
-      z-index: 9999;
-      animation: fadeInUp 0.3s ease;
-    }
-
-    .neon-popup.error {
-      background: linear-gradient(90deg, #ff3b3b, #ff6b6b);
-      box-shadow: 0 0 25px rgba(255,0,90,0.7);
-    }
-
-    @keyframes fadeInUp {
-      from {opacity:0; transform: translate(-50%, 10px);}
-      to {opacity:1; transform: translate(-50%, 0);}
-    }
-
-    /* Modal de confirmação */
-    .confirm-overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.7);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 10000;
-      animation: fadeIn .3s ease;
-    }
-
-    .confirm-box {
-      background: rgba(40,0,60,0.95);
-      border: 1px solid rgba(200,150,255,0.4);
-      border-radius: 15px;
-      padding: 25px;
-      text-align: center;
-      box-shadow: 0 0 25px rgba(180,0,255,0.7);
-      width: 300px;
-      animation: fadeInUp .3s ease;
-    }
-
-    .confirm-box h3 {
-      color: #d6b2ff;
-      margin-bottom: 15px;
-    }
-
-    .confirm-buttons {
-      display: flex;
-      justify-content: space-around;
-      margin-top: 20px;
-    }
-
-    .confirm-buttons button {
-      background: linear-gradient(90deg,#9b4dff,#b86bff);
-      border: none;
-      border-radius: 8px;
-      color: #fff;
-      padding: 8px 20px;
-      cursor: pointer;
-      transition: .3s;
-    }
-
-    .confirm-buttons button:hover {
-      transform: scale(1.05);
-      background: linear-gradient(90deg,#b86bff,#d6aaff);
-    }
-
-    .confirm-buttons .cancel {
-      background: linear-gradient(90deg,#444,#666);
-    }
+    .muted{opacity:.8;}
+    .hidden{display:none;}
   </style>
 </head>
+
 <body>
-  <div class="top-bar">
-    <div class="left-buttons">
-      <button id="backBtn">⬅ Voltar</button>
-    </div>
-    <h2>Casos Registrados</h2>
-    <button id="newCaseBtn">+ Criar Novo Caso</button>
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <h2 class="logo">SISTEMA AURA</h2>
+    <ul>
+      <li><a href="../dashboard.html" class="navlink active"><span class="icon">🏠</span><span class="label">Dashboard</span></a></li>
+      <li><a href="../pesquisa/ver.html" class="navlink"><span class="icon">🔍</span><span class="label">Pesquisa Geral</span></a></li>
+      <li><a href="../perfis/ver.html" class="navlink"><span class="icon">👑</span><span class="label">Perfil da Aura</span></a></li>
+      <li><a href="../people/ver.html" class="navlink"><span class="icon">🧍</span><span class="label">Pessoas</span></a></li>
+      <li><a href="../casos/ver.html" class="navlink"><span class="icon">📁</span><span class="label">Casos</span></a></li>
+      <li><a href="../investigacoes/ver.html" class="navlink"><span class="icon">🕵️</span><span class="label">Investigações</span></a></li>
+      <li><a href="../veiculos/ver.html" class="navlink"><span class="icon">🏎️</span><span class="label">Veículos</span></a></li>
+      <li><a href="../facc/ver.html" class="navlink"><span class="icon">⚔️</span><span class="label">Facções</span></a></li>
+      <li><a href="../perimetro/ver.html" class="navlink"><span class="icon">📍</span><span class="label">Perímetro de Ações</span></a></li>
+      <li><a href="../reunioes/ver.html" class="navlink"><span class="icon">🗓️</span><span class="label">Reuniões</span></a></li>
+    </ul>
+    <button id="logoutBtn">Sair</button>
   </div>
 
-  <input type="text" id="searchBar" placeholder="🔍 Pesquisar por código ou título..." />
-  <div class="grid" id="casesGrid"></div>
+  <!-- CONTEÚDO -->
+  <div class="main-content">
+    <div class="page-container">
+      <div class="topbar">
+        <h1>Casos</h1>
+        <div class="actions">
+          <button id="archivedBtn" class="btn btn-soft">🗃 Arquivados</button>
+          <button id="newBtn" class="btn only-editor">➕ Novo Caso</button>
+        </div>
+      </div>
 
+      <div class="searchbar">
+        <input id="searchBar" placeholder="Pesquisar por título, responsável, envolvidos, veículos ou facções..." />
+      </div>
+
+      <div id="casesGrid" class="grid"></div>
+    </div>
+  </div>
+
+  <!-- FIREBASE -->
   <script type="module">
     import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js";
-    import { getFirestore, collection, getDocs, query, orderBy, addDoc, deleteDoc, doc } 
-      from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
-    import { firebaseConfig } from "../../firebaseConfig.js";
+    import {
+      getFirestore, collection, getDocs, deleteDoc, doc, updateDoc, query, orderBy
+    } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
+    import { firebaseConfig } from "../firebaseConfig.js";
 
-    const app = getApps().length===0 ? initializeApp(firebaseConfig):getApps()[0];
+    const app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
     const db = getFirestore(app);
-    const grid=document.getElementById("casesGrid");
-    const search=document.getElementById("searchBar");
-    let allCases=[];
 
-    // Voltar
-    document.getElementById("backBtn").addEventListener("click", () => {
-      window.location.href = "../../dashboard.html";
-    });
+    const grid   = document.getElementById("casesGrid");
+    const search = document.getElementById("searchBar");
+    let allCases = [];
 
-    // Criar novo
-    document.getElementById("newCaseBtn").addEventListener("click", () => {
-      window.location.href = "criar.html";
-    });
+    // Permissões
+    const isAdmin = localStorage.getItem("isAdmin") === "true";
+    const roleStr = (localStorage.getItem("userRole") || "").toLowerCase();
+    const canEdit = isAdmin || roleStr === "investigador";
 
-    // Popup neon
-    function showNeonMessage(msg, isError = false) {
-      const popup = document.createElement("div");
-      popup.className = `neon-popup ${isError ? 'error' : ''}`;
-      popup.textContent = msg;
-      document.body.appendChild(popup);
-      setTimeout(() => popup.remove(), 3000);
+    // Navegação
+    document.getElementById("archivedBtn").onclick = ()=> window.location.href="arquivados.html";
+    document.getElementById("newBtn").onclick = ()=> window.location.href="criar.html";
+
+    // Toast
+    function toast(msg,type="success"){
+      const t=document.createElement("div");
+      t.className=`aura-toast ${type}`;
+      t.innerHTML=`<span>${type==="success"?"✅":"⚠️"}</span><span>${msg}</span>`;
+      document.body.appendChild(t);
+      setTimeout(()=>{ t.style.opacity="0"; setTimeout(()=>t.remove(),260); }, 1900);
     }
 
-    // Modal neon
-    function showConfirmModal(message, onConfirm) {
-      const overlay = document.createElement("div");
-      overlay.className = "confirm-overlay";
-      overlay.innerHTML = `
-        <div class="confirm-box">
-          <h3>${message}</h3>
-          <div class="confirm-buttons">
-            <button class="confirm">Confirmar</button>
-            <button class="cancel">Cancelar</button>
-          </div>
-        </div>`;
-      document.body.appendChild(overlay);
-
-      overlay.querySelector(".confirm").addEventListener("click", () => {
-        overlay.remove();
-        onConfirm();
+    // Modal confirmar
+    function confirmModal({title="Confirmar", message="Tens a certeza?", okText="Confirmar", variant="primary"}){
+      return new Promise(resolve=>{
+        const wrap=document.createElement("div");
+        wrap.className="aura-modal-wrap";
+        wrap.innerHTML=`
+          <div class="aura-modal">
+            <h3>${title}</h3>
+            <p>${message}</p>
+            <div class="row">
+              <button class="aura-btn">Cancelar</button>
+              <button class="aura-btn ${variant==='danger'?'danger':'primary'}">${okText}</button>
+            </div>
+          </div>`;
+        document.body.appendChild(wrap);
+        const [cancelBtn, okBtn] = wrap.querySelectorAll("button");
+        const close = (v)=>{ wrap.remove(); resolve(v); };
+        cancelBtn.onclick = ()=> close(false);
+        okBtn.onclick     = ()=> close(true);
+        wrap.addEventListener("click",(e)=>{ if(e.target===wrap) close(false); });
       });
-      overlay.querySelector(".cancel").addEventListener("click", () => overlay.remove());
     }
 
+    // Carregar casos (mais recentes primeiro)
     async function loadCases(){
-      const q=query(collection(db,"cases"),orderBy("createdAt","desc"));
-      const snap=await getDocs(q);
-      allCases=snap.docs.map(d=>({id:d.id,...d.data()}));
-      renderCases(allCases);
+      try{
+        const q = query(collection(db,"casos"), orderBy("createdAt","desc"));
+        const snap = await getDocs(q);
+        allCases = snap.docs.map(d => ({ id:d.id, ...d.data() }));
+      }catch{
+        const snap = await getDocs(collection(db,"casos"));
+        allCases = snap.docs.map(d => ({ id:d.id, ...d.data() }));
+        allCases.sort((a,b)=>{
+          const ta=a.createdAt?.seconds||0, tb=b.createdAt?.seconds||0;
+          return tb-ta;
+        });
+      }
+      render(allCases);
     }
 
-    function renderCases(cases){
-      grid.innerHTML="";
-      if(!cases.length){grid.innerHTML="<p style='text-align:center;opacity:0.7'>Nenhum caso encontrado.</p>";return;}
-      cases.forEach(c=>{
-        const shortDesc=c.description?.length>100?c.description.substring(0,100)+"...":c.description||"Sem descrição";
-        const card=document.createElement("div");
-        card.className="card";
-        card.innerHTML=`
-          <h3>${c.code||"C-??"} — ${c.title||"Sem título"}</h3>
-          <p><b>Suspeito:</b> ${c.suspect||"—"}</p>
-          <p><b>Facção:</b> ${c.faction||"—"}</p>
-          <p><b>Veículo:</b> ${c.vehicle||"—"}</p>
-          <p><b>Data:</b> ${c.createdAt?.toDate?c.createdAt.toDate().toLocaleDateString():"—"}</p>
-          <p class="desc">${shortDesc}</p>
-          <div class="buttons">
-            <button class="viewBtn">👁 Ver Detalhes</button>
-            <button class="editBtn">🖊 Editar</button>
-            <button class="archiveBtn">📦 Arquivar</button>
-            <button class="deleteBtn">🗑 Eliminar</button>
-          </div>
-        `;
+    function isImageLike(url, fileType){
+      if (fileType && fileType.startsWith("image/")) return true;
+      return /\.(png|jpe?g|gif|webp|bmp|svg)$/i.test(url||"");
+    }
 
-        const viewBtn=card.querySelector(".viewBtn");
-        const editBtn=card.querySelector(".editBtn");
-        const archiveBtn=card.querySelector(".archiveBtn");
-        const deleteBtn=card.querySelector(".deleteBtn");
+    function caseCard(c){
+      const isImg = isImageLike(c.photoURL, c.fileType);
+      const thumbEl = isImg
+        ? `<img class="thumb" src="${c.photoURL}" alt="anexo">`
+        : (c.photoURL ? `<div class="thumb-file">📄</div><div class="file-name" title="${c.fileName||"documento"}">${(c.fileName||"documento")}</div>` : "");
 
-        editBtn.addEventListener("click", () => window.location.href = `editar.html?id=${c.id}`);
-
-        viewBtn.addEventListener("click",()=>{
-          if(card.classList.contains("expanded")){
-            card.classList.remove("expanded");
-            const full=card.querySelector(".fullDesc");
-            if(full)full.remove();
-            viewBtn.textContent="👁 Ver Detalhes";
-          }else{
-            card.classList.add("expanded");
-            const full=document.createElement("div");
-            full.className="fullDesc";
-            full.innerHTML=`
-              <p><b>Descrição Completa:</b><br>${c.description||"Sem descrição detalhada."}</p>
-              <button class="closeBtn">⬅ Fechar</button>`;
-            card.appendChild(full);
-            full.querySelector(".closeBtn").addEventListener("click",()=>{
-              card.classList.remove("expanded");
-              full.remove();
-              viewBtn.textContent="👁 Ver Detalhes";
-            });
-            viewBtn.textContent="⬅ Fechar";
-          }
-        });
-
-        // Arquivar com modal
-        archiveBtn.addEventListener("click", () => {
-          showConfirmModal("📦 Desejas arquivar este caso?", async () => {
-            try {
-              const docRef = doc(db, "cases", c.id);
-              await addDoc(collection(db, "cases_archived"), { ...c, archivedAt: new Date() });
-              await deleteDoc(docRef);
-              showNeonMessage("✅ Caso arquivado com sucesso!");
-              card.remove(); // Oculta imediatamente
-            } catch (err) {
-              console.error(err);
-              showNeonMessage("❌ Erro ao arquivar!", true);
+      const estadoStyle = c.estado==="arquivado" ? "opacity:.65;" : "";
+      const card = document.createElement("div");
+      card.className="card";
+      card.style = estadoStyle;
+      card.innerHTML = `
+        ${thumbEl}
+        <h3>${c.titulo || "Sem título"}</h3>
+        <div class="meta"><b>Responsável:</b> ${c.responsavel || "-"}</div>
+        ${c.envolvidos?.length ? `<div class="meta"><b>Envolvidos:</b> ${c.envolvidos.join(", ")}</div>` : ""}
+        ${c.veiculos?.length ? `<div class="meta"><b>Veículos:</b> ${c.veiculos.join(", ")}</div>` : ""}
+        ${c.faccoes?.length ? `<div class="meta"><b>Facções:</b> ${c.faccoes.join(", ")}</div>` : ""}
+        <div class="estado">${(c.estado || "ativo").toUpperCase()}</div>
+        <div class="buttons">
+          <button class="btn btn-soft viewBtn">👁 Ver</button>
+          ${canEdit ? `
+            ${c.estado!=="arquivado" ? `
+              <button class="btn btn-soft editBtn">🖊 Editar</button>
+              <button class="btn btn-soft archiveBtn">📦 Arquivar</button>` :
+              `<button class="btn btn-soft reopenBtn">🗃 Reabrir</button>`
             }
-          });
-        });
+            <button class="btn btn-danger delBtn">🗑 Eliminar</button>
+          ` : ""}
+        </div>
+      `;
 
-        // Eliminar com modal
-        deleteBtn.addEventListener("click", () => {
-          showConfirmModal("🗑 Tens a certeza que queres eliminar este caso?", async () => {
-            try {
-              const docRef = doc(db, "cases", c.id);
-              await deleteDoc(docRef);
-              showNeonMessage("🗑 Caso eliminado com sucesso!");
-              card.remove();
-            } catch (err) {
-              console.error(err);
-              showNeonMessage("❌ Erro ao eliminar!", true);
-            }
-          });
-        });
+      // Ver (modal com preview grande)
+      card.querySelector(".viewBtn").onclick = ()=>{
+        const wrap = document.createElement("div");
+        wrap.className="aura-modal-wrap";
+        const fileBlock = c.photoURL ? (isImg
+          ? `<p><img src="${c.photoURL}" alt="anexo" style="max-width:100%; border-radius:12px; box-shadow:0 0 12px rgba(180,107,255,.35);" /></p>`
+          : `<p>📄 ${c.fileName || "documento"} — <a href="${c.photoURL}" target="_blank" style="color:#bfa7ff; text-decoration:underline;">Abrir</a></p>`)
+          : "";
 
-        grid.appendChild(card);
+        wrap.innerHTML=`
+          <div class="aura-modal">
+            <h3>${c.titulo || "Sem título"}</h3>
+            <p><b>Responsável:</b> ${c.responsavel || "-"}</p>
+            ${c.envolvidos?.length ? `<p><b>Envolvidos:</b> ${c.envolvidos.join(", ")}</p>` : ""}
+            ${c.veiculos?.length ? `<p><b>Veículos:</b> ${c.veiculos.join(", ")}</p>` : ""}
+            ${c.faccoes?.length ? `<p><b>Facções:</b> ${c.faccoes.join(", ")}</p>` : ""}
+            <p><b>Descrição:</b><br>${c.descricao || "Sem descrição."}</p>
+            ${fileBlock}
+            <div class="row"><button class="aura-btn primary">Fechar</button></div>
+          </div>`;
+        wrap.querySelector("button").onclick = ()=> wrap.remove();
+        wrap.addEventListener("click",(e)=>{ if(e.target===wrap) wrap.remove(); });
+        document.body.appendChild(wrap);
+      };
+
+      // Editar
+      card.querySelector(".editBtn")?.addEventListener("click", ()=> window.location.href=`editar.html?id=${c.id}`);
+
+      // Arquivar
+      card.querySelector(".archiveBtn")?.addEventListener("click", async ()=>{
+        const ok = await confirmModal({
+          title:"Arquivar caso",
+          message:`Queres arquivar <b>${c.titulo || c.id}</b>?`,
+          okText:"Arquivar"
+        });
+        if(!ok) return;
+        try{
+          await updateDoc(doc(db,"casos",c.id), { estado:"arquivado" });
+          toast("Caso arquivado!");
+          loadCases();
+        }catch(e){ console.error(e); toast("Erro ao arquivar: " + e.message, "error"); }
       });
+
+      // Reabrir
+      card.querySelector(".reopenBtn")?.addEventListener("click", async ()=>{
+        const ok = await confirmModal({
+          title:"Reabrir caso",
+          message:`Desejas reabrir <b>${c.titulo || c.id}</b>?`,
+          okText:"Reabrir"
+        });
+        if(!ok) return;
+        try{
+          await updateDoc(doc(db,"casos",c.id), { estado:"ativo" });
+          toast("Caso reaberto!");
+          loadCases();
+        }catch(e){ console.error(e); toast("Erro ao reabrir: " + e.message, "error"); }
+      });
+
+      // Eliminar
+      card.querySelector(".delBtn")?.addEventListener("click", async ()=>{
+        const ok = await confirmModal({
+          title:"Eliminar caso",
+          message:`Esta ação é permanente. Eliminar <b>${c.titulo || c.id}</b>?`,
+          okText:"Eliminar", variant:"danger"
+        });
+        if(!ok) return;
+        try{
+          await deleteDoc(doc(db,"casos",c.id));
+          toast("Caso eliminado!");
+          card.remove();
+        }catch(e){ console.error(e); toast("Erro ao eliminar: " + e.message, "error"); }
+      });
+
+      return card;
     }
 
-    search.addEventListener("input",()=>{
-      const term=search.value.toLowerCase();
-      const filtered=allCases.filter(c=>
-        (c.code||"").toLowerCase().includes(term) ||
-        (c.title||"").toLowerCase().includes(term)
-      );
-      renderCases(filtered);
+    function render(list){
+      grid.innerHTML="";
+      if(!list.length){ grid.innerHTML="<p class='muted'>Nenhum caso registado.</p>"; return; }
+      list.forEach(c=>grid.appendChild(caseCard(c)));
+    }
+
+    // Pesquisa
+    search.addEventListener("input", (e)=>{
+      const t=(e.target.value||"").toLowerCase().trim();
+      const filtered = allCases.filter(c=>{
+        return (c.titulo||"").toLowerCase().includes(t) ||
+               (c.responsavel||"").toLowerCase().includes(t) ||
+               (Array.isArray(c.envolvidos) && c.envolvidos.join(", ").toLowerCase().includes(t)) ||
+               (Array.isArray(c.veiculos) && c.veiculos.join(", ").toLowerCase().includes(t)) ||
+               (Array.isArray(c.faccoes)  && c.faccoes.join(", ").toLowerCase().includes(t));
+      });
+      render(filtered);
     });
 
     loadCases();
+  </script>
+
+  <!-- PERFIL + SAIR + PERMISSÕES VISUAIS -->
+  <script>
+    (function(){
+      const logoutBtn = document.getElementById("logoutBtn");
+      if (logoutBtn) {
+        logoutBtn.addEventListener("click", () => {
+          ["username","selectedAgent","userRole","userCode","isAdmin"].forEach(k => localStorage.removeItem(k));
+          window.location.href = "../select.html";
+        });
+      }
+
+      const isAdmin = localStorage.getItem("isAdmin")==="true";
+      const role = (localStorage.getItem("userRole")||"").toLowerCase();
+      const canEdit = isAdmin || role==="investigador";
+
+      if (!canEdit) {
+        document.querySelectorAll(".only-editor").forEach(el => el.style.display = "none");
+      }
+    })();
   </script>
 </body>
 </html>

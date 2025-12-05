@@ -1,290 +1,425 @@
 <!DOCTYPE html>
 <html lang="pt">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Editar Perfil - Sistema AURA</title>
-  <link rel="icon" href="../../Aurinha.png">
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Editar Perfil — Sistema AURA 💜</title>
+
+  <link rel="icon" href="../Aurinha.png" />
+  <link rel="stylesheet" href="../style.css" />
 
   <style>
-    body {
-      background: radial-gradient(circle at top left, #1a001f, #000);
-      font-family: 'Poppins', sans-serif;
-      color: #fff;
-      margin: 0;
-      padding: 0;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
+    .page-container { padding: 2rem; max-width: 1100px; margin: 0 auto; }
+    .topbar {
+      display:flex; gap:10px; flex-wrap:wrap; align-items:center; justify-content:space-between;
+      margin-bottom:1.2rem;
     }
-
-   /* 🔹 Botão retangular fixo no canto superior esquerdo */
-.back-btn {
-  position: fixed;
-  top: 15px;
-  left: 15px;
-  background: linear-gradient(90deg, #9b4dff, #b86bff);
-  border: none;
-  border-radius: 12px;
-  color: #fff;
-  font-weight: 600;
-  padding: 6px 14px;
-  font-size: 14px;
-  cursor: pointer;
-  box-shadow: 0 0 12px rgba(180, 0, 255, 0.6);
-  transition: 0.3s;
-  z-index: 9999;
-  width: auto !important;   /* ✅ Impede de ficar largo */
-  display: inline-block;    /* ✅ Mantém o tamanho justo */
-}
-
-.back-btn:hover {
-  transform: scale(1.05);
-  background: linear-gradient(90deg, #b86bff, #d6aaff);
-  box-shadow: 0 0 15px rgba(180, 0, 255, 0.9);
-}
-    .container {
-      background: rgba(50,0,80,0.45);
-      border: 1px solid rgba(200,150,255,0.3);
-      border-radius: 20px;
-      padding: 30px;
-      box-shadow: 0 0 30px rgba(180,0,255,0.4);
-      width: 420px;
-    }
-
-    h2 {
-      text-align: center;
-      color: #d6b2ff;
-      text-shadow: 0 0 10px rgba(180,0,255,0.7);
-      margin-bottom: 20px;
-    }
-
-    label {
-      display: block;
-      margin-top: 10px;
-      font-weight: 500;
-    }
-
-    input, select {
-      width: 100%;
-      margin-top: 5px;
-      padding: 10px;
-      border: none;
-      border-radius: 10px;
-      background: rgba(255,255,255,0.1);
-      color: #fff;
-    }
-
-    input:focus, select:focus {
-      outline: none;
-      box-shadow: 0 0 10px rgba(180,0,255,0.6);
-      background: rgba(255,255,255,0.15);
-    }
-
-    .photo-preview {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      margin-bottom: 10px;
-    }
-
-    .photo-preview img {
-      width: 100px;
-      height: 100px;
-      border-radius: 50%;
-      object-fit: cover;
-      border: 2px solid rgba(200,150,255,0.6);
-      box-shadow: 0 0 10px rgba(180,0,255,0.4);
-      margin-bottom: 8px;
-    }
-
-    .photo-btn {
+    .topbar h1 { margin:0; }
+    .actions { display:flex; gap:8px; flex-wrap:wrap; }
+    .btn {
       background: linear-gradient(90deg,#9b4dff,#b86bff);
-      border: none;
-      border-radius: 8px;
-      color: #fff;
-      padding: 6px 12px;
-      cursor: pointer;
-      transition: .3s;
+      border: none; border-radius: 10px; color: #fff; font-weight: 600;
+      padding: 8px 14px; cursor: pointer; transition: .2s;
+      box-shadow: 0 0 10px rgba(180,107,255,.25);
+    }
+    .btn:hover { transform: translateY(-1px); box-shadow: 0 10px 22px rgba(180,107,255,.35); }
+    .btn-soft { background: rgba(255,255,255,.08); color:#fff; border:1px solid rgba(255,255,255,.08); }
+    .btn-danger { background: linear-gradient(90deg,#ff4d6d,#ff7c6b); }
+
+    .form-grid {
+      display:grid; grid-template-columns: repeat(12, 1fr); gap:16px;
+      background: rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.06);
+      border-radius:14px; padding: 14px; box-shadow:0 10px 22px rgba(180,107,255,.15);
+    }
+    .field { display:flex; flex-direction:column; gap:6px; }
+    .field label { font-weight:600; opacity:.95; }
+    .field input, .field select, .field textarea {
+      width: 100%; padding:.75rem .9rem; border-radius:12px; border:none; outline:none;
+      background: rgba(255,255,255,.08); color:#fff;
+      box-shadow: 0 0 10px rgba(180,107,255,.18);
+    }
+    .field input[type="file"] {
+      padding: .55rem .7rem; background: rgba(255,255,255,.06);
+    }
+    .field textarea { min-height: 120px; resize: vertical; }
+
+    .preview {
+      display:flex; align-items:center; gap:12px;
+    }
+    .preview img {
+      width: 84px; height: 84px; border-radius: 10px; object-fit: cover;
+      box-shadow: 0 0 12px rgba(180,107,255,.35);
+      border: 1px solid rgba(255,255,255,.08);
     }
 
-    .photo-btn:hover {
-      transform: scale(1.05);
-      background: linear-gradient(90deg,#b86bff,#d6aaff);
-    }
+    .col-4 { grid-column: span 4; }
+    .col-6 { grid-column: span 6; }
+    .col-8 { grid-column: span 8; }
+    .col-12{ grid-column: span 12; }
 
-    button {
-      width: 100%;
-      margin-top: 15px;
-      padding: 10px;
-      border: none;
-      border-radius: 10px;
-      font-weight: 600;
-      color: #fff;
-      background: linear-gradient(90deg,#9b4dff,#b86bff);
-      box-shadow: 0 0 10px rgba(180,0,255,0.4);
-      cursor: pointer;
-      transition: .3s;
-    }
+    .muted { opacity:.8; }
 
-    button:hover {
-      transform: scale(1.05);
-      background: linear-gradient(90deg,#b86bff,#d6aaff);
-    }
+    /* Modal & Toast (bonitos) */
+    .aura-modal-wrap{ position:fixed; inset:0; background:rgba(0,0,0,.55); display:flex; align-items:center; justify-content:center; padding:20px; z-index:1100; animation: fadeIn .15s ease; }
+    .aura-modal{ width:min(540px,95vw); background: rgba(20,0,40,.92); border:1px solid rgba(255,255,255,.08); border-radius:16px; padding:18px; color:#fff; box-shadow:0 18px 40px rgba(180,107,255,.35); transform: translateY(6px); animation: popIn .18s ease forwards; }
+    .aura-modal h3{ margin:0 0 6px; }
+    .aura-modal p{ margin:.25rem 0 .8rem; opacity:.9; }
+    .aura-modal .row{ display:flex; gap:10px; justify-content:flex-end; }
+    .aura-modal .aura-btn{ background: rgba(255,255,255,.08); color:#fff; border:1px solid rgba(255,255,255,.08); padding:.6rem .9rem; border-radius:10px; cursor:pointer; font-weight:600; }
+    .aura-modal .aura-btn.primary{ background: linear-gradient(135deg,#b46bff,#9f4dff); border:none; box-shadow: 0 8px 18px rgba(159,77,255,.35); }
+    .aura-modal .aura-btn.danger{ background: linear-gradient(135deg,#ff4d6d,#ff7c6b); border:none; box-shadow: 0 8px 18px rgba(255,124,107,.35); }
+    @keyframes fadeIn { from{opacity:0} to{opacity:1} } @keyframes popIn { to{ transform: translateY(0) } }
+    .aura-toast{ position:fixed; right:16px; bottom:16px; z-index:1200; display:flex; gap:10px; align-items:center; background: rgba(20,0,40,.95); border:1px solid rgba(255,255,255,.08); padding:.7rem 1rem; border-radius:12px; color:#fff; box-shadow:0 10px 24px rgba(180,107,255,.35); animation: fadeIn .15s ease; }
+    .aura-toast.success{ border-color: rgba(140,255,199,.35); }
+    .aura-toast.error{ border-color: rgba(255,124,107,.35); }
+    .aura-toast .icon{ font-size:1.2rem; }
 
-    .popup {
-      position: fixed;
-      bottom: 30px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: linear-gradient(90deg, #9b4dff, #b86bff);
-      padding: 12px 25px;
-      border-radius: 15px;
-      color: #fff;
-      font-weight: 500;
-      box-shadow: 0 0 20px rgba(180,0,255,0.6);
-      text-align: center;
-      z-index: 9999;
-      animation: fadeInUp 0.3s ease;
-    }
-
-    @keyframes fadeInUp {
-      from {opacity:0; transform: translate(-50%, 10px);}
-      to {opacity:1; transform: translate(-50%, 0);}
-    }
+    /* Helpers de permissão */
+    .only-editor {} /* investigador/admin */
+    .only-admin {}  /* apenas admin */
   </style>
 </head>
 
 <body>
-  <!-- 🔹 Botão fixo no canto superior esquerdo -->
-  <button class="back-btn" onclick="window.location.href='ver.html'">⬅ Voltar</button>
+  <!-- MENU LATERAL -->
+  <div class="sidebar">
+    <h2 class="logo">SISTEMA AURA</h2>
+    <span id="agentNameDisplay" class="agent-display">Agente: -</span>
 
-  <div class="container">
-    <h2>Editar Perfil</h2>
+    <ul>
+      <li><a href="../dashboard.html" class="navlink active"><span class="icon">🏠</span><span class="label">Dashboard</span></a></li>
+      <li><a href="../pesquisa/ver.html" class="navlink"><span class="icon">🔍</span><span class="label">Pesquisa Geral</span></a></li>
+      <li><a href="../perfis/ver.html" class="navlink"><span class="icon">👑</span><span class="label">Perfil da Aura</span></a></li>
+      <li><a href="../people/ver.html" class="navlink"><span class="icon">🧍</span><span class="label">Pessoas</span></a></li>
+      <li><a href="../casos/ver.html" class="navlink"><span class="icon">📁</span><span class="label">Casos</span></a></li>
+      <li><a href="../investigacoes/ver.html" class="navlink"><span class="icon">🕵️</span><span class="label">Investigações</span></a></li>
+      <li><a href="../veiculos/ver.html" class="navlink"><span class="icon">🏎️</span><span class="label">Veículos</span></a></li>
+      <li><a href="../facc/ver.html" class="navlink"><span class="icon">⚔️</span><span class="label">Facções</span></a></li>
+      <li><a href="../perimetro/ver.html" class="navlink"><span class="icon">📍</span><span class="label">Perímetro de Ações</span></a></li>
+      <li><a href="../reunioes/ver.html" class="navlink"><span class="icon">🗓️</span><span class="label">Reuniões</span></a></li>
+      <li><a href="../casos/arquivados.html" class="navlink"><span class="icon">🗃️</span><span class="label">Casos Arquivados</span></a></li>
+    </ul>
 
-    <div class="photo-preview">
-      <img id="profilePhoto" src="../../Aurinha.png" alt="Foto de Perfil">
-      <input type="file" id="photoInput" accept="image/*" hidden>
-      <button class="photo-btn" id="uploadPhotoBtn">📁 Escolher Foto</button>
+    <button id="logoutBtn">Sair</button>
+  </div>
+  <!-- CONTEÚDO -->
+  <div class="main-content">
+    <div class="page-container">
+      <div class="topbar">
+        <h1>Editar Perfil</h1>
+        <div class="actions">
+          <button id="backBtn" class="btn btn-soft">⬅️ Voltar</button>
+          <button id="archiveBtn" class="btn only-editor">📦 Arquivar</button>
+          <button id="deleteBtn" class="btn btn-danger only-admin">🗑 Eliminar</button>
+        </div>
+      </div>
+
+      <form id="editForm" class="form-grid">
+        <div class="field col-6">
+          <label for="name">Nome</label>
+          <input id="name" placeholder="Nome completo" />
+        </div>
+        <div class="field col-6">
+          <label for="division">Divisão</label>
+          <input id="division" placeholder="Investigação / Grupo Aéreo / Corrida / Estratégia..." />
+        </div>
+
+        <div class="field col-4">
+          <label for="joinDate">Entrada</label>
+          <input id="joinDate" type="date" />
+        </div>
+        <div class="field col-4">
+          <label for="alias">Alias/Nick</label>
+          <input id="alias" placeholder="Opcional" />
+        </div>
+        <div class="field col-4">
+          <label for="photoURL">Foto (URL)</label>
+          <input id="photoURL" placeholder="https://..." />
+        </div>
+
+        <div class="field col-12">
+          <label>Foto (ficheiro do PC)</label>
+          <div class="preview">
+            <img id="photoPreview" src="../Aurinha.png" alt="preview">
+            <input id="photoFile" type="file" accept="image/*" />
+          </div>
+          <small class="muted">Opcional: se escolheres um ficheiro, vamos fazer upload para o Storage e atualizar o campo Foto automaticamente.</small>
+        </div>
+
+        <div class="field col-12">
+          <label for="description">Descrição</label>
+          <textarea id="description" placeholder="Notas, conquistas, observações..."></textarea>
+        </div>
+
+        <!-- Admin pode alternar Admin aqui -->
+        <div class="field col-6 only-admin">
+          <label for="isAdmin">Administrador</label>
+          <select id="isAdmin">
+            <option value="false">Não</option>
+            <option value="true">Sim</option>
+          </select>
+        </div>
+
+        <!-- Cargo apenas leitura (tag Investigador é gerida no ecrã de listagem) -->
+        <div class="field col-6">
+          <label for="roleView">Cargo</label>
+          <input id="roleView" disabled class="muted" />
+          <small class="muted">Para alterar Investigador usa o botão no ecrã de listagem.</small>
+        </div>
+
+        <div class="col-12" style="display:flex; gap:10px; justify-content:flex-end;">
+          <button type="button" id="saveBtn" class="btn only-editor">💾 Guardar</button>
+        </div>
+      </form>
     </div>
-
-    <form id="editForm">
-      <label>Código:</label>
-      <input type="text" id="code" disabled>
-
-      <label>Nome:</label>
-      <input type="text" id="name" required>
-
-      <label>Função (Role):</label>
-      <input type="text" id="role" required>
-
-      <label>Facção:</label>
-      <input type="text" id="faction" required>
-
-      <label>Tipo:</label>
-      <input type="text" id="type" required>
-
-      <button type="submit">💾 Salvar Alterações</button>
-    </form>
   </div>
 
+  <!-- FIREBASE & LÓGICA -->
   <script type="module">
     import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js";
-    import { getFirestore, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
-    import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-storage.js";
-    import { firebaseConfig } from "../../firebaseConfig.js";
+    import {
+      getFirestore, doc, getDoc, updateDoc, addDoc, deleteDoc, collection, serverTimestamp
+    } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
+    import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-storage.js";
+    import { firebaseConfig } from "../firebaseConfig.js";
 
-    const app = getApps().length===0 ? initializeApp(firebaseConfig) : getApps()[0];
+    const app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
     const db = getFirestore(app);
     const storage = getStorage(app);
 
-    const params = new URLSearchParams(window.location.search);
-    const userId = params.get("id");
+    const q = new URLSearchParams(location.search);
+    const id = q.get("id");
+    if (!id) location.href = "ver.html";
 
-    const photoEl = document.getElementById("profilePhoto");
-    const photoInput = document.getElementById("photoInput");
-    const uploadBtn = document.getElementById("uploadPhotoBtn");
+    const form = document.getElementById("editForm");
+    const name = document.getElementById("name");
+    const division = document.getElementById("division");
+    const joinDate = document.getElementById("joinDate");
+    const alias = document.getElementById("alias");
+    const photoURL = document.getElementById("photoURL");
+    const photoFile = document.getElementById("photoFile");
+    const photoPreview = document.getElementById("photoPreview");
+    const description = document.getElementById("description");
+    const roleView = document.getElementById("roleView");
+    const isAdminSel = document.getElementById("isAdmin");
 
-    let currentPhotoURL = null;
+    const backBtn = document.getElementById("backBtn");
+    const saveBtn = document.getElementById("saveBtn");
+    const archiveBtn = document.getElementById("archiveBtn");
+    const deleteBtn = document.getElementById("deleteBtn");
 
-    function popup(msg){
-      const el=document.createElement("div");
-      el.className="popup";
-      el.textContent=msg;
-      document.body.appendChild(el);
-      setTimeout(()=>el.remove(),3000);
+    backBtn.onclick = () => history.back();
+
+    // UI helpers (modal + toast)
+    function showConfirm({ title="Confirmar", message="", confirmText="Confirmar", cancelText="Cancelar", variant="primary" }){
+      return new Promise((resolve)=>{
+        const wrap = document.createElement("div");
+        wrap.className = "aura-modal-wrap";
+        const modal = document.createElement("div");
+        modal.className = "aura-modal";
+        modal.innerHTML = `
+          <h3>${title}</h3>
+          <p>${message}</p>
+          <div class="row">
+            <button class="aura-btn">${cancelText}</button>
+            <button class="aura-btn ${variant==='danger'?'danger':'primary'}">${confirmText}</button>
+          </div>
+        `;
+        wrap.appendChild(modal);
+        document.body.appendChild(wrap);
+
+        const [btnCancel, btnOk] = modal.querySelectorAll("button");
+        const close = (val)=>{ wrap.remove(); resolve(val); };
+        btnCancel.onclick = ()=> close(false);
+        btnOk.onclick     = ()=> close(true);
+        wrap.addEventListener("click", (e)=>{ if(e.target===wrap) close(false); });
+        window.addEventListener("keydown", function esc(e){ if(e.key==="Escape"){ close(false); window.removeEventListener("keydown", esc);} });
+      });
     }
 
-    // Carregar dados do perfil
-    async function loadProfile(){
-      if(!userId) return popup("❌ ID inválido!");
-      const ref=doc(db,"users",userId);
-      const snap=await getDoc(ref);
-      if(!snap.exists()) return popup("❌ Perfil não encontrado!");
-      const data=snap.data();
-
-      document.getElementById("code").value=data.code||"";
-      document.getElementById("name").value=data.name||"";
-      document.getElementById("role").value=data.role||"";
-      document.getElementById("faction").value=data.faction||"";
-      document.getElementById("type").value=data.type||"";
-
-      if(data.photoURL){
-        photoEl.src=data.photoURL;
-        currentPhotoURL=data.photoURL;
-      }
+    function toast(msg, type="success"){
+      const t = document.createElement("div");
+      t.className = `aura-toast ${type}`;
+      t.innerHTML = `<span class="icon">${type==="success"?"✅":type==="error"?"⚠️":"💜"}</span><span>${msg}</span>`;
+      document.body.appendChild(t);
+      setTimeout(()=>{ t.style.opacity="0"; setTimeout(()=>t.remove(), 220); }, 1800);
     }
 
-    // Escolher foto
-    uploadBtn.addEventListener("click",()=>photoInput.click());
+    async function addLog(action, itemType, itemName){
+      try{
+        await addDoc(collection(db, "logs"), {
+          action, itemType, itemName: itemName || "",
+          user: localStorage.getItem("selectedAgent") || "Desconhecido",
+          timestamp: serverTimestamp()
+        });
+      }catch(e){ console.warn("log fail", e); }
+    }
 
-    // Upload automático da nova foto
-    photoInput.addEventListener("change", async (e)=>{
-      const file=e.target.files[0];
-      if(!file) return;
+    // Pré-visualização de imagem local
+    photoFile.addEventListener("change", ()=>{
+      const f = photoFile.files?.[0];
+      if (!f) return;
+      const url = URL.createObjectURL(f);
+      photoPreview.src = url;
+    });
+
+    // Upload para Storage (se houver ficheiro); devolve URL final
+    async function maybeUploadPhoto(userId){
+      const f = photoFile.files?.[0];
+      if (!f) return null;
+      const safeName = (f.name || "photo").replace(/[^\w.\-]+/g,"_");
+      const storageRef = ref(storage, `users/${userId}/${Date.now()}_${safeName}`);
+      await uploadBytes(storageRef, f);
+      const url = await getDownloadURL(storageRef);
+      return url;
+    }
+
+    // Carregar documento
+    let original = null;
+    (async ()=>{
+      try{
+        const snap = await getDoc(doc(db, "users", id));
+        if (!snap.exists()) { toast("Perfil não encontrado.","error"); return; }
+        original = { id, ...snap.data() };
+        // preencher
+        name.value = original.name || "";
+        division.value = original.division || "";
+        joinDate.value = original.joinDate ? (String(original.joinDate).length===10 ? original.joinDate : "") : "";
+        alias.value = original.alias || original.nick || "";
+        photoURL.value = original.photoURL || "";
+        photoPreview.src = original.photoURL || "../Aurinha.png";
+        description.value = original.description || original.observacoes || "";
+        roleView.value = original.role || "";
+        isAdminSel.value = (original.isAdmin === true) ? "true" : "false";
+      }catch(e){ console.error(e); toast("Erro ao carregar perfil.","error"); }
+    })();
+
+    // Guardar
+    saveBtn.addEventListener("click", async ()=>{
+      const ok = await showConfirm({
+        title: "Guardar alterações",
+        message: `Confirmas as alterações em <b>${name.value || original?.name || id}</b>?`,
+        confirmText: "Guardar",
+        variant: "primary"
+      });
+      if(!ok) return;
 
       try{
-        if(currentPhotoURL){
-          const oldRef=ref(storage, currentPhotoURL);
-          try { await deleteObject(oldRef); } catch {}
+        // Se tiver ficheiro, faz upload e usa a URL nova
+        const uploadedURL = await maybeUploadPhoto(id);
+        if (uploadedURL) {
+          photoURL.value = uploadedURL;
         }
 
-        const fileRef=ref(storage, `profile_photos/${userId}_${Date.now()}.jpg`);
-        await uploadBytes(fileRef, file);
-        const url=await getDownloadURL(fileRef);
-        currentPhotoURL=url;
-        photoEl.src=url;
+        const payload = {
+          name: name.value.trim(),
+          division: division.value.trim(),
+          joinDate: joinDate.value || "",
+          alias: alias.value.trim(),
+          photoURL: photoURL.value.trim(),
+          description: description.value.trim(),
+        };
 
-        await updateDoc(doc(db,"users",userId),{photoURL:url});
-        popup("✅ Foto atualizada!");
-      }catch(err){
-        console.error(err);
-        popup("❌ Erro ao enviar foto!");
-      }
+        // Admin pode alternar isAdmin aqui
+        const isAdmin = (localStorage.getItem("isAdmin") === "true" || localStorage.getItem("isAdmin") === true);
+        if (isAdmin) {
+          payload.isAdmin = (isAdminSel.value === "true");
+        }
+
+        await updateDoc(doc(db, "users", id), payload);
+        await addLog("editou", "perfil", name.value || original?.name || id);
+        toast("Alterações guardadas!","success");
+      }catch(e){ console.error(e); toast("Erro ao guardar.","error"); }
     });
 
-    // Salvar alterações
-    document.getElementById("editForm").addEventListener("submit", async(e)=>{
-      e.preventDefault();
+    // Arquivar
+    archiveBtn.addEventListener("click", async ()=>{
+      const ok = await showConfirm({
+        title: "Arquivar perfil",
+        message: `Queres arquivar <b>${name.value || original?.name || id}</b>? Podes restaurar mais tarde.`,
+        confirmText: "Arquivar",
+        variant: "primary"
+      });
+      if(!ok) return;
+
       try{
-        await updateDoc(doc(db,"users",userId),{
-          name:document.getElementById("name").value.trim(),
-          role:document.getElementById("role").value.trim(),
-          faction:document.getElementById("faction").value.trim(),
-          type:document.getElementById("type").value.trim(),
-          updatedAt:new Date()
-        });
-        popup("✅ Perfil atualizado com sucesso!");
-        setTimeout(()=>window.location.href="ver.html",1500);
-      }catch(err){
-        console.error(err);
-        popup("❌ Erro ao salvar!");
-      }
+        // Se tiver ficheiro novo, faz upload e usa-o no payload
+        const uploadedURL = await maybeUploadPhoto(id);
+        const payload = { ...original, ...{
+          name: name.value.trim() || original?.name || "",
+          division: division.value.trim() || original?.division || "",
+          joinDate: joinDate.value || original?.joinDate || "",
+          alias: alias.value.trim() || original?.alias || original?.nick || "",
+          photoURL: uploadedURL ? uploadedURL : (photoURL.value.trim() || original?.photoURL || ""),
+          description: description.value.trim() || original?.description || "",
+          archivedAt: new Date()
+        }};
+        await addDoc(collection(db,"users_archived"), payload);
+        await deleteDoc(doc(db,"users", id));
+        await addLog("arquivou","perfil", payload.name || id);
+        toast("Perfil arquivado!","success");
+        setTimeout(()=> location.href = "ver.html", 600);
+      }catch(e){ console.error(e); toast("Erro ao arquivar.","error"); }
     });
 
-    loadProfile();
+    // Eliminar (apenas admin visível)
+    deleteBtn.addEventListener("click", async ()=>{
+      const ok = await showConfirm({
+        title: "Eliminar perfil",
+        message: `Esta ação é permanente. Eliminar <b>${name.value || original?.name || id}</b>?`,
+        confirmText: "Eliminar",
+        variant: "danger"
+      });
+      if(!ok) return;
+
+      try{
+        await deleteDoc(doc(db,"users", id));
+        await addLog("eliminou","perfil", name.value || original?.name || id);
+        toast("Perfil eliminado!","success");
+        setTimeout(()=> location.href = "ver.html", 600);
+      }catch(e){ console.error(e); toast("Erro ao eliminar.","error"); }
+    });
   </script>
+
+   <!-- PERMISSÕES (front) + Agente/Sair -->
+  <script>
+(function() {
+  const agent = localStorage.getItem("selectedAgent") || "Desconhecido";
+  const el = document.getElementById("agentNameDisplay");
+  if (el) el.textContent = `Agente: ${agent}`;
+
+  const logoutBtn = document.getElementById("logoutBtn");
+  if (logoutBtn) {
+    logoutBtn.addEventListener("click", () => {
+      ["username","selectedAgent","userRole","userCode","isAdmin"].forEach(k => localStorage.removeItem(k));
+      window.location.href = "../select.html";
+    });
+  }
+
+  // Lê permissões do localStorage
+  const isAdmin = localStorage.getItem("isAdmin") === "true";
+  const role = (localStorage.getItem("userRole") || "").toLowerCase();
+  const canEdit = role === "investigador" || isAdmin;
+
+  // 🔒 remove completamente elementos de admin do DOM se não for admin
+  if (!isAdmin) {
+    document.querySelectorAll(".only-admin").forEach(el => el.remove());
+  }
+
+  // mostra/oculta botões de edição normais (investigador)
+  document.querySelectorAll(".only-editor").forEach(el => {
+    el.style.display = canEdit ? "" : "none";
+  });
+
+  // bloqueia inputs se não puder editar
+  if (!canEdit) {
+    document.querySelectorAll("input, textarea, select, button").forEach(el => {
+      if (el.id === "logoutBtn") return;
+      if (el.closest(".only-admin")) return;
+      if (el.closest(".only-editor")) { el.disabled = true; return; }
+    });
+  }
+})();
+</script>
 </body>
 </html>

@@ -8,10 +8,40 @@
   <link rel="icon" href="Aurinha.png" />
   <link rel="stylesheet" href="style.css" />
 
-  <!-- Firebase -->
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
-  <script src="firebaseConfig.js"></script>
+  <!-- Firebase (versão modular) -->
+  <script type="module">
+    import { app, db } from "./firebaseConfig.js";
+    import { collection, getDocs } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
+
+    document.addEventListener("DOMContentLoaded", async () => {
+      const userSelect = document.getElementById("userSelect");
+      const btnEntrar = document.getElementById("btnEntrar");
+
+      try {
+        const querySnapshot = await getDocs(collection(db, "users"));
+        querySnapshot.forEach((doc) => {
+          const data = doc.data();
+          const opt = document.createElement("option");
+          opt.value = data.name;
+          opt.textContent = data.name;
+          userSelect.appendChild(opt);
+        });
+      } catch (err) {
+        console.error("Erro ao carregar usuários:", err);
+        alert("Erro ao carregar usuários. Verifique a conexão com o Firebase.");
+      }
+
+      btnEntrar.addEventListener("click", () => {
+        const username = userSelect.value;
+        if (!username) {
+          alert("Selecione um usuário primeiro!");
+          return;
+        }
+        localStorage.setItem("username", username);
+        window.location.href = "index.html";
+      });
+    });
+  </script>
 
   <style>
     body {
@@ -100,46 +130,7 @@
       <option value="" disabled selected>-- Escolha o usuário --</option>
     </select>
 
-    <button onclick="entrarDashboard()">Entrar no Sistema</button>
+    <button id="btnEntrar">Entrar no Sistema</button>
   </div>
-
-  <script>
-    const db = firebase.firestore();
-    const userSelect = document.getElementById("userSelect");
-
-    // 🔹 Carrega os usuários do Firestore (coleção 'users')
-    async function carregarUsuarios() {
-      try {
-        const snapshot = await db.collection("users").get();
-        snapshot.forEach(doc => {
-          const data = doc.data();
-          const opt = document.createElement("option");
-          opt.value = data.name;
-          opt.textContent = data.name;
-          userSelect.appendChild(opt);
-        });
-      } catch (err) {
-        console.error("Erro ao carregar usuários:", err);
-        alert("Erro ao carregar usuários. Verifique sua conexão com o Firebase.");
-      }
-    }
-
-    carregarUsuarios();
-
-    // 🔹 Ao clicar em entrar
-    function entrarDashboard() {
-      const username = userSelect.value;
-      if (!username) {
-        alert("Selecione um usuário primeiro!");
-        return;
-      }
-
-      // Salva o nome do usuário no localStorage
-      localStorage.setItem("username", username);
-
-      // Redireciona para o dashboard
-      window.location.href = "dashboard.html";
-    }
-  </script>
 </body>
 </html>

@@ -1,109 +1,273 @@
 <!DOCTYPE html>
 <html lang="pt">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Editar Pessoa - Sistema Aura</title>
-  <link rel="icon" href="../../Aurinha.png">
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Editar Pessoa — Sistema AURA 💜</title>
+
+  <link rel="icon" href="../Aurinha.png" />
+  <link rel="stylesheet" href="../style.css" />
+
   <style>
-    body {
-      background: radial-gradient(circle at top left, #1a001f, #000);
-      font-family: 'Poppins', sans-serif;
-      color: #fff;
-      display: flex; justify-content: center; align-items: center;
-      height: 100vh; margin: 0;
+    .page-container { padding: 2rem; max-width: 1100px; margin: 0 auto; }
+    .topbar { display:flex; justify-content:space-between; align-items:center; margin-bottom:1.4rem; gap:8px; flex-wrap:wrap; }
+    .card { background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.06); border-radius:16px; padding:22px; box-shadow:0 10px 22px rgba(180,107,255,.15); }
+    .grid { display:grid; grid-template-columns: repeat(auto-fit, minmax(260px,1fr)); gap:16px; }
+    label { font-weight:600; opacity:.95; margin-bottom:6px; display:block; }
+    input, select, textarea {
+      width:100%; padding:.8rem 1rem; border-radius:12px; border:none; outline:none;
+      background:rgba(255,255,255,.08); color:#fff; box-shadow:0 0 10px rgba(180,107,255,.18);
     }
-    .form-container {
-      background: rgba(50, 0, 80, 0.4);
-      border: 1px solid rgba(200, 150, 255, 0.3);
-      border-radius: 20px;
-      padding: 30px 40px;
-      width: 400px;
-      text-align: center;
-      box-shadow: 0 0 25px rgba(180, 0, 255, 0.2);
-    }
-    input {
-      width: 100%; padding: 10px; margin: 8px 0;
-      border-radius: 8px; border: none;
-      background: rgba(255,255,255,0.1); color: #fff;
-    }
-    button {
-      background: linear-gradient(90deg, #9b4dff, #b86bff);
-      border: none; padding: 10px 20px;
-      border-radius: 10px; color: #fff;
-      font-weight: 600; cursor: pointer; transition: 0.3s;
-      margin-top: 10px;
-    }
-    button:hover { transform: scale(1.05); }
+    textarea { resize:vertical; min-height:120px; }
+    .col-12 { grid-column:1/-1; }
+    .preview { display:flex; align-items:center; gap:12px; }
+    .preview img { width:86px; height:86px; border-radius:12px; object-fit:cover; box-shadow:0 0 12px rgba(180,107,255,.35); }
+
+    .btn { background:linear-gradient(90deg,#9b4dff,#b86bff); border:none; border-radius:10px; color:#fff; font-weight:600; padding:8px 14px; cursor:pointer; transition:.2s; box-shadow:0 0 10px rgba(180,107,255,.25); }
+    .btn:hover{ transform:translateY(-1px); box-shadow:0 10px 22px rgba(180,107,255,.35); }
+    .btn-soft{ background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.08); }
+    .btn-danger{ background:linear-gradient(90deg,#ff4d6d,#ff7c6b); }
+
+    /* Toast */
+    .aura-toast{ position:fixed; right:16px; bottom:16px; z-index:1200; display:flex; gap:10px; align-items:center; background:rgba(20,0,40,.95); border:1px solid rgba(255,255,255,.08); padding:.7rem 1rem; border-radius:12px; color:#fff; box-shadow:0 10px 24px rgba(180,107,255,.35); animation:fadeIn .15s ease; }
+    .aura-toast.success{ border-color:rgba(140,255,199,.35); }
+    .aura-toast.error{ border-color:rgba(255,124,107,.35); }
+    @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+
+    /* Modal */
+    .aura-modal-wrap{ position:fixed; inset:0; background:rgba(0,0,0,.55); display:flex; align-items:center; justify-content:center; padding:20px; z-index:1400; animation:fadeIn .15s ease;}
+    .aura-modal{ width:min(520px,95vw); background:rgba(20,0,40,.92); border:1px solid rgba(255,255,255,.08); border-radius:16px; padding:18px; color:#fff; box-shadow:0 18px 40px rgba(180,107,255,.35);}
+    .aura-modal h3{ margin:0 0 6px; }
+    .aura-modal p{ margin:.25rem 0 1rem; opacity:.9;}
+    .aura-modal .row{ display:flex; gap:10px; justify-content:flex-end;}
+    .aura-btn{ background:rgba(255,255,255,.08); color:#fff; border:1px solid rgba(255,255,255,.08); padding:.6rem .9rem; border-radius:10px; cursor:pointer; font-weight:600;}
+    .aura-btn.primary{ background: linear-gradient(135deg,#b46bff,#9f4dff); border:none;}
+    .aura-btn.danger{ background: linear-gradient(135deg,#ff4d6d,#ff7c6b); border:none;}
+
+    .hidden{display:none}
   </style>
 </head>
+
 <body>
-  <div class="form-container">
-    <h2>Editar Pessoa</h2>
-    <input id="name" placeholder="Nome">
-    <input id="faction" placeholder="Facção">
-    <input id="hierarchy" placeholder="Hierarquia">
-    <input id="phone" placeholder="Telefone">
-    <input type="file" id="photo" accept="image/*">
-    <button id="updateBtn">Atualizar</button>
-    <button onclick="window.location.href='ver.html'">⬅ Voltar</button>
-    <p id="msg"></p>
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <h2 class="logo">SISTEMA AURA</h2>
+    <span id="agentNameDisplay" class="agent-display">Agente: -</span>
+    <ul>
+      <li><a href="../dashboard.html" class="navlink"><span class="icon">🏠</span><span class="label">Dashboard</span></a></li>
+      <li><a href="../perfis/ver.html" class="navlink"><span class="icon">👑</span><span class="label">Perfil da Aura</span></a></li>
+      <li><a href="ver.html" class="navlink"><span class="icon">🧍</span><span class="label">Pessoas</span></a></li>
+    </ul>
+    <button id="logoutBtn">Sair</button>
   </div>
 
+  <!-- CONTEÚDO -->
+  <div class="main-content">
+    <div class="page-container">
+      <div class="topbar">
+        <h1>Editar Pessoa</h1>
+        <div style="display:flex; gap:8px;">
+          <button id="backBtn" class="btn btn-soft">⬅️ Voltar</button>
+          <button id="deleteBtn" class="btn btn-danger only-editor">🗑 Eliminar</button>
+          <button id="saveBtn" class="btn only-editor">💾 Guardar</button>
+        </div>
+      </div>
+
+      <form id="editForm" class="card">
+        <div class="grid">
+          <div>
+            <label>Nome</label>
+            <input id="name" required />
+          </div>
+          <div>
+            <label>Telefone</label>
+            <input id="phone" placeholder="912345678" />
+          </div>
+          <div>
+            <label>Tipo</label>
+            <select id="type">
+              <option value="civil">Civil</option>
+              <option value="PM">PM</option>
+              <option value="fac">Facção</option>
+            </select>
+          </div>
+          <div id="roleField" class="hidden">
+            <label>Cargo</label>
+            <input id="role" placeholder="Ex: Sargento / Conselheiro" />
+          </div>
+
+          <div class="col-12">
+            <label>Foto (ficheiro do PC)</label>
+            <div class="preview">
+              <img id="photoPreview" src="../Aurinha.png" alt="preview" />
+              <input id="photoFile" type="file" accept="image/*" />
+            </div>
+            <small class="muted">Se escolheres um ficheiro, será carregado para o Storage e o registo será atualizado.</small>
+          </div>
+
+          <div class="col-12">
+            <label>Observações</label>
+            <textarea id="notes" placeholder="Notas adicionais (opcional)"></textarea>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- FIREBASE -->
   <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js";
-    import { getFirestore, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
+    import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js";
+    import { getFirestore, doc, getDoc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
     import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-storage.js";
-    import { firebaseConfig } from "../../firebaseConfig.js";
+    import { firebaseConfig } from "../firebaseConfig.js";
 
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-    const storage = getStorage(app);
+    const app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
+    const db  = getFirestore(app);
+    const stg = getStorage(app);
 
-    const params = new URLSearchParams(window.location.search);
-    const id = params.get("id");
-    const msg = document.getElementById("msg");
+    const qs = new URLSearchParams(location.search);
+    const id = qs.get("id");
+    if(!id){ location.href="ver.html"; }
 
-    async function loadData() {
-      const snap = await getDoc(doc(db, "people", id));
-      if (snap.exists()) {
-        const p = snap.data();
-        document.getElementById("name").value = p.name;
-        document.getElementById("faction").value = p.faction;
-        document.getElementById("hierarchy").value = p.hierarchy;
-        document.getElementById("phone").value = p.phone;
-      }
+    // els
+    const nameEl = document.getElementById("name");
+    const phoneEl= document.getElementById("phone");
+    const typeEl = document.getElementById("type");
+    const roleEl = document.getElementById("role");
+    const roleWrap = document.getElementById("roleField");
+    const notesEl= document.getElementById("notes");
+    const photoFile = document.getElementById("photoFile");
+    const photoPreview = document.getElementById("photoPreview");
+    const btnSave = document.getElementById("saveBtn");
+    const btnDel  = document.getElementById("deleteBtn");
+    const btnBack = document.getElementById("backBtn");
+
+    btnBack.onclick = ()=> window.location.href="ver.html";
+
+    function toast(msg,type="success"){
+      const t=document.createElement("div");
+      t.className=`aura-toast ${type}`;
+      t.innerHTML=`<span>${type==="success"?"✅":"⚠️"}</span><span>${msg}</span>`;
+      document.body.appendChild(t);
+      setTimeout(()=>{t.style.opacity="0"; setTimeout(()=>t.remove(),260);}, 1900);
+    }
+    function confirmModal({title="Confirmar",message="Tens a certeza?",okText="Confirmar",variant="primary"}){
+      return new Promise(resolve=>{
+        const wrap=document.createElement("div");
+        wrap.className="aura-modal-wrap";
+        wrap.innerHTML=`
+          <div class="aura-modal">
+            <h3>${title}</h3>
+            <p>${message}</p>
+            <div class="row">
+              <button class="aura-btn">Cancelar</button>
+              <button class="aura-btn ${variant==='danger'?'danger':'primary'}">${okText}</button>
+            </div>
+          </div>`;
+        document.body.appendChild(wrap);
+        const [c,o]=wrap.querySelectorAll("button");
+        const close=v=>{ wrap.remove(); resolve(v); };
+        c.onclick=()=>close(false); o.onclick=()=>close(true);
+        wrap.addEventListener("click",(e)=>{ if(e.target===wrap) close(false); });
+      });
     }
 
-    document.getElementById("updateBtn").addEventListener("click", async () => {
-      msg.textContent = "Atualizando...";
-      const name = document.getElementById("name").value.trim();
-      const faction = document.getElementById("faction").value.trim();
-      const hierarchy = document.getElementById("hierarchy").value.trim();
-      const phone = document.getElementById("phone").value.trim();
-      const file = document.getElementById("photo").files[0];
-      let photoURL;
+    function toggleRole(){
+      const t=typeEl.value;
+      if(t==="PM"||t==="fac"){ roleWrap.classList.remove("hidden"); }
+      else { roleWrap.classList.add("hidden"); roleEl.value=""; }
+    }
+    typeEl.addEventListener("change", toggleRole);
 
-      try {
-        if (file) {
-          const storageRef = ref(storage, `people/${Date.now()}_${file.name}`);
-          await uploadBytes(storageRef, file);
-          photoURL = await getDownloadURL(storageRef);
-        }
-
-        const updateData = { name, faction, hierarchy, phone };
-        if (photoURL) updateData.photoURL = photoURL;
-
-        await updateDoc(doc(db, "people", id), updateData);
-        msg.textContent = "✅ Atualizado com sucesso!";
-        setTimeout(() => window.location.href = "ver.html", 1200);
-      } catch (err) {
-        msg.textContent = "❌ Erro: " + err.message;
-      }
+    photoFile.addEventListener("change",()=>{
+      const f=photoFile.files?.[0];
+      if(f) photoPreview.src=URL.createObjectURL(f);
     });
 
-    loadData();
+    // Permissões
+    const isAdmin = localStorage.getItem("isAdmin")==="true";
+    const uRole = (localStorage.getItem("userRole")||"").toLowerCase();
+    const canEdit = isAdmin || uRole==="investigador";
+    if(!canEdit){
+      btnSave.style.display="none";
+      btnDel.style.display="none";
+      document.querySelectorAll("input, select, textarea").forEach(el=>el.disabled=true);
+    }
+
+    async function uploadPhotoIfNeeded(){
+      const f=photoFile.files?.[0];
+      if(!f) return null;
+      const path = `people/${id}/${Date.now()}_${f.name.replace(/[^\w.\-]+/g,"_")}`;
+      const r = ref(stg, path);
+      await uploadBytes(r, f);
+      return await getDownloadURL(r);
+    }
+
+    async function load(){
+      try{
+        const snap = await getDoc(doc(db,"people",id));
+        if(!snap.exists()){ toast("Registo não encontrado.","error"); setTimeout(()=>location.href="ver.html",900); return; }
+        const p = snap.data();
+        nameEl.value = p.name || "";
+        phoneEl.value= p.phone || "";
+        typeEl.value = p.type || "civil";
+        roleEl.value = p.role || "";
+        notesEl.value= p.notes || "";
+        if(p.photoURL){ photoPreview.src = p.photoURL; }
+        toggleRole();
+      }catch(e){ console.error(e); toast("Erro ao carregar.","error"); }
+    }
+
+    btnSave?.addEventListener("click", async (e)=>{
+      e.preventDefault();
+      if(!canEdit){ toast("Sem permissão para guardar.","error"); return; }
+
+      const ok = await confirmModal({ title:"Guardar alterações", message:"Confirmas guardar as alterações deste registo?", okText:"Guardar", variant:"primary" });
+      if(!ok) return;
+
+      try{
+        const url = await uploadPhotoIfNeeded(); // só carrega se houver ficheiro
+        const payload = {
+          name: nameEl.value.trim(),
+          phone: (phoneEl.value||"").trim(),
+          type: typeEl.value,
+          role: (typeEl.value==="PM"||typeEl.value==="fac") ? (roleEl.value||"").trim() : "",
+          notes: (notesEl.value||"").trim()
+        };
+        if(url) payload.photoURL = url;
+
+        await updateDoc(doc(db,"people",id), payload);
+        toast("Alterações guardadas!");
+      }catch(e){ console.error(e); toast("Erro ao guardar: " + e.message,"error"); }
+    });
+
+    btnDel?.addEventListener("click", async (e)=>{
+      e.preventDefault();
+      if(!canEdit){ toast("Sem permissão para eliminar.","error"); return; }
+      const ok = await confirmModal({ title:"Eliminar pessoa", message:"Esta ação é permanente. Desejas eliminar este registo?", okText:"Eliminar", variant:"danger" });
+      if(!ok) return;
+      try{
+        await deleteDoc(doc(db,"people",id));
+        toast("Registo eliminado!");
+        setTimeout(()=> location.href="ver.html", 800);
+      }catch(e){ console.error(e); toast("Erro ao eliminar: " + e.message,"error"); }
+    });
+
+    load();
+  </script>
+
+  <!-- PERFIL + SAIR -->
+  <script>
+    (function(){
+      const agent = localStorage.getItem("selectedAgent") || "Desconhecido";
+      const el = document.getElementById("agentNameDisplay");
+      if (el) el.textContent = `Agente: ${agent}`;
+      const logoutBtn = document.getElementById("logoutBtn");
+      if (logoutBtn) logoutBtn.onclick = ()=>{
+        ["username","selectedAgent","userRole","userCode","isAdmin"].forEach(k=>localStorage.removeItem(k));
+        window.location.href = "../select.html";
+      };
+    })();
   </script>
 </body>
 </html>

@@ -1,149 +1,185 @@
 <!DOCTYPE html>
-<html lang="pt">
+<html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Sistema Aura - Acesso</title>
+  <title>Sistema AURA 💜 — Login</title>
+
   <link rel="icon" href="Aurinha.png" />
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+
+<!-- Firebase -->
+<script type="module">
+  import { app, db } from "./firebaseConfig.js";
+  import { collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
+
+  document.addEventListener("DOMContentLoaded", async () => {
+    const username = localStorage.getItem("username");
+    const userDisplay = document.getElementById("userDisplay");
+    const loginBtn = document.getElementById("loginBtn");
+    const passwordInput = document.getElementById("password");
+
+    if (!username) {
+      alert("Nenhum usuário selecionado. Volte para a tela anterior.");
+      window.location.href = "select.html";
+      return;
+    }
+
+    userDisplay.textContent = username;
+
+    loginBtn.addEventListener("click", async () => {
+      const senha = passwordInput.value.trim();
+      if (!senha) {
+        alert("Digite sua senha!");
+        return;
+      }
+
+      try {
+        // procura pelo nome no Firestore
+        const q = query(collection(db, "users"), where("name", "==", username));
+        const snapshot = await getDocs(q);
+
+        if (snapshot.empty) {
+          alert("Usuário não encontrado!");
+          return;
+        }
+
+        const userData = snapshot.docs[0].data();
+
+        if (userData.password === senha) {
+          // ✅ Guarda permissões no localStorage de forma padronizada
+          localStorage.setItem("selectedAgent", username);
+          localStorage.setItem("userRole", userData.role ? userData.role.toLowerCase() : "");
+          localStorage.setItem("userTag", userData.tag || "");
+          localStorage.setItem("userCode", userData.code || "");
+          localStorage.setItem("isAdmin", userData.isAdmin === true ? "true" : "false");
+
+          // compatibilidade com páginas antigas
+          localStorage.setItem("username", username);
+
+          // Vai para o dashboard
+          window.location.href = "dashboard.html";
+        } else {
+          alert("Senha incorreta! Tente novamente.");
+        }
+      } catch (err) {
+        console.error(err);
+        alert("Erro ao verificar login. Verifique sua conexão.");
+      }
+    });
+  });
+</script>
 
   <style>
     body {
-      margin: 0;
-      height: 100vh;
-      background: radial-gradient(circle at top, #220033, #000);
-      display: flex;
-      justify-content: center;
-      align-items: center;
+      background: radial-gradient(circle at top left, #3c0064, #150026);
+      color: white;
       font-family: 'Poppins', sans-serif;
-      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
     }
 
-    .container {
-      text-align: center;
-      background: rgba(50, 0, 70, 0.4);
+    .login-container {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
       border-radius: 20px;
-      padding: 50px 60px;
-      box-shadow: 0 0 25px rgba(180, 0, 255, 0.3);
-      backdrop-filter: blur(15px);
-      border: 1px solid rgba(180, 0, 255, 0.3);
-      animation: fadeIn 0.6s ease;
+      box-shadow: 0 0 25px rgba(180,107,255,0.3);
+      padding: 2.5rem 3rem;
+      text-align: center;
+      backdrop-filter: blur(12px);
+      width: 400px;
+      animation: fadeIn 0.8s ease;
     }
 
     @keyframes fadeIn {
-      from { opacity: 0; transform: scale(0.95); }
-      to { opacity: 1; transform: scale(1); }
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    img {
+      width: 90px;
+      filter: drop-shadow(0 0 8px rgba(180,107,255,0.6));
+      margin-bottom: 1rem;
     }
 
     h1 {
-      font-size: 1.8rem;
-      margin-bottom: 25px;
-      color: #e0c6ff;
-      text-shadow: 0 0 15px rgba(180, 0, 255, 0.8);
+      text-shadow: 0 0 8px rgba(180,107,255,0.4);
+      margin-bottom: 0.5rem;
+      font-size: 1.5rem;
     }
 
-    .agent-name {
-      font-size: 1rem;
-      color: #c9aaff;
-      margin-bottom: 20px;
+    .muted {
+      opacity: 0.75;
+      margin-bottom: 1.5rem;
+      font-size: 0.9rem;
     }
 
     input {
       width: 100%;
-      padding: 12px;
-      border: none;
+      padding: 0.8rem;
       border-radius: 10px;
-      background: rgba(255, 255, 255, 0.1);
-      color: #fff;
+      border: none;
+      background: rgba(255,255,255,0.1);
+      color: white;
       font-size: 1rem;
-      text-align: center;
-      margin-bottom: 20px;
       outline: none;
+      box-shadow: 0 0 10px rgba(180,107,255,0.2);
+      margin-bottom: 1.5rem;
+      text-align: center;
+      letter-spacing: 1px;
     }
 
     input::placeholder {
-      color: #bbb;
+      color: rgba(255,255,255,0.6);
     }
 
     button {
       width: 100%;
-      padding: 12px;
+      padding: 0.8rem;
+      background: #b46bff;
       border: none;
       border-radius: 10px;
-      background: linear-gradient(90deg, #9b4dff, #b86bff);
-      color: #fff;
+      color: white;
+      font-size: 1rem;
       font-weight: 600;
       cursor: pointer;
       transition: 0.3s;
-      font-size: 1rem;
     }
 
     button:hover {
-      background: linear-gradient(90deg, #b86bff, #d6aaff);
-      transform: scale(1.03);
+      background: #9f4dff;
+      box-shadow: 0 0 15px rgba(180,107,255,0.4);
     }
 
-    .error {
-      color: #ff7575;
-      margin-top: 10px;
+    .back-btn {
+      display: inline-block;
+      margin-top: 1rem;
       font-size: 0.9rem;
-      display: none;
+      color: #ccc;
+      text-decoration: none;
+      transition: 0.3s;
+    }
+
+    .back-btn:hover {
+      color: white;
+      text-shadow: 0 0 8px rgba(180,107,255,0.4);
     }
   </style>
 </head>
+
 <body>
-  <div class="container">
-    <h1>Sistema Aura</h1>
-    <p class="agent-name" id="agentName"></p>
-    <input type="password" id="senhaInput" placeholder="Digite a senha de acesso" />
+  <div class="login-container fade-in">
+    <img src="Aurinha.png" alt="Logo AURA" />
+    <h1 id="userDisplay">Usuário</h1>
+    <p class="muted">Digite sua senha para continuar.</p>
+
+    <input type="password" id="password" placeholder="Senha 💜" />
     <button id="loginBtn">Entrar</button>
-    <p class="error" id="errorMsg">Senha incorreta. Tente novamente.</p>
+
+    <a href="select.html" class="back-btn">⬅️ Voltar para seleção</a>
   </div>
-
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js";
-    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
-    import { firebaseConfig } from "./firebaseConfig.js";
-
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-
-    // Mostrar o nome do agente se vier do select.html
-    const agent = localStorage.getItem("selectedAgent");
-    const agentDisplay = document.getElementById("agentName");
-    if (agent) {
-      agentDisplay.textContent = `Agente selecionado: ${agent}`;
-    }
-
-    // Função de verificação da senha
-    async function verificarSenha() {
-      const senhaInput = document.getElementById("senhaInput").value.trim();
-      const errorMsg = document.getElementById("errorMsg");
-
-      try {
-        const ref = doc(db, "sistema", "config");
-        const snap = await getDoc(ref);
-        if (snap.exists()) {
-          const senhaCorreta = snap.data().senha;
-          if (senhaInput === senhaCorreta) {
-            errorMsg.style.display = "none";
-            window.location.href = "dashboard.html";
-          } else {
-            errorMsg.style.display = "block";
-          }
-        } else {
-          alert("Configuração de senha não encontrada no Firebase!");
-        }
-      } catch (error) {
-        console.error("Erro Firebase:", error);
-        alert("Erro ao conectar ao servidor.");
-      }
-    }
-
-    document.getElementById("loginBtn").addEventListener("click", verificarSenha);
-    document.getElementById("senhaInput").addEventListener("keypress", (e) => {
-      if (e.key === "Enter") verificarSenha();
-    });
-  </script>
 </body>
 </html>

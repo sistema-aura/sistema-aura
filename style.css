@@ -1,250 +1,212 @@
-/* style.css — Sistema Aura v8 */
+/* === SISTEMA AURA — ESTILO GLOBAL === */
 
 * {
+  box-sizing: border-box;
   margin: 0;
   padding: 0;
-  box-sizing: border-box;
   font-family: 'Poppins', sans-serif;
 }
 
 body {
-  background: radial-gradient(circle at top left, #1a001f, #000);
+  background: radial-gradient(circle at top left, #2a004a, #0b0012);
   color: #fff;
   display: flex;
   min-height: 100vh;
 }
 
-/* ===== MENU LATERAL ===== */
+/* ===== SIDEBAR ===== */
 .sidebar {
-  width: 230px;
-  background: rgba(80, 0, 120, 0.25);
-  backdrop-filter: blur(15px);
-  border-right: 1px solid rgba(200, 150, 255, 0.2);
+  width: 220px; /* largura normal compacta */
+  min-width: 220px;
+  background: rgba(50, 0, 80, 0.8);
+  backdrop-filter: blur(12px);
+  border-right: 1px solid rgba(255, 255, 255, 0.06);
+  padding: 1.4rem 1rem;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  padding: 25px 0;
-  position: fixed;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  box-shadow: 0 0 20px rgba(160, 0, 255, 0.15);
+  justify-content: space-between;
 }
 
-.logo {
-  font-size: 1.3rem;
-  color: #d6b2ff;
-  text-shadow: 0 0 12px rgba(200, 100, 255, 0.6);
-  margin-bottom: 30px;
+.sidebar .logo {
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
   text-align: center;
+  color: #fff;
 }
 
 .sidebar ul {
   list-style: none;
-  width: 100%;
-}
-
-.sidebar li {
-  width: 100%;
-  padding: 14px 25px;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  color: #fff;
-  opacity: 0.8;
-  cursor: pointer;
-  transition: 0.2s;
-}
-
-.sidebar li:hover {
-  background: rgba(180, 0, 255, 0.15);
-  opacity: 1;
-  transform: translateX(5px);
-}
-
-.sidebar .icon {
-  font-size: 1.2rem;
-  color: #fff;
-  filter: drop-shadow(0 0 5px rgba(255,255,255,0.6));
-}
-
-.sidebar a {
-  color: #fff;
-  text-decoration: none;
-  font-weight: 500;
-}
-
-#logoutBtn {
-  margin-top: auto;
-  margin-bottom: 10px;
-  background: linear-gradient(90deg, #9b4dff, #b86bff);
-  border: none;
-  color: #fff;
-  padding: 10px 30px;
-  border-radius: 10px;
-  cursor: pointer;
-  font-weight: 600;
-  transition: 0.3s;
-}
-
-#logoutBtn:hover {
-  background: linear-gradient(90deg, #b86bff, #d6aaff);
-  transform: scale(1.05);
-}
-
-/* ===== CONTEÚDO PRINCIPAL ===== */
-.main-content {
-  margin-left: 230px;
-  padding: 25px 40px;
+  padding: 0;
+  margin: 0;
   flex: 1;
 }
 
+.sidebar ul li {
+  margin-bottom: .3rem;
+}
+
+/* === Links tipo "pill" (ícone + texto) === */
+.sidebar ul li .navlink {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  color: rgba(255, 255, 255, 0.9);
+  font-weight: 600;
+  padding: 0.6rem 0.9rem;
+  border-radius: 14px;
+  transition: transform 0.12s ease, box-shadow 0.2s ease, background 0.2s ease, color 0.2s ease;
+}
+
+.sidebar ul li .navlink .icon {
+  width: 1.4rem;
+  text-align: center;
+  filter: drop-shadow(0 0 6px rgba(180, 107, 255, 0.25));
+}
+
+.sidebar ul li .navlink:hover {
+  transform: translateX(3px);
+  background: rgba(180, 107, 255, 0.12);
+  box-shadow: 0 8px 18px rgba(180, 107, 255, 0.18);
+}
+
+.sidebar ul li .navlink.active {
+  background: rgba(180, 107, 255, 0.18);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.06),
+              0 10px 24px rgba(180, 107, 255, 0.22);
+}
+
+/* === Botão de logout === */
+.sidebar button#logoutBtn {
+  width: 100%;
+  margin-top: 1rem;
+  background: linear-gradient(135deg, #b46bff, #9f4dff);
+  border: none;
+  padding: 0.85rem 1rem;
+  color: #fff;
+  border-radius: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
+  box-shadow: 0 10px 20px rgba(159, 77, 255, 0.25);
+}
+
+.sidebar button#logoutBtn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 12px 24px rgba(159, 77, 255, 0.35);
+  opacity: 0.95;
+}
+
+/* === Conteúdo principal === */
+.main-content {
+  flex: 1;
+  padding: 2rem;
+  overflow-y: auto;
+}
+
+/* === Cabeçalho do dashboard === */
 header {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  margin-bottom: 25px;
+  justify-content: space-between;
+  margin-bottom: 2rem;
 }
 
 header h1 {
-  font-size: 1.6rem;
-  color: #d6b2ff;
-  text-shadow: 0 0 10px rgba(180, 0, 255, 0.7);
+  font-size: 1.8rem;
+  font-weight: 700;
 }
 
-#searchInput {
-  background: rgba(255,255,255,0.1);
+header input {
+  background: rgba(255, 255, 255, 0.08);
   border: none;
-  border-radius: 10px;
-  padding: 10px 15px;
+  border-radius: 12px;
+  padding: 0.6rem 1rem;
   color: #fff;
-  width: 220px;
-  transition: 0.2s;
-}
-
-#searchInput::placeholder {
-  color: #ccc;
-}
-
-#searchInput:focus {
+  width: 260px;
   outline: none;
-  background: rgba(255,255,255,0.15);
+  transition: box-shadow 0.2s ease;
 }
 
-/* ===== CARDS DE ESTATÍSTICAS ===== */
+header input:focus {
+  box-shadow: 0 0 0 2px rgba(180, 107, 255, 0.6);
+}
+
+/* === Cards de estatísticas === */
 .stats-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
   gap: 20px;
-  margin-bottom: 40px;
 }
 
 .stat-card {
-  background: rgba(50, 0, 80, 0.4);
-  border-radius: 15px;
-  padding: 20px;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 14px;
+  padding: 1.2rem;
   text-align: center;
-  box-shadow: 0 0 15px rgba(180, 0, 255, 0.2);
-  border: 1px solid rgba(200, 150, 255, 0.3);
-  transition: 0.3s;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  box-shadow: 0 6px 18px rgba(180, 107, 255, 0.15);
 }
 
 .stat-card:hover {
-  transform: scale(1.05);
-  box-shadow: 0 0 25px rgba(200, 150, 255, 0.3);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px rgba(180, 107, 255, 0.25);
 }
 
 .stat-card h3 {
-  color: #d6aaff;
-  font-weight: 500;
-  margin-bottom: 10px;
+  font-size: 1rem;
+  margin-bottom: .4rem;
 }
 
 .stat-card p {
-  font-size: 1.8rem;
+  font-size: 1.4rem;
   font-weight: 700;
-  color: #fff;
-  text-shadow: 0 0 8px rgba(255,255,255,0.4);
 }
 
-/* ===== GRÁFICOS ===== */
-.charts {
-  background: rgba(30, 0, 60, 0.4);
-  border-radius: 15px;
-  padding: 20px;
-  margin-bottom: 40px;
-  border: 1px solid rgba(200, 150, 255, 0.2);
-  box-shadow: 0 0 20px rgba(180, 0, 255, 0.2);
-}
-
-/* ===== LOG DE ATIVIDADES ===== */
+/* === Log de atividades === */
 .log {
-  background: rgba(50, 0, 80, 0.3);
-  border-radius: 15px;
-  padding: 20px;
-  border: 1px solid rgba(200, 150, 255, 0.2);
+  margin-top: 2rem;
 }
 
 .log h2 {
-  color: #d6b2ff;
-  margin-bottom: 15px;
-  font-size: 1.2rem;
+  margin-bottom: 1rem;
 }
 
 .log ul {
   list-style: none;
-  max-height: 200px;
-  overflow-y: auto;
-  padding-right: 10px;
+  padding: 0;
+  margin: 0;
 }
 
-.log li {
-  padding: 5px 0;
-  font-size: 0.9rem;
-  color: #e3d1ff;
-  border-bottom: 1px solid rgba(255,255,255,0.05);
-}
-
-/* Scroll personalizado */
-.log ul::-webkit-scrollbar {
-  width: 6px;
-}
-.log ul::-webkit-scrollbar-thumb {
-  background: rgba(180, 0, 255, 0.4);
-  border-radius: 10px;
-}
-/* ===== AGENTE ATIVO (RODAPÉ DO MENU) ===== */
-.active-user {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-top: auto;
-  margin-bottom: 20px;
-  text-align: center;
-  color: #fff;
-  padding-top: 15px;
-  border-top: 1px solid rgba(200, 150, 255, 0.2);
-  width: 100%;
-}
-
-.active-user .avatar {
-  width: 65px;
-  height: 65px;
-  border-radius: 50%;
-  object-fit: cover;
-  box-shadow: 0 0 12px rgba(180, 0, 255, 0.5);
-  margin-bottom: 8px;
-  transition: 0.3s;
-}
-
-.active-user .avatar:hover {
-  transform: scale(1.05);
-  box-shadow: 0 0 20px rgba(200, 100, 255, 0.8);
-}
-
-#agentNameDisplay {
+.log ul li {
+  padding: 0.5rem 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
   font-size: 0.95rem;
-  font-weight: 500;
-  color: #e4caff;
-  text-shadow: 0 0 8px rgba(200, 100, 255, 0.6);
+  opacity: 0.9;
 }
+
+/* === Scrollbar elegante === */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(180, 107, 255, 0.3);
+  border-radius: 8px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(180, 107, 255, 0.5);
+}
+
+/* === Agente === */
+.agent-display {
+  display: block;
+  text-align: center;
+  margin-bottom: 1rem;
+  opacity: 0.85;
+}
+
+/* === Helpers de permissão === */
+.only-editor { /* visível para investigador e admin */ }
+.only-admin {  /* visível apenas para admin */ }

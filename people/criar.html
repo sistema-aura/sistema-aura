@@ -2,181 +2,162 @@
 <html lang="pt">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Criar Pessoa - Sistema Aura</title>
-  <link rel="icon" href="../../Aurinha.png" />
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Nova Pessoa — Sistema AURA 💜</title>
+
+  <link rel="icon" href="../Aurinha.png" />
+  <link rel="stylesheet" href="../style.css" />
 
   <style>
-    body {
-      background: radial-gradient(circle at top left, #1a001f, #000);
-      font-family: 'Poppins', sans-serif;
-      color: #fff;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      margin: 0;
-    }
+    .page-container { padding: 2rem; max-width: 1000px; margin: 0 auto; }
+    .topbar{ display:flex; justify-content:space-between; align-items:center; margin-bottom:1.4rem; gap:8px; flex-wrap:wrap; }
+    .card{ background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.06); border-radius:16px; padding:20px; box-shadow:0 10px 22px rgba(180,107,255,.15); }
+    .grid{ display:grid; grid-template-columns: repeat(auto-fit, minmax(260px,1fr)); gap:16px; }
+    label{ font-weight:600; opacity:.95; margin-bottom:6px; display:block; }
+    input,select,textarea{ width:100%; padding:.8rem 1rem; border-radius:12px; border:none; outline:none; background:rgba(255,255,255,.08); color:#fff; box-shadow:0 0 10px rgba(180,107,255,.18); }
+    .preview{ display:flex; align-items:center; gap:12px; }
+    .preview img{ width:86px; height:86px; border-radius:12px; object-fit:cover; box-shadow:0 0 12px rgba(180,107,255,.35); }
+    .col-12{ grid-column:1/-1; }
+    .btn{ background:linear-gradient(90deg,#9b4dff,#b86bff); border:none; border-radius:10px; color:#fff; font-weight:600; padding:8px 14px; cursor:pointer; transition:.2s; box-shadow:0 0 10px rgba(180,107,255,.25); }
+    .btn:hover{ transform:translateY(-1px); box-shadow:0 10px 22px rgba(180,107,255,.35); }
+    .btn-soft{ background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.08); }
 
-    .form-container {
-      background: rgba(50, 0, 80, 0.45);
-      border: 1px solid rgba(200, 150, 255, 0.3);
-      border-radius: 20px;
-      padding: 35px 45px;
-      width: 380px;
-      text-align: center;
-      box-shadow: 0 0 25px rgba(180, 0, 255, 0.25);
-    }
-
-    h2 {
-      color: #d6b2ff;
-      text-shadow: 0 0 10px rgba(180, 0, 255, 0.7);
-      margin-bottom: 25px;
-    }
-
-    input, select {
-      width: 100%;
-      padding: 10px;
-      margin: 8px 0;
-      border-radius: 10px;
-      border: none;
-      background: rgba(255, 255, 255, 0.1);
-      color: #fff;
-      transition: 0.3s;
-    }
-
-    input:focus, select:focus {
-      outline: none;
-      box-shadow: 0 0 10px rgba(180, 0, 255, 0.6);
-      background: rgba(255, 255, 255, 0.15);
-    }
-
-    button {
-      background: linear-gradient(90deg, #9b4dff, #b86bff);
-      border: none;
-      padding: 10px 20px;
-      border-radius: 10px;
-      color: #fff;
-      font-weight: 600;
-      cursor: pointer;
-      transition: 0.3s;
-      margin-top: 10px;
-      width: 100%;
-    }
-
-    button:hover {
-      transform: scale(1.05);
-      background: linear-gradient(90deg, #b86bff, #d6aaff);
-    }
-
-    .hidden { display: none; }
-
-    #msg {
-      margin-top: 15px;
-      color: #c8b6ff;
-      font-size: 0.9rem;
-    }
+    .aura-toast{ position:fixed; right:16px; bottom:16px; z-index:1200; display:flex; gap:10px; align-items:center; background:rgba(20,0,40,.95); border:1px solid rgba(255,255,255,.08); padding:.7rem 1rem; border-radius:12px; color:#fff; box-shadow:0 10px 24px rgba(180,107,255,.35); animation:fadeIn .15s ease; }
+    .aura-toast.success{ border-color:rgba(140,255,199,.35); }
+    .aura-toast.error{ border-color:rgba(255,124,107,.35); }
+    @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+    .hidden{display:none}
   </style>
 </head>
 
 <body>
-  <div class="form-container">
-    <h2>Adicionar Pessoa</h2>
+  <div class="sidebar">
+    <h2 class="logo">SISTEMA AURA</h2>
+    <span id="agentNameDisplay" class="agent-display">Agente: -</span>
+    <ul>
+      <li><a href="../dashboard.html" class="navlink"><span class="icon">🏠</span><span class="label">Dashboard</span></a></li>
+      <li><a href="../perfis/ver.html" class="navlink"><span class="icon">👑</span><span class="label">Perfil da Aura</span></a></li>
+      <li><a href="ver.html" class="navlink"><span class="icon">🧍</span><span class="label">Pessoas</span></a></li>
+    </ul>
+    <button id="logoutBtn">Sair</button>
+  </div>
 
-    <select id="typeSelect">
-      <option value="civil">👤 Civil</option>
-      <option value="pm">🚔 Polícia (PM)</option>
-      <option value="faccao">⚔️ Facção</option>
-    </select>
+  <div class="main-content">
+    <div class="page-container">
+      <div class="topbar">
+        <h1>Criar Nova Pessoa</h1>
+        <button id="backBtn" class="btn btn-soft">⬅️ Voltar</button>
+      </div>
 
-    <input id="name" placeholder="Nome completo" required />
-    <input id="phone" placeholder="Telefone / Contato" />
-    <div id="factionGroup" class="hidden">
-      <input id="faction" placeholder="Nome da Facção" />
+      <form id="createForm" class="card">
+        <div class="grid">
+          <div>
+            <label>Nome</label>
+            <input id="name" required />
+          </div>
+          <div>
+            <label>Telefone</label>
+            <input id="phone" placeholder="912345678" />
+          </div>
+          <div>
+            <label>Tipo</label>
+            <select id="type">
+              <option value="civil">Civil</option>
+              <option value="PM">PM</option>
+              <option value="fac">Facção</option>
+            </select>
+          </div>
+          <div id="roleField" class="hidden">
+            <label>Cargo</label>
+            <input id="role" placeholder="Ex: Sargento / Conselheiro" />
+          </div>
+
+          <div class="col-12">
+            <label>Foto (ficheiro do PC)</label>
+            <div class="preview">
+              <img id="photoPreview" src="../Aurinha.png" alt="preview"/>
+              <input id="photoFile" type="file" accept="image/*" />
+            </div>
+          </div>
+
+          <div class="col-12">
+            <label>Observações</label>
+            <textarea id="notes" placeholder="Notas (opcional)"></textarea>
+          </div>
+        </div>
+
+        <div style="display:flex; justify-content:flex-end; margin-top:12px;">
+          <button id="saveBtn" class="btn only-editor">💾 Guardar</button>
+        </div>
+        <p id="noPermMsg" class="hidden" style="opacity:.8; margin-top:6px;">Apenas Investigadores/Admin podem criar.</p>
+      </form>
     </div>
-    <div id="hierarchyGroup" class="hidden">
-      <input id="hierarchy" placeholder="Hierarquia (Ex: Chefe, Cabo...)" />
-    </div>
-    <input type="file" id="photo" accept="image/*" />
-
-    <button id="saveBtn">Salvar</button>
-    <button onclick="window.location.href='ver.html'">⬅ Voltar</button>
-
-    <p id="msg"></p>
   </div>
 
   <script type="module">
     import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js";
-    import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
+    import { getFirestore, addDoc, collection, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
     import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-storage.js";
-    import { firebaseConfig } from "../../firebaseConfig.js";
+    import { firebaseConfig } from "../firebaseConfig.js";
 
-    // Inicializar Firebase apenas uma vez
-    const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
-    const db = getFirestore(app);
-    const storage = getStorage(app);
+    const app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
+    const db  = getFirestore(app);
+    const stg = getStorage(app);
 
-    const msg = document.getElementById("msg");
-    const typeSelect = document.getElementById("typeSelect");
-    const factionGroup = document.getElementById("factionGroup");
-    const hierarchyGroup = document.getElementById("hierarchyGroup");
+    const nameEl=document.getElementById("name");
+    const phoneEl=document.getElementById("phone");
+    const typeEl=document.getElementById("type");
+    const roleEl=document.getElementById("role");
+    const roleWrap=document.getElementById("roleField");
+    const notesEl=document.getElementById("notes");
+    const photoFile=document.getElementById("photoFile");
+    const photoPreview=document.getElementById("photoPreview");
 
-    // Mostrar / esconder campos conforme o tipo
-    typeSelect.addEventListener("change", () => {
-      const type = typeSelect.value;
-      factionGroup.classList.add("hidden");
-      hierarchyGroup.classList.add("hidden");
+    document.getElementById("backBtn").onclick=()=>window.location.href="ver.html";
 
-      if (type === "pm") hierarchyGroup.classList.remove("hidden");
-      if (type === "faccao") {
-        factionGroup.classList.remove("hidden");
-        hierarchyGroup.classList.remove("hidden");
-      }
+    function toast(msg,type="success"){ const t=document.createElement("div"); t.className=`aura-toast ${type}`; t.innerHTML=`<span>${type==="success"?"✅":"⚠️"}</span><span>${msg}</span>`; document.body.appendChild(t); setTimeout(()=>{t.style.opacity="0"; setTimeout(()=>t.remove(),250);},1900); }
+    function toggleRole(){ const t=typeEl.value; if(t==="PM"||t==="fac"){ roleWrap.classList.remove("hidden"); } else { roleWrap.classList.add("hidden"); roleEl.value=""; } }
+    typeEl.addEventListener("change", toggleRole); toggleRole();
+    photoFile.addEventListener("change",()=>{ const f=photoFile.files?.[0]; if(f) photoPreview.src=URL.createObjectURL(f); });
+
+    const isAdmin = localStorage.getItem("isAdmin")==="true";
+    const uRole = (localStorage.getItem("userRole")||"").toLowerCase();
+    const canEdit = isAdmin || uRole==="investigador";
+    if(!canEdit){ document.getElementById("saveBtn").style.display="none"; document.getElementById("noPermMsg").classList.remove("hidden"); }
+
+    async function uploadPhoto(){ const f=photoFile.files?.[0]; if(!f) return null; const path=`people/new_${Date.now()}_${f.name.replace(/[^\w.\-]+/g,"_")}`; const r=ref(stg,path); await uploadBytes(r,f); return await getDownloadURL(r); }
+
+    document.getElementById("createForm").addEventListener("submit", async (e)=>{
+      e.preventDefault();
+      if(!canEdit) return toast("Sem permissão para criar.","error");
+      try{
+        const url = await uploadPhoto();
+        const payload = {
+          name: nameEl.value.trim(),
+          phone: (phoneEl.value||"").trim(),
+          type: typeEl.value,
+          role: (typeEl.value==="PM"||typeEl.value==="fac") ? (roleEl.value||"").trim() : "",
+          notes: (notesEl.value||"").trim(),
+          photoURL: url || "",
+          createdBy: localStorage.getItem("selectedAgent") || "Desconhecido",
+          createdAt: serverTimestamp()
+        };
+        await addDoc(collection(db,"people"), payload);
+        toast("Pessoa criada com sucesso!");
+        setTimeout(()=>window.location.href="ver.html", 900);
+      }catch(e){ console.error(e); toast("Erro: " + e.message, "error"); }
     });
+  </script>
 
-    // Clique em salvar
-    document.getElementById("saveBtn").addEventListener("click", async () => {
-      msg.textContent = "💾 Salvando...";
-      const name = document.getElementById("name").value.trim();
-      const phone = document.getElementById("phone").value.trim();
-      const faction = document.getElementById("faction").value.trim();
-      const hierarchy = document.getElementById("hierarchy").value.trim();
-      const type = typeSelect.value;
-      const file = document.getElementById("photo").files[0];
-      let photoURL = "";
-
-      if (!name) {
-        msg.textContent = "⚠️ O campo nome é obrigatório.";
-        return;
-      }
-
-      try {
-        // Upload da imagem se existir
-        if (file) {
-          const storageRef = ref(storage, `people/${Date.now()}_${file.name}`);
-          await uploadBytes(storageRef, file);
-          photoURL = await getDownloadURL(storageRef);
-        }
-
-        // Gravar no Firestore
-        await addDoc(collection(db, "people"), {
-          name,
-          phone,
-          type,
-          faction: type === "faccao" ? faction : "",
-          hierarchy: type === "civil" ? "" : hierarchy,
-          photoURL,
-          createdAt: serverTimestamp(),
-        });
-
-        msg.textContent = "✅ Pessoa adicionada com sucesso!";
-        setTimeout(() => window.location.href = "ver.html", 1500);
-      } catch (err) {
-        console.error(err);
-        msg.textContent = "❌ Erro ao salvar: " + err.message;
-      }
-    });
+  <script>
+    (function(){
+      const agent = localStorage.getItem("selectedAgent") || "Desconhecido";
+      document.getElementById("agentNameDisplay").textContent = `Agente: ${agent}`;
+      document.getElementById("logoutBtn").onclick = ()=>{
+        ["username","selectedAgent","userRole","userCode","isAdmin"].forEach(k=>localStorage.removeItem(k));
+        window.location.href = "../select.html";
+      };
+    })();
   </script>
 </body>
 </html>

@@ -1,95 +1,244 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Criar Perfil AURA 💜</title>
+  <title>Criar Perfil — Sistema AURA 💜</title>
 
   <link rel="icon" href="../Aurinha.png" />
   <link rel="stylesheet" href="../style.css" />
 
-  <!-- Firebase -->
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-storage-compat.js"></script>
-  <script src="../firebaseConfig.js"></script>
+  <style>
+    .page-container { padding: 2rem; max-width: 1100px; margin: 0 auto; }
+    .topbar {
+      display:flex; justify-content:space-between; align-items:center;
+      margin-bottom:1.4rem; flex-wrap:wrap; gap:8px;
+    }
+    .btn {
+      background: linear-gradient(90deg,#9b4dff,#b86bff);
+      border:none; border-radius:10px; color:#fff; font-weight:600;
+      padding:8px 14px; cursor:pointer; transition:.2s;
+      box-shadow:0 0 10px rgba(180,107,255,.25);
+    }
+    .btn:hover{ transform:translateY(-1px); box-shadow:0 10px 22px rgba(180,107,255,.35); }
+    .btn-soft{ background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.08); }
+    .btn-danger{ background: linear-gradient(90deg,#ff4d6d,#ff7c6b); }
+
+    form {
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.06);
+      border-radius: 16px;
+      padding: 22px;
+      box-shadow: 0 10px 22px rgba(180,107,255,.15);
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 16px;
+    }
+    label { font-weight:600; opacity:.95; margin-bottom:4px; display:block; }
+    input, textarea, select {
+      width:100%; padding:.8rem 1rem; border-radius:12px; border:none; outline:none;
+      background:rgba(255,255,255,.08); color:#fff;
+      box-shadow:0 0 10px rgba(180,107,255,.18);
+    }
+    textarea{ resize:vertical; min-height:90px; }
+    .col-12 { grid-column:1/-1; }
+    .preview { display:flex; align-items:center; gap:10px; }
+    .preview img { width:80px; height:80px; border-radius:10px; object-fit:cover; box-shadow:0 0 12px rgba(180,107,255,.35); }
+
+    .aura-toast {
+      position:fixed; right:16px; bottom:16px; z-index:9999; display:flex;
+      gap:10px; align-items:center; background:rgba(20,0,40,.95);
+      border:1px solid rgba(255,255,255,.08); padding:.7rem 1rem;
+      border-radius:12px; color:#fff; box-shadow:0 10px 24px rgba(180,107,255,.35);
+      animation:fadeIn .15s ease;
+    }
+    .aura-toast.success{border-color:rgba(140,255,199,.35);}
+    .aura-toast.error{border-color:rgba(255,124,107,.35);}
+    @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+  </style>
 </head>
 
-<body class="fade-in">
-  <div class="main">
-    <div class="card">
-      <h2>💜 Criar Novo Perfil AURA</h2>
+<body>
+  <!-- MENU LATERAL -->
+  <div class="sidebar">
+    <h2 class="logo">SISTEMA AURA</h2>
+    <span id="agentNameDisplay" class="agent-display">Agente: -</span>
+
+    <ul>
+      <li><a href="../dashboard.html" class="navlink active"><span class="icon">🏠</span><span class="label">Dashboard</span></a></li>
+      <li><a href="../pesquisa/ver.html" class="navlink"><span class="icon">🔍</span><span class="label">Pesquisa Geral</span></a></li>
+      <li><a href="../perfis/ver.html" class="navlink"><span class="icon">👑</span><span class="label">Perfil da Aura</span></a></li>
+      <li><a href="../people/ver.html" class="navlink"><span class="icon">🧍</span><span class="label">Pessoas</span></a></li>
+      <li><a href="../casos/ver.html" class="navlink"><span class="icon">📁</span><span class="label">Casos</span></a></li>
+      <li><a href="../investigacoes/ver.html" class="navlink"><span class="icon">🕵️</span><span class="label">Investigações</span></a></li>
+      <li><a href="../veiculos/ver.html" class="navlink"><span class="icon">🏎️</span><span class="label">Veículos</span></a></li>
+      <li><a href="../facc/ver.html" class="navlink"><span class="icon">⚔️</span><span class="label">Facções</span></a></li>
+      <li><a href="../perimetro/ver.html" class="navlink"><span class="icon">📍</span><span class="label">Perímetro de Ações</span></a></li>
+      <li><a href="../reunioes/ver.html" class="navlink"><span class="icon">🗓️</span><span class="label">Reuniões</span></a></li>
+      <li><a href="../casos/arquivados.html" class="navlink"><span class="icon">🗃️</span><span class="label">Casos Arquivados</span></a></li>
+    </ul>
+
+    <button id="logoutBtn">Sair</button>
+  </div>
+
+  <!-- CONTEÚDO -->
+  <div class="main-content">
+    <div class="page-container">
+      <div class="topbar">
+        <h1>Criar Novo Perfil</h1>
+        <button id="backBtn" class="btn btn-soft">⬅️ Voltar</button>
+      </div>
+
       <form id="createForm">
-        <label>Código AURA</label>
-        <input type="text" id="code" placeholder="Ex: A-07" required />
-
-        <label>Nome</label>
-        <input type="text" id="name" placeholder="Digite o nome completo" required />
-
-        <label>Patente / Hierarquia</label>
-        <input type="text" id="role" placeholder="Ex: Recruta, Soldado, Veterano..." required />
-
-        <label>Data de Ingresso</label>
-        <input type="date" id="joinedAt" required />
-
-        <label>Foto</label>
-        <input type="file" id="photo" accept="image/*" />
-        <img id="preview" src="../Aurinha.png" style="width:100px;border-radius:10px;margin-top:5px;" />
-
-        <button type="submit" class="btn">💾 Criar Perfil</button>
-        <a href="../dashboard.html" class="btn ghost">⬅️ Voltar</a>
+        <div>
+          <label>Nome</label>
+          <input id="name" placeholder="Nome completo" required />
+        </div>
+        <div>
+          <label>Divisão</label>
+          <input id="division" placeholder="Investigação / Estratégia..." />
+        </div>
+        <div>
+          <label>Entrada</label>
+          <input id="joinDate" type="date" />
+        </div>
+        <div>
+          <label>Alias/Nick</label>
+          <input id="alias" placeholder="Opcional" />
+        </div>
+        <div>
+          <label>Foto (ficheiro do PC)</label>
+          <div class="preview">
+            <img id="photoPreview" src="../Aurinha.png" alt="preview" />
+            <input id="photoFile" type="file" accept="image/*" />
+          </div>
+          <small style="opacity:.8;">Opcional — se escolheres uma imagem, será enviada para o Storage automaticamente.</small>
+        </div>
+        <div class="col-12">
+          <label>Descrição</label>
+          <textarea id="description" placeholder="Notas, conquistas, observações..."></textarea>
+        </div>
+        <div class="col-12" style="text-align:right;">
+          <button class="btn" id="createBtn">💾 Guardar</button>
+        </div>
       </form>
-      <p id="result" style="margin-top:1rem;"></p>
     </div>
   </div>
 
+  <!-- FIREBASE -->
+ <script type="module">
+  import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js";
+  import { getFirestore, collection, addDoc, getDocs, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
+  import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-storage.js";
+  import { firebaseConfig } from "../firebaseConfig.js";
+
+  // Inicializar Firebase
+  const app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+  const storage = getStorage(app);
+
+  const nameEl = document.getElementById("name");
+  const divisionEl = document.getElementById("division");
+  const joinDateEl = document.getElementById("joinDate");
+  const aliasEl = document.getElementById("alias");
+  const descriptionEl = document.getElementById("description");
+  const photoFile = document.getElementById("photoFile");
+  const photoPreview = document.getElementById("photoPreview");
+
+  document.getElementById("backBtn").onclick = () => window.location.href = "ver.html";
+
+  // Preview da imagem
+  photoFile.addEventListener("change", () => {
+    const f = photoFile.files?.[0];
+    if (f) photoPreview.src = URL.createObjectURL(f);
+  });
+
+  // Toast
+  function toast(msg, type="success"){
+    const t=document.createElement("div");
+    t.className=`aura-toast ${type}`;
+    t.innerHTML=`<span>${type==="success"?"✅":"⚠️"}</span><span>${msg}</span>`;
+    document.body.appendChild(t);
+    setTimeout(()=>{t.style.opacity="0";setTimeout(()=>t.remove(),250);},2000);
+  }
+
+  // Upload da foto
+  async function uploadPhoto(){
+    const f = photoFile.files?.[0];
+    if(!f) return null;
+    const refPath = ref(storage, `users/${Date.now()}_${f.name}`);
+    await uploadBytes(refPath, f);
+    return await getDownloadURL(refPath);
+  }
+
+  // Gera senha automática
+  function generatePassword(){
+    const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    let pass = "";
+    for (let i = 0; i < 6; i++) pass += chars.charAt(Math.floor(Math.random() * chars.length));
+    return "aur4_" + pass;
+  }
+
+  // Gera código incremental (A-XX)
+  async function generateNextCode(){
+    const snap = await getDocs(collection(db, "users"));
+    const count = snap.size + 1;
+    return "A-" + count;
+  }
+
+  // Criação do perfil
+  document.getElementById("createForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const role = (localStorage.getItem("userRole") || "").toLowerCase();
+    const isAdmin = localStorage.getItem("isAdmin") === "true";
+    if (!(isAdmin || role === "investigador")) {
+      toast("Apenas investigadores ou admin podem criar perfis.","error");
+      return;
+    }
+
+    try {
+      const photoURL = await uploadPhoto();
+      const code = await generateNextCode();
+      const password = generatePassword();
+
+      const newProfile = {
+        code,
+        createdAt: serverTimestamp(),
+        faction: "AURA",
+        name: nameEl.value.trim(),
+        password,
+        role: "Recruta",
+        tag: "",
+        type: "AURA",
+        division: divisionEl.value.trim(),
+        joinDate: joinDateEl.value || "",
+        alias: aliasEl.value.trim(),
+        description: descriptionEl.value.trim(),
+        photoURL: photoURL || "",
+        createdBy: localStorage.getItem("selectedAgent") || "Desconhecido",
+      };
+
+      await addDoc(collection(db, "users"), newProfile);
+      toast("✅ Perfil criado com sucesso!");
+      setTimeout(()=> window.location.href = "ver.html", 1200);
+    } catch (e) {
+      console.error("Erro ao criar:", e);
+      toast("Erro: " + e.message, "error");
+    }
+  });
+</script>
+
+  <!-- PERFIL / LOGOUT -->
   <script>
-    const db = firebase.firestore();
-    const storage = firebase.storage();
-
-    document.getElementById("photo").addEventListener("change", (e) => {
-      const file = e.target.files[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = (ev) => (document.getElementById("preview").src = ev.target.result);
-        reader.readAsDataURL(file);
-      }
-    });
-
-    document.getElementById("createForm").addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const code = document.getElementById("code").value.trim();
-      const name = document.getElementById("name").value.trim();
-      const role = document.getElementById("role").value.trim();
-      const joinedAt = document.getElementById("joinedAt").value;
-      const file = document.getElementById("photo").files[0];
-      let photoURL = "../Aurinha.png";
-
-      try {
-        if (file) {
-          const ref = storage.ref("users/" + code + "_" + Date.now());
-          await ref.put(file);
-          photoURL = await ref.getDownloadURL();
-        }
-
-        await db.collection("users").doc(code).set({
-          code,
-          name,
-          role,
-          joinedAt,
-          faction: "AURA",
-          photo: photoURL,
-          type: "AURA",
-          createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-        });
-
-        document.getElementById("result").innerHTML = "✅ Perfil AURA criado com sucesso!";
-        document.getElementById("createForm").reset();
-        document.getElementById("preview").src = "../Aurinha.png";
-      } catch (err) {
-        document.getElementById("result").innerHTML = "❌ Erro: " + err.message;
-      }
-    });
+  (function(){
+    const agent=localStorage.getItem("selectedAgent")||"Desconhecido";
+    document.getElementById("agentNameDisplay").textContent=`Agente: ${agent}`;
+    document.getElementById("logoutBtn").onclick=()=>{
+      ["username","selectedAgent","userRole","userCode","isAdmin"].forEach(k=>localStorage.removeItem(k));
+      window.location.href="../select.html";
+    };
+  })();
   </script>
 </body>
 </html>

@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Pesquisa Geral — Sistema AURA 💜</title>
+
+<link rel="icon" href="../Aurinha.png"/>
+<link rel="stylesheet" href="../style.css"/>
+
+<style>
+  body { overflow-x:hidden; }
+
+  .container { max-width: 1100px; margin: 0 auto; padding: 2rem; }
+
+  .topbar {
+    display:flex; justify-content:space-between; align-items:center;
+    margin-bottom:1.6rem;
+  }
+
+  .btn-back {
+    background:rgba(255,255,255,.08);
+    border:1px solid rgba(255,255,255,.12);
+    padding:.6rem 1rem; border-radius:10px;
+    color:#fff; cursor:pointer; font-weight:600;
+    box-shadow:0 4px 14px rgba(180,107,255,.25);
+  }
+
+  .searchbar {
+    display:flex; gap:12px; align-items:center; margin-bottom:1rem;
+    background: rgba(255,255,255,0.06); border-radius: 14px; padding: .8rem 1rem;
+    box-shadow: 0 0 12px rgba(180,107,255,0.25);
+  }
+  .searchbar input {
+    flex:1; background: transparent; border: none; outline:none;
+    color: #fff; font-size: 1.05rem;
+  }
+
+  .btn-filter {
+    background: linear-gradient(90deg,#9b4dff,#b86bff);
+    padding:.6rem 1.2rem; color:#fff; font-weight:600;
+    border:none; border-radius:12px; cursor:pointer;
+    box-shadow:0 6px 16px rgba(180,107,255,.25);
+  }
+
+  /* FILTER PANEL */
+  .filter-panel {
+    position:fixed; top:0; right:-360px; width:340px; height:100vh;
+    background:rgba(18,0,40,.96); border-left:1px solid rgba(255,255,255,.08);
+    padding:1.4rem; transition:.25s ease; z-index:2000;
+    box-shadow:-6px 0 20px rgba(0,0,0,.4);
+    overflow-y:auto;
+  }
+  .filter-panel.open { right:0; }
+
+  .filters label {
+    display:flex;
+    align-items:center;
+    gap:10px;
+    background:rgba(255,255,255,0.06);
+    padding:10px 12px;
+    border-radius:12px;
+    margin-bottom:12px;
+    border:1px solid rgba(255,255,255,0.08);
+    cursor:pointer;
+    transition:0.15s;
+  }
+  .filters label:hover {
+    background:rgba(255,255,255,0.10);
+  }
+  .filters input[type="checkbox"] {
+    width:18px;
+    height:18px;
+  }
+
+  .overlay {
+    position:fixed; inset:0; background:rgba(0,0,0,.55);
+    display:none; z-index:1990;
+  }
+  .overlay.show { display:block; }
+
+  .results {
+    margin-top:1rem;
+    display:grid; grid-template-columns: repeat(auto-fill,minmax(300px,1fr));
+    gap:18px;
+  }
+
+  .card-result {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 16px; padding: 1rem;
+    box-shadow: 0 10px 22px rgba(180,107,255,0.15);
+  }
+  .card-result h3 { margin:.3rem 0 .6rem; font-size:1.1rem; }
+  .card-result small { opacity:.75; }
+  .card-result a { color:#b46bff; font-weight:600; text-decoration:none; }
+
+  .muted { opacity:.7; }
+</style>
+</head>
+
+<body>
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+  <h2 class="logo">SISTEMA AURA</h2>
+    <ul>
+      <li><a href="../dashboard.html" class="navlink active"><span class="icon">🏠</span><span class="label">Dashboard</span></a></li>
+      <li><a href="../pesquisa/ver.html" class="navlink"><span class="icon">🔍</span><span class="label">Pesquisa Geral</span></a></li>
+      <li><a href="../perfis/ver.html" class="navlink"><span class="icon">👑</span><span class="label">Perfil da Aura</span></a></li>
+      <li><a href="../people/ver.html" class="navlink"><span class="icon">🧍</span><span class="label">Pessoas</span></a></li>
+      <li><a href="../casos/ver.html" class="navlink"><span class="icon">📁</span><span class="label">Casos</span></a></li>
+      <li><a href="../investigacoes/ver.html" class="navlink"><span class="icon">🕵️</span><span class="label">Investigações</span></a></li>
+      <li><a href="../veiculos/ver.html" class="navlink"><span class="icon">🏎️</span><span class="label">Veículos</span></a></li>
+      <li><a href="../facc/ver.html" class="navlink"><span class="icon">⚔️</span><span class="label">Facções</span></a></li>
+      <li><a href="../perimetro/ver.html" class="navlink"><span class="icon">📍</span><span class="label">Perímetro de Ações</span></a></li>
+      <li><a href="../reunioes/ver.html" class="navlink"><span class="icon">🗓️</span><span class="label">Reuniões</span></a></li>
+    </ul>
+</div>
+
+<div class="main-content">
+  <div class="container">
+
+    <div class="topbar">
+      <button class="btn-back" onclick="window.location.href='../dashboard.html'">⬅ Voltar</button>
+      <button class="btn-filter" id="openFilter">Filtros ⚙️</button>
+    </div>
+
+    <div class="searchbar">
+      <span>🔎</span>
+      <input id="searchInput" placeholder="Pesquisar em todo o sistema..." />
+    </div>
+
+    <div id="count" class="muted"></div>
+    <div id="results" class="results"></div>
+
+  </div>
+</div>
+
+<!-- FILTER PANEL -->
+<div id="panel" class="filter-panel">
+  <h2 style="margin-bottom:1rem;">Filtros</h2>
+
+  <div class="filters">
+    <label><input type="checkbox" class="ck" value="people" checked> Pessoas</label>
+    <label><input type="checkbox" class="ck" value="users" checked> Users</label>
+    <label><input type="checkbox" class="ck" value="cases" checked> Casos</label>
+    <label><input type="checkbox" class="ck" value="investigacoes" checked> Investigações</label>
+    <label><input type="checkbox" class="ck" value="veiculos" checked> Veículos</label>
+    <label><input type="checkbox" class="ck" value="facc" checked> Facções</label>
+    <label><input type="checkbox" class="ck" value="reunioes" checked> Reuniões</label>
+    <label><input type="checkbox" class="ck" value="cobrancas" checked> Cobranças</label>
+  </div>
+
+  <button class="btn-filter" id="closeFilter" style="width:100%; margin-top:10px;">Fechar</button>
+</div>
+
+<div id="overlay" class="overlay"></div>
+
+<script type="module">
+  import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js";
+  import { getFirestore, collection, getDocs }
+    from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
+  import { firebaseConfig } from "../firebaseConfig.js";
+
+  const app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  const searchInput = document.getElementById("searchInput");
+  const results = document.getElementById("results");
+  const count = document.getElementById("count");
+
+  const panel = document.getElementById("panel");
+  const overlay = document.getElementById("overlay");
+
+  document.getElementById("openFilter").onclick = ()=>{
+    panel.classList.add("open");
+    overlay.classList.add("show");
+  };
+  document.getElementById("closeFilter").onclick = ()=>{
+    panel.classList.remove("open");
+    overlay.classList.remove("show");
+  };
+  overlay.onclick = ()=>{
+    panel.classList.remove("open");
+    overlay.classList.remove("show");
+  };
+
+  const cks = Array.from(document.querySelectorAll(".ck"));
+
+  const LINKS = {
+    people: "../people/ver.html",
+    users: "../people/ver.html",
+    cases: "../casos/ver.html",
+    investigacoes: "../investigacoes/ver.html",
+    veiculos: "../veiculos/ver.html",
+    facc: "../facc/ver.html",
+    reunioes: "../reunioes/ver.html",
+    cobrancas: "../cobrancas/ver.html",
+  };
+
+  let debounce = null;
+  searchInput.addEventListener("input", ()=>{
+    clearTimeout(debounce);
+    debounce = setTimeout(runSearch, 300);
+  });
+
+  async function runSearch(){
+    const q = searchInput.value.trim().toLowerCase();
+    if(q.length < 2){
+      results.innerHTML = "";
+      count.textContent = "";
+      return;
+    }
+
+    const selected = cks.filter(c=>c.checked).map(c=>c.value);
+    if(!selected.length) return;
+
+    let finalResults = [];
+
+    for(const col of selected){
+      try{
+        const snap = await getDocs(collection(db, col));
+        snap.forEach(doc=>{
+          const data = doc.data();
+          const txt = JSON.stringify(data).toLowerCase();
+          if(txt.includes(q)){
+            finalResults.push({ id:doc.id, type:col, data });
+          }
+        });
+      }catch(e){
+        console.warn("Erro:", col, e);
+      }
+    }
+
+    count.textContent = `${finalResults.length} resultados encontrados`;
+
+    results.innerHTML = finalResults.map(r=>{
+      const title = r.data.name || r.data.nome || r.data.titulo || r.data.modelo || r.data.alias || "Sem título";
+      const desc = r.data.descricao || r.data.description || "";
+      return `
+        <div class="card-result">
+          <small>${r.type.toUpperCase()}</small>
+          <h3>${title}</h3>
+          <p class="muted">${desc.slice(0,120)}</p>
+          <a href="${LINKS[r.type]}?id=${r.id}">Ver detalhes →</a>
+        </div>
+      `;
+    }).join("");
+  }
+
+</script>
+
+</body>
+</html>

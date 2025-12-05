@@ -3,32 +3,101 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Sistema Aura - Dashboard</title>
+  <title>Sistema AURA 💜 - Dashboard</title>
   <link rel="icon" href="Aurinha.png" />
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css" />
+
+  <style>
+    /* --- Sidebar nav pill style (mantendo o mesmo roxo) --- */
+    .sidebar ul li .navlink {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      color: rgba(255, 255, 255, 0.9);
+      font-weight: 600;
+      padding: 0.6rem 0.9rem;
+      border-radius: 14px;
+      transition: transform 0.12s ease, box-shadow 0.2s ease, background 0.2s ease, color 0.2s ease;
+    }
+
+    .sidebar ul li .navlink .icon {
+      width: 1.4rem;
+      text-align: center;
+      filter: drop-shadow(0 0 6px rgba(180, 107, 255, 0.25));
+    }
+
+    .sidebar ul li .navlink:hover {
+      transform: translateX(3px);
+      background: rgba(180, 107, 255, 0.12);
+      box-shadow: 0 8px 18px rgba(180, 107, 255, 0.18);
+    }
+
+    .sidebar ul li .navlink.active {
+      background: rgba(180, 107, 255, 0.18);
+      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.06),
+                  0 10px 24px rgba(180, 107, 255, 0.22);
+    }
+
+    /* --- DASHBOARD CARDS MAIORES --- */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); /* cards mais largos */
+      gap: 1.4rem;
+      margin-top: 1.5rem;
+    }
+
+    .stat-card {
+      padding: 1.4rem 1.6rem;              /* mais padding */
+      min-height: 150px;                   /* mais altura */
+      border-radius: 18px;                 /* cantos mais suaves */
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      box-shadow: 0 10px 24px rgba(180, 107, 255, 0.18);
+      transition: transform 0.16s ease, box-shadow 0.2s ease;
+    }
+
+    .stat-card h3 {
+      font-size: 1rem;
+      margin: 0 0 .4rem;
+      opacity: .9;
+    }
+
+    .stat-card p {
+      margin: 0;
+      font-size: 2.4rem;          /* número maior */
+      font-weight: 700;
+      line-height: 1.1;
+    }
+
+    .stat-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 14px 30px rgba(180, 107, 255, 0.28);
+    }
+  </style>
 </head>
 
 <body>
   <!-- MENU LATERAL -->
   <div class="sidebar">
     <h2 class="logo">SISTEMA AURA</h2>
-    <ul>
-      <li><i class="icon">🏠</i><a href="dashboard.html" class="active">Dashboard</a></li>
-      <li><i class="icon">👑</i><a href="perfis/ver.html">Perfil da Aura</a></li>
-      <li><i class="icon">🧍</i><a href="people/ver.html">Pessoas</a></li>
-      <li><i class="icon">📁</i><a href="casos/ver.html">Casos</a></li>
-      <li><i class="icon">🕵️</i><a href="investigacoes/ver.html">Investigações</a></li>
-      <li><i class="icon">🏎️</i><a href="veiculos/ver.html">Veiculos</a></li>
-      <li><i class="icon">⚔️</i><a href="facc/ver.html">Facções</a></li>
-      <li><i class="icon">🗃️</i><a href="casos/arquivados.html">Casos Arquivados</a></li>
-    </ul>
+    <span id="agentNameDisplay" class="agent-display">Agente: -</span>
 
-    <!-- AGENTE ATIVO -->
-    <div class="active-user">
-      <img src="Aurinha.png" alt="Avatar" class="avatar">
-      <span id="agentNameDisplay">Agente: -</span>
-    </div>
+    <ul>
+      <li><a href="dashboard.html" class="navlink active"><span class="icon">🏠</span><span class="label">Dashboard</span></a></li>
+      <li><a href="pesquisa/ver.html" class="navlink"><span class="icon">🔍</span><span class="label">Pesquisa Geral</span></a></li>
+      <li><a href="perfis/ver.html" class="navlink"><span class="icon">👑</span><span class="label">Perfil da Aura</span></a></li>
+      <li><a href="people/ver.html" class="navlink"><span class="icon">🧍</span><span class="label">Pessoas</span></a></li>
+      <li><a href="casos/ver.html" class="navlink"><span class="icon">📁</span><span class="label">Casos</span></a></li>
+      <li><a href="investigacoes/ver.html" class="navlink"><span class="icon">🕵️</span><span class="label">Investigações</span></a></li>
+      <li><a href="veiculos/ver.html" class="navlink"><span class="icon">🏎️</span><span class="label">Veículos</span></a></li>
+      <li><a href="facc/ver.html" class="navlink"><span class="icon">⚔️</span><span class="label">Facções</span></a></li>
+      <li><a href="perimetro/ver.html" class="navlink"><span class="icon">📍</span><span class="label">Perímetro de Ações</span></a></li>
+      <li><a href="reunioes/ver.html" class="navlink"><span class="icon">🗓️</span><span class="label">Reuniões</span></a></li>
+    </ul>
 
     <button id="logoutBtn">Sair</button>
   </div>
@@ -59,23 +128,16 @@
       </div>
     </section>
 
-    <section class="log">
-      <h2>Log de Atividades</h2>
-      <ul id="activityLog">
-        <li>Carregando logs...</li>
-      </ul>
-    </section>
-  </div>
-
   <script type="module">
     import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js";
-    import { getFirestore, collection, getDocs, query, orderBy, limit } 
+    import { getFirestore, collection, getDocs } 
       from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
     import { firebaseConfig } from "./firebaseConfig.js";
 
     const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
     const db = getFirestore(app);
 
+    // Exibir o nome do agente logado
     const agent = localStorage.getItem("selectedAgent") || "Desconhecido";
     document.getElementById("agentNameDisplay").textContent = `Agente: ${agent}`;
 
@@ -94,33 +156,24 @@
       }
     }
 
-    // Logs recentes
-    async function loadLogs() {
-      const logEl = document.getElementById("activityLog");
-      const q = query(collection(db, "logs"), orderBy("timestamp", "desc"), limit(10));
-      const snap = await getDocs(q);
-      logEl.innerHTML = "";
-      if (snap.empty) {
-        logEl.innerHTML = "<li>Nenhuma atividade registada ainda.</li>";
-        return;
-      }
-      snap.forEach(doc => {
-        const data = doc.data();
-        const time = data.timestamp?.toDate ? data.timestamp.toDate().toLocaleString() : "—";
-        const li = document.createElement("li");
-        li.textContent = `${time} — ${data.user || "Desconhecido"} ${data.action} ${data.itemType}`;
-        logEl.appendChild(li);
-      });
-    }
-
     // Tornar os cartões clicáveis
     document.getElementById("cardPeople").addEventListener("click", () => window.location.href = "people/ver.html");
     document.getElementById("cardCases").addEventListener("click", () => window.location.href = "casos/ver.html");
     document.getElementById("cardInvestigations").addEventListener("click", () => window.location.href = "investigacoes/ver.html");
     document.getElementById("cardFacc").addEventListener("click", () => window.location.href = "facc/ver.html");
 
+    // Botão Sair
+    const logoutBtn = document.getElementById("logoutBtn");
+    if (logoutBtn) {
+      logoutBtn.addEventListener("click", () => {
+        const keys = ["username","selectedAgent","userRole","userCode","isAdmin"];
+        keys.forEach(k => localStorage.removeItem(k));
+        window.location.href = "select.html";
+      });
+    }
+
     updateCounts();
-    loadLogs();
+    // loadLogs(); // se tiveres esta função noutro ficheiro, podes voltar a chamar
   </script>
 </body>
 </html>

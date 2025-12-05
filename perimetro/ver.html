@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Facções — Sistema AURA 💜</title>
+  <title>Perímetros de Ação — Sistema AURA 💜</title>
 
   <link rel="icon" href="../Aurinha.png" />
   <link rel="stylesheet" href="../style.css" />
@@ -23,112 +23,138 @@
     .btn:hover { transform:translateY(-1px); box-shadow:0 10px 22px rgba(180,107,255,.35); }
     .btn-soft { background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.08); }
     .btn-danger { background: linear-gradient(90deg,#ff4d6d,#ff7c6b); }
+    .btn-sm{ padding:5px 9px; font-size:.8rem; box-shadow:none; }
+    .btn-sm:hover{ box-shadow:0 0 10px rgba(180,107,255,.25); transform:translateY(-1px); }
 
-    .btn-sm{
-      padding:5px 9px;
-      font-size:.8rem;
-      box-shadow:none;
-    }
-    .btn-sm:hover{
-      box-shadow:0 0 10px rgba(180,107,255,.25);
-      transform:translateY(-1px);
-    }
-
-    .searchbar { margin:.5rem 0 1rem; display:flex; gap:8px; }
+    .searchbar { margin:.5rem 0 1.2rem; display:flex; gap:8px; }
     .searchbar input {
       flex:1; padding:.8rem 1rem; border-radius:12px; border:none;
       background:rgba(255,255,255,.08); color:#fff; outline:none;
       box-shadow: 0 0 10px rgba(180,107,255,.25);
     }
 
-    /* cards em modo retângulo largo */
-    .grid {
-      display:grid;
-      grid-template-columns: minmax(0, 1fr);
-      gap:18px;
-    }
+    .muted{opacity:.8; font-size:.9rem;}
 
-    .card {
-      background: rgba(255,255,255,.06);
+    /* BLOCO DE CATEGORIA ("PASTA") */
+    .cat-block{
+      background:rgba(255,255,255,.03);
       border:1px solid rgba(255,255,255,.08);
       border-radius:18px;
-      padding:18px 20px 14px;
-      box-shadow:0 10px 22px rgba(180,107,255,.18);
-      transition:.2s;
-      position:relative;
+      margin-bottom:16px;
+      box-shadow:0 8px 18px rgba(180,107,255,.12);
+      overflow:hidden;
+    }
+    .cat-header{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding:10px 14px;
+      background:linear-gradient(90deg,rgba(155,77,255,.35),rgba(12,0,40,.95));
+      cursor:pointer;
+    }
+    .cat-title{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      font-weight:600;
+      font-size:.95rem;
+    }
+    .cat-title span.folder{
+      font-size:1.1rem;
+    }
+    .cat-count{
+      font-size:.78rem;
+      opacity:.85;
+    }
+    .cat-toggle{
+      border:none;
+      background:rgba(0,0,0,.25);
+      color:#fff;
+      border-radius:999px;
+      width:24px;
+      height:24px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:.85rem;
+      transform:rotate(0deg);
+      transition:.18s;
+    }
+    .cat-block.collapsed .cat-toggle{
+      transform:rotate(-90deg);
+    }
+
+    .cat-body{
+      padding:10px 14px 12px;
+      display:flex;
+      flex-direction:column;
+      gap:14px;
+    }
+    .cat-block.collapsed .cat-body{
+      display:none;
+    }
+
+    /* CARD DA AÇÃO (RETÂNGULO) */
+    .act-card{
+      background:rgba(10,0,35,.9);
+      border-radius:16px;
+      border:1px solid rgba(255,255,255,.08);
+      padding:12px 12px 10px;
+      box-shadow:0 8px 18px rgba(180,107,255,.15);
       display:flex;
       flex-direction:column;
       gap:8px;
-      min-height:210px;
     }
-    .card.inactivo,
-    .card.inativo { opacity:.7; }
-    .card:hover { transform:translateY(-3px); }
-
-    .card-top{
+    .act-header{
       display:flex;
-      gap:18px;
+      justify-content:space-between;
       align-items:flex-start;
+      gap:10px;
+      flex-wrap:wrap;
     }
-
-    .thumb, .thumb-color {
-      width:88px; height:88px; border-radius:16px;
-      display:flex; align-items:center; justify-content:center;
-      box-shadow:0 0 12px rgba(180,107,255,.35);
-      font-weight:700; font-size:1.6rem;
-      text-transform:uppercase;
-      flex-shrink:0;
+    .act-header h3{
+      margin:0;
+      font-size:1rem;
     }
-    .thumb img {
-      width:100%; height:100%; border-radius:16px; object-fit:cover;
-    }
-    .thumb-color { color:#fff; }
-
-    .card-main{
-      flex:1;
-      min-width:0;
-      display:flex;
-      flex-direction:column;
-      gap:2px;
-    }
-
-    .card-main h3{
-      margin:0 0 4px;
-      font-size:1.15rem;
-      white-space:nowrap;
-      overflow:hidden;
-      text-overflow:ellipsis;
-    }
-
-    .meta { font-size:.9rem; color:#ddd; margin:1px 0; }
-    .meta b{ color:#fff; }
-
-    .meta-line {
-      white-space:nowrap;
-      overflow:hidden;
-      text-overflow:ellipsis;
-      max-width:100%;
-    }
-
-    .pill {
-      display:inline-flex; align-items:center; gap:6px;
-      padding:2px 10px; border-radius:999px;
+    .pill{
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      padding:2px 9px;
+      border-radius:999px;
       font-size:.75rem;
+      background:rgba(255,255,255,.06);
     }
-    .pill.ativo { background:rgba(140,255,199,.12); color:#8cffc7; }
-    .pill.inativo { background:rgba(255,124,107,.12); color:#ff9b8a; }
+    .pill.tipo{ opacity:.9; }
+    .pill.estado-ativo{ background:rgba(140,255,199,.12); color:#8cffc7; }
+    .pill.estado-inativo{ background:rgba(255,124,107,.12); color:#ff9b8a; }
 
-    .meta-small{
-      font-size:.8rem;
-      color:#ccc;
+    .act-desc{
+      font-size:.9rem;
+      color:#eee;
+      white-space:pre-line; /* mantém quebras de linha como no Discord */
+    }
+
+    .act-image{
+      margin-top:4px;
+      border-radius:12px;
+      overflow:hidden;
+      max-height:260px;
+      border:1px solid rgba(255,255,255,.07);
+    }
+    .act-image img{
+      width:100%;
+      display:block;
+      object-fit:cover;
+    }
+
+    .act-footer{
       margin-top:6px;
+      display:flex;
+      justify-content:flex-end;
+      gap:6px;
+      flex-wrap:wrap;
     }
-
-    .buttons {
-      display:flex; gap:6px; margin-top:10px; flex-wrap:wrap; justify-content:flex-end;
-    }
-
-    .muted{opacity:.8;}
 
     /* Toast */
     .aura-toast{
@@ -141,31 +167,14 @@
     .aura-toast.error{ border-color:rgba(255,124,107,.35); }
     @keyframes fadeIn{from{opacity:0}to{opacity:1}}
 
-    /* Modal */
+    /* Modal simples para Ver */
     .aura-modal-wrap{ position:fixed; inset:0; background:rgba(0,0,0,.55); display:flex; align-items:center; justify-content:center; padding:20px; z-index:1400; animation:fadeIn .15s ease;}
-    .aura-modal{ width:min(560px,95vw); background:rgba(20,0,40,.92); border:1px solid rgba(255,255,255,.08); border-radius:16px; padding:18px; color:#fff; box-shadow:0 18px 40px rgba(180,107,255,.35);}
+    .aura-modal{ width:min(720px,95vw); background:rgba(20,0,40,.92); border:1px solid rgba(255,255,255,.08); border-radius:16px; padding:18px; color:#fff; box-shadow:0 18px 40px rgba(180,107,255,.35);}
     .aura-modal h3{ margin:0 0 6px; }
     .aura-modal p{ margin:.25rem 0 .5rem; opacity:.9;}
     .aura-modal .row{ display:flex; gap:10px; justify-content:flex-end; margin-top:.8rem;}
     .aura-btn{ background:rgba(255,255,255,.08); color:#fff; border:1px solid rgba(255,255,255,.08); padding:.6rem .9rem; border-radius:10px; cursor:pointer; font-weight:600;}
     .aura-btn.primary{ background: linear-gradient(135deg,#b46bff,#9f4dff); border:none;}
-    .aura-btn.danger{ background: linear-gradient(135deg,#ff4d6d,#ff7c6b); border:none;}
-
-    .aura-modal h4{
-      margin:.4rem 0 .2rem;
-      font-size:.9rem;
-      opacity:.95;
-    }
-    .aura-modal ul{
-      margin:0 0 .5rem;
-      padding-left:1.1rem;
-      font-size:.9rem;
-      max-height:150px;
-      overflow:auto;
-    }
-    .aura-modal li{
-      margin:.05rem 0;
-    }
   </style>
 </head>
 
@@ -192,17 +201,17 @@
   <div class="main-content">
     <div class="page-container">
       <div class="topbar">
-        <h1>Facções</h1>
+        <h1>Perímetros de Ação</h1>
         <div class="actions">
-          <button id="newBtn" class="btn only-editor">➕ Nova Facção</button>
+          <button id="newBtn" class="btn only-editor">➕ Nova Ação</button>
         </div>
       </div>
 
       <div class="searchbar">
-        <input id="searchBar" placeholder="Pesquisar por nome, sigla, líder ou membro..." />
+        <input id="searchBar" placeholder="Pesquisar por local, tipo ou descrição da ação..." />
       </div>
 
-      <div id="faccGrid" class="grid"></div>
+      <div id="groupsWrap"></div>
     </div>
   </div>
 
@@ -217,8 +226,8 @@
     const app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    const grid   = document.getElementById("faccGrid");
-    const search = document.getElementById("searchBar");
+    const groupsWrap = document.getElementById("groupsWrap");
+    const searchInput = document.getElementById("searchBar");
 
     // Permissões
     const isAdmin = localStorage.getItem("isAdmin")==="true";
@@ -260,90 +269,72 @@
       });
     }
 
-    function initials(nome, sigla){
-      if(sigla) return sigla.slice(0,3).toUpperCase();
-      const n = (nome || "").trim();
-      if(!n) return "?";
-      const parts = n.split(/\s+/);
-      if(parts.length===1) return parts[0].slice(0,2).toUpperCase();
-      return (parts[0][0] + parts[1][0]).toUpperCase();
-    }
+    let allActs = [];
 
-    let allFacc = [];
-
-    async function loadFacc(){
+    async function loadActs(){
       try{
-        const snap = await getDocs(collection(db,"facc"));
-        allFacc = snap.docs.map(d=>({ id:d.id, ...d.data() }));
+        const snap = await getDocs(collection(db,"perimetros")); // coleção sugerida
+        allActs = snap.docs.map(d=>({ id:d.id, ...d.data() }));
 
-        allFacc.sort((a,b)=>{
-          const ta = (a.createdAt?.seconds ?? (a.createdAt?.toMillis?.() ?? 0));
-          const tb = (b.createdAt?.seconds ?? (b.createdAt?.toMillis?.() ?? 0));
-          return tb - ta;
+        // opcional: filtrar só ativos se tiveres campo estado
+        allActs = allActs.filter(a => (a.estado || "ativo") !== "inativo");
+
+        // ordenar por categoria e depois título
+        allActs.sort((a,b)=>{
+          const ca = (a.categoria || "Outros").toLowerCase();
+          const cb = (b.categoria || "Outros").toLowerCase();
+          if(ca !== cb) return ca.localeCompare(cb);
+          const ta = (a.titulo || "").toLowerCase();
+          const tb = (b.titulo || "").toLowerCase();
+          return ta.localeCompare(tb);
         });
 
-        render(allFacc);
+        renderGroups(allActs);
       }catch(e){
         console.error(e);
-        toast("Erro ao carregar facções: " + e.message, "error");
+        toast("Erro ao carregar perímetros: " + e.message, "error");
       }
     }
 
-    function resumoMembros(nomes){
-      if(!nomes || !nomes.length) return "Nenhum membro";
-      if(nomes.length <= 3) return nomes.join(", ");
-      return nomes.slice(0,3).join(", ") + ` +${nomes.length - 3}`;
+    function groupByCategoria(list){
+      const map = new Map();
+      list.forEach(a=>{
+        const cat = a.categoria || "Outros";
+        if(!map.has(cat)) map.set(cat, []);
+        map.get(cat).push(a);
+      });
+      return Array.from(map.entries()).sort((a,b)=> a[0].localeCompare(b[0]));
     }
 
-    function listBlock(titulo, arr){
-      if(!arr || !arr.length){
-        return `<h4>${titulo}</h4><p class="muted">Nenhum.</p>`;
-      }
-      return `
-        <h4>${titulo}</h4>
-        <ul>${arr.map(n=>`<li>${n}</li>`).join("")}</ul>
-      `;
-    }
+    function makeActCard(a){
+      const el = document.createElement("div");
+      el.className = "act-card";
 
-    function makeCard(f){
-      const estado = (f.estado || "ativo").toLowerCase();
+      const estado = (a.estado || "ativo").toLowerCase();
       const isAtivo = estado === "ativo";
 
-      const hasPhoto = !!f.photoURL;
-      const cor = f.corHex || "#9b4dff";
-      const inic = initials(f.nome, f.sigla);
+      const tipo = a.tipo || "";
+      const titulo = a.titulo || a.nome || "Sem título";
 
-      const membrosNomes = f.membrosNomes || [];
-      const membrosResumo = resumoMembros(membrosNomes);
+      const desc = a.descricao || "";
 
-      const aliancasNomes = f.aliancasNomes || [];
-      const amizadesNomes = f.amizadesNomes || [];
-
-      const el = document.createElement("div");
-      el.className = "card" + (isAtivo ? "" : " inativo");
-
-      const thumbHtml = hasPhoto
-        ? `<div class="thumb"><img src="${f.photoURL}" alt="facção"></div>`
-        : `<div class="thumb-color" style="background:${cor};">${inic}</div>`;
+      const imgHtml = a.photoURL
+        ? `<img src="${a.photoURL}" alt="perímetro">`
+        : `<img src="../Aurinha.png" alt="perímetro">`;
 
       el.innerHTML = `
-        <div class="card-top">
-          ${thumbHtml}
-          <div class="card-main">
-            <h3 title="${f.nome || ""}">${f.nome || "Sem nome"}</h3>
-            <div class="meta meta-line"><b>Sigla:</b> ${f.sigla || "-"}</div>
-            <div class="meta meta-line"><b>Líder:</b> ${f.liderNome || "-"}</div>
-            <div class="meta meta-line"><b>Membros:</b> ${membrosResumo}</div>
-            <div class="meta-small">
-              <span class="pill ${isAtivo ? "ativo" : "inativo"}">
-                ● ${isAtivo ? "Ativo" : "Inativo"}
-              </span>
-              ${aliancasNomes.length ? ` • ${aliancasNomes.length} alianças` : ""}
-              ${amizadesNomes.length ? ` • ${amizadesNomes.length} amizades` : ""}
-            </div>
+        <div class="act-header">
+          <h3>${titulo}</h3>
+          <div style="display:flex; gap:6px; flex-wrap:wrap;">
+            ${tipo ? `<span class="pill tipo">${tipo}</span>` : ""}
+            <span class="pill ${isAtivo ? "estado-ativo" : "estado-inativo"}">
+              ● ${isAtivo ? "Ativo" : "Inativo"}
+            </span>
           </div>
         </div>
-        <div class="buttons">
+        <div class="act-desc">${desc}</div>
+        <div class="act-image">${imgHtml}</div>
+        <div class="act-footer">
           <button class="btn btn-soft btn-sm viewBtn">Ver</button>
           ${canEdit ? `
             <button class="btn btn-soft btn-sm editBtn">Editar</button>
@@ -352,45 +343,28 @@
         </div>
       `;
 
-      // Ver (modal com listas organizadas)
+      // Ver: modal simples com texto + imagem
       el.querySelector(".viewBtn").onclick = ()=>{
         const wrap = document.createElement("div");
         wrap.className="aura-modal-wrap";
 
-        const fileBlock = f.photoURL
-          ? `
-            <div style="text-align:center; margin:6px 0 10px;">
-              <img src="${f.photoURL}" alt="facção"
-                   style="width:140px;height:140px;object-fit:cover;border-radius:14px;
-                          box-shadow:0 0 10px rgba(180,107,255,.35);display:inline-block;">
-            </div>
-          `
-          : `
-            <p>
-              <b>Cor da facção:</b>
-              <span style="display:inline-block;width:18px;height:18px;border-radius:6px;
-                           vertical-align:middle;margin-right:6px;background:${cor};"></span>
-              ${cor}
-            </p>
-          `;
+        const descHtml = (a.descricao || "Sem descrição.").replace(/\n/g,"<br>");
 
-        const membrosBlock  = listBlock("Membros",   membrosNomes);
-        const aliancasBlock = listBlock("Alianças",  aliancasNomes);
-        const amizadesBlock = listBlock("Amizades",  amizadesNomes);
+        const imgModal = a.photoURL
+          ? `<div style="margin:8px 0 10px;"><img src="${a.photoURL}" alt="perímetro" style="width:100%;border-radius:12px;box-shadow:0 0 12px rgba(180,107,255,.35);"></div>`
+          : "";
 
         wrap.innerHTML = `
           <div class="aura-modal">
-            <h3>${f.nome || "Sem nome"}</h3>
-            <p><b>Sigla:</b> ${f.sigla || "-"}</p>
-            <p><b>Tipo:</b> ${f.tipo || "-"}</p>
-            <p><b>Líder:</b> ${f.liderNome || "-"}</p>
-            <p><b>Estado:</b> ${(estado==="ativo"?"Ativo":"Inativo")}</p>
-            ${fileBlock}
-            <p><b>Descrição:</b><br>${f.descricao || "Sem descrição."}</p>
-            ${membrosBlock}
-            ${aliancasBlock}
-            ${amizadesBlock}
-            <div class="row"><button class="aura-btn primary">Fechar</button></div>
+            <h3>${titulo}</h3>
+            <p><b>Categoria:</b> ${a.categoria || "Outros"}</p>
+            ${tipo ? `<p><b>Tipo:</b> ${tipo}</p>` : ""}
+            <p><b>Estado:</b> ${isAtivo ? "Ativo" : "Inativo"}</p>
+            <p><b>Descrição / Briefing:</b><br>${descHtml}</p>
+            ${imgModal}
+            <div class="row">
+              <button class="aura-btn primary">Fechar</button>
+            </div>
           </div>`;
         wrap.querySelector("button").onclick = ()=> wrap.remove();
         wrap.addEventListener("click",(e)=>{ if(e.target===wrap) wrap.remove(); });
@@ -398,57 +372,94 @@
       };
 
       // Editar
-      el.querySelector(".editBtn")?.addEventListener("click", ()=> {
-        window.location.href = `editar.html?id=${f.id}`;
+      el.querySelector(".editBtn")?.addEventListener("click", ()=>{
+        window.location.href = `editar.html?id=${a.id}`;
       });
 
       // Eliminar
       el.querySelector(".delBtn")?.addEventListener("click", async ()=>{
-        const label = f.nome || f.sigla || f.id;
         const ok = await confirmModal({
-          title:"Eliminar facção",
-          message:`Esta ação é permanente. Eliminar <b>${label}</b>?`,
+          title:"Eliminar ação",
+          message:`Esta ação é permanente. Eliminar <b>${titulo}</b>?`,
           okText:"Eliminar",
           variant:"danger"
         });
         if(!ok) return;
         try{
-          await deleteDoc(doc(db,"facc", f.id));
+          await deleteDoc(doc(db,"perimetros", a.id));
           el.remove();
-          toast("Facção eliminada!");
-        }catch(e){ console.error(e); toast("Erro ao eliminar: " + e.message, "error"); }
+          toast("Ação eliminada!");
+        }catch(e){
+          console.error(e);
+          toast("Erro ao eliminar: " + e.message, "error");
+        }
       });
 
       return el;
     }
 
-    function render(list){
-      grid.innerHTML = "";
+    function renderGroups(list){
+      groupsWrap.innerHTML = "";
       if(!list.length){
-        grid.innerHTML = "<p class='muted'>Nenhuma facção registada.</p>";
+        groupsWrap.innerHTML = "<p class='muted'>Nenhuma ação registada.</p>";
         return;
       }
-      list.forEach(f => grid.appendChild(makeCard(f)));
+
+      const grouped = groupByCategoria(list);
+
+      grouped.forEach(([cat, items])=>{
+        const catEl = document.createElement("div");
+        catEl.className = "cat-block";
+
+        const header = document.createElement("div");
+        header.className = "cat-header";
+        header.innerHTML = `
+          <div class="cat-title">
+            <span class="folder">📁</span>
+            <span>${cat}</span>
+            <span class="cat-count">${items.length} ação(ões)</span>
+          </div>
+          <button class="cat-toggle">▾</button>
+        `;
+
+        const body = document.createElement("div");
+        body.className = "cat-body";
+
+        items.forEach(a => body.appendChild(makeActCard(a)));
+
+        header.addEventListener("click", ()=>{
+          catEl.classList.toggle("collapsed");
+        });
+
+        catEl.appendChild(header);
+        catEl.appendChild(body);
+        groupsWrap.appendChild(catEl);
+      });
     }
 
-    search.addEventListener("input", (e)=>{
+    // Pesquisa
+    searchInput.addEventListener("input", (e)=>{
       const t = (e.target.value || "").toLowerCase().trim();
-      const filtered = allFacc.filter(f =>{
-        const nome   = (f.nome || "").toLowerCase();
-        const sigla  = (f.sigla || "").toLowerCase();
-        const lider  = (f.liderNome || "").toLowerCase();
-        const membros = (f.membrosNomes || []).join(" ").toLowerCase();
+      if(!t){
+        renderGroups(allActs);
+        return;
+      }
+      const filtered = allActs.filter(a=>{
+        const titulo = (a.titulo || a.nome || "").toLowerCase();
+        const cat    = (a.categoria || "").toLowerCase();
+        const tipo   = (a.tipo || "").toLowerCase();
+        const desc   = (a.descricao || "").toLowerCase();
         return (
-          nome.includes(t) ||
-          sigla.includes(t) ||
-          lider.includes(t) ||
-          membros.includes(t)
+          titulo.includes(t) ||
+          cat.includes(t) ||
+          tipo.includes(t) ||
+          desc.includes(t)
         );
       });
-      render(filtered);
+      renderGroups(filtered);
     });
 
-    loadFacc();
+    loadActs();
   </script>
 
   <!-- LOGOUT + PERMISSÕES VISUAIS -->

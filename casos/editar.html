@@ -1,195 +1,515 @@
 <!DOCTYPE html>
 <html lang="pt">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Editar Caso - Sistema Aura</title>
-  <link rel="icon" href="../../Aurinha.png" />
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet" />
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Editar Caso — Sistema AURA 💜</title>
+
+  <link rel="icon" href="../Aurinha.png"/>
+  <link rel="stylesheet" href="../style.css"/>
+
   <style>
-    body {
-      background: radial-gradient(circle at top left,#1a001f,#000);
-      font-family:'Poppins',sans-serif;
-      color:#fff;
-      display:flex;
-      justify-content:center;
-      align-items:center;
-      height:100vh;
-      margin:0;
+    .page-container { padding:2rem; max-width:1100px; margin:0 auto; }
+    .topbar { display:flex; justify-content:space-between; align-items:center; gap:8px; flex-wrap:wrap; margin-bottom:1.4rem; }
+    .row-actions { display:flex; gap:8px; flex-wrap:wrap; }
+    .card { background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.06); border-radius:16px; padding:22px; box-shadow:0 10px 22px rgba(180,107,255,.15); }
+
+    label { font-weight:600; opacity:.95; margin-bottom:6px; display:block; }
+    input, textarea {
+      width:100%; padding:.8rem 1rem; border-radius:12px; border:none; outline:none;
+      background:rgba(255,255,255,.08); color:#fff; box-shadow:0 0 10px rgba(180,107,255,.18);
+      margin-bottom:1rem;
     }
-    .form-container {
-      background:rgba(50,0,80,0.45);
-      border:1px solid rgba(200,150,255,0.3);
-      border-radius:20px;
-      padding:35px 45px;
-      width:400px;
-      text-align:center;
-      box-shadow:0 0 25px rgba(180,0,255,0.25);
-      position:relative;
+    textarea { resize:vertical; min-height:120px; }
+
+    /* Chips multi-select */
+    .ms { margin-bottom:1rem; }
+    .ms .box {
+      display:flex; gap:8px; flex-wrap:wrap; align-items:center;
+      min-height:48px; padding:8px; border-radius:12px;
+      background:rgba(255,255,255,.08); box-shadow:0 0 10px rgba(180,107,255,.18);
     }
-    h2{
-      color:#d6b2ff;
-      text-shadow:0 0 10px rgba(180,0,255,0.7);
-      margin-bottom:20px;
-    }
-    input,textarea{
-      width:100%;
-      padding:10px;
-      margin:8px 0;
-      border-radius:10px;
-      border:none;
-      background:rgba(255,255,255,0.1);
-      color:#fff;
-      transition:0.3s;
-    }
-    input:focus,textarea:focus{
-      outline:none;
-      box-shadow:0 0 10px rgba(180,0,255,0.6);
-      background:rgba(255,255,255,0.15);
-    }
-    button{
+    .ms .chip {
+      display:inline-flex; align-items:center; gap:6px;
       background:linear-gradient(90deg,#9b4dff,#b86bff);
-      border:none;
-      padding:10px 20px;
-      border-radius:10px;
-      color:#fff;
-      font-weight:600;
-      cursor:pointer;
-      transition:0.3s;
-      margin-top:10px;
-      width:100%;
+      color:#fff; padding:6px 10px; border-radius:999px; font-weight:600; font-size:.9rem;
+      box-shadow:0 6px 14px rgba(180,107,255,.25);
     }
-    button:hover{
-      transform:scale(1.05);
-      background:linear-gradient(90deg,#b86bff,#d6aaff);
+    .ms .chip button {
+      background:rgba(255,255,255,.25); border:none; color:#fff; width:20px; height:20px;
+      border-radius:50%; cursor:pointer; font-weight:700; line-height:20px;
     }
-    .suggestions{
-      position:absolute;
-      width:calc(100% - 90px);
-      background:rgba(50,0,80,0.85);
-      border-radius:10px;
-      box-shadow:0 0 10px rgba(200,150,255,0.3);
-      max-height:150px;
-      overflow-y:auto;
-      z-index:99;
-      text-align:left;
+    .ms .input-wrap { flex:1; min-width:200px; position:relative; }
+    .ms input[type="text"] {
+      margin:0; background:transparent; box-shadow:none; padding:.5rem .6rem; width:100%;
+      color:#fff; border:none; outline:none;
     }
-    .suggestions div{
-      padding:8px 12px;
-      cursor:pointer;
-      transition:0.2s;
+    .ms .dropdown {
+      position:absolute; left:0; right:0; top:110%;
+      background:rgba(20,0,40,.95); border:1px solid rgba(255,255,255,.08);
+      border-radius:12px; box-shadow:0 18px 34px rgba(180,107,255,.25);
+      max-height:220px; overflow:auto; z-index:50; display:none;
     }
-    .suggestions div:hover{background:rgba(180,0,255,0.4);}
-    #msg{margin-top:10px;color:#c8b6ff;font-size:0.9rem;}
+    .ms .dropdown.open { display:block; }
+    .ms .opt { padding:10px 12px; cursor:pointer; display:flex; justify-content:space-between; gap:10px; }
+    .ms .opt:hover { background:rgba(255,255,255,.08); }
+
+    .file-row { display:flex; align-items:center; gap:12px; margin:8px 0 4px; }
+    .preview {
+      display:flex; align-items:center; gap:10px;
+      background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.06);
+      padding:10px; border-radius:12px; margin-top:6px;
+    }
+    .preview img { width:86px; height:86px; object-fit:cover; border-radius:10px; box-shadow:0 0 12px rgba(180,107,255,.35); }
+    .preview .fileinfo { font-size:.95rem; opacity:.9; }
+
+    .btn {
+      background:linear-gradient(90deg,#9b4dff,#b86bff);
+      border:none; border-radius:10px; color:#fff; font-weight:600;
+      padding:8px 14px; cursor:pointer; transition:.2s; box-shadow:0 0 10px rgba(180,107,255,.25);
+    }
+    .btn:hover { transform:translateY(-1px); box-shadow:0 10px 22px rgba(180,107,255,.35); }
+    .btn-soft { background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.08); }
+    .btn-danger{ background:linear-gradient(90deg,#ff4d6d,#ff7c6b); }
+
+    /* Toast */
+    .aura-toast{
+      position:fixed; right:16px; bottom:16px; z-index:1200; display:flex; gap:10px; align-items:center;
+      background:rgba(20,0,40,.95); border:1px solid rgba(255,255,255,.08);
+      padding:.7rem 1rem; border-radius:12px; color:#fff; box-shadow:0 10px 24px rgba(180,107,255,.35);
+      animation:fadeIn .15s ease;
+    }
+    .aura-toast.success{ border-color:rgba(140,255,199,.35); }
+    .aura-toast.error{ border-color:rgba(255,124,107,.35); }
+    @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+
+    /* Modal */
+    .aura-modal-wrap{ position:fixed; inset:0; background:rgba(0,0,0,.55); display:flex; align-items:center; justify-content:center; padding:20px; z-index:1400; animation:fadeIn .15s ease;}
+    .aura-modal{ width:min(520px,95vw); background:rgba(20,0,40,.92); border:1px solid rgba(255,255,255,.08); border-radius:16px; padding:18px; color:#fff; box-shadow:0 18px 40px rgba(180,107,255,.35);}
+    .aura-modal h3{ margin:0 0 6px; }
+    .aura-modal p{ margin:.25rem 0 1rem; opacity:.9;}
+    .aura-modal .row{ display:flex; gap:10px; justify-content:flex-end;}
+    .aura-btn{ background:rgba(255,255,255,.08); color:#fff; border:1px solid rgba(255,255,255,.08); padding:.6rem .9rem; border-radius:10px; cursor:pointer; font-weight:600;}
+    .aura-btn.primary{ background: linear-gradient(135deg,#b46bff,#9f4dff); border:none;}
+    .aura-btn.danger{ background: linear-gradient(135deg,#ff4d6d,#ff7c6b); border:none;}
+
+    .hidden{display:none}
   </style>
 </head>
-<body>
-  <div class="form-container">
-    <h2>Editar Caso</h2>
-    <input id="caseCode" readonly placeholder="Código do Caso" />
-    <input id="title" placeholder="Título do Caso" required />
-    <textarea id="description" placeholder="Descrição do Caso" rows="3"></textarea>
-    <div style="position:relative">
-      <input id="suspect" placeholder="Suspeito (opcional)" autocomplete="off" />
-      <div id="suspectList" class="suggestions" style="display:none"></div>
-    </div>
-    <div style="position:relative">
-      <input id="faction" placeholder="Facção (opcional)" autocomplete="off" />
-      <div id="factionList" class="suggestions" style="display:none"></div>
-    </div>
-    <div style="position:relative">
-      <input id="vehicle" placeholder="Veículo (opcional)" autocomplete="off" />
-      <div id="vehicleList" class="suggestions" style="display:none"></div>
-    </div>
 
-    <button id="saveBtn">Salvar Alterações</button>
-    <button onclick="window.location.href='ver.html'">⬅ Voltar</button>
-    <p id="msg"></p>
+<body>
+  <!-- SIDEBAR (sem "Agente:") -->
+  <div class="sidebar">
+    <h2 class="logo">SISTEMA AURA</h2>
+    <ul>
+      <li><a href="../dashboard.html" class="navlink"><span class="icon">🏠</span><span class="label">Dashboard</span></a></li>
+      <li><a href="../perfis/ver.html" class="navlink"><span class="icon">👑</span><span class="label">Perfil da Aura</span></a></li>
+      <li><a href="ver.html" class="navlink"><span class="icon">📁</span><span class="label">Casos</span></a></li>
+      <li><a href="arquivados.html" class="navlink"><span class="icon">🗃️</span><span class="label">Arquivados</span></a></li>
+    </ul>
+    <button id="logoutBtn">Sair</button>
   </div>
 
+  <!-- CONTEÚDO -->
+  <div class="main-content">
+    <div class="page-container">
+      <div class="topbar">
+        <h1>Editar Caso</h1>
+        <div class="row-actions">
+          <button id="backBtn" class="btn btn-soft">⬅️ Voltar</button>
+          <button id="archiveBtn" class="btn btn-soft only-editor">📦 Arquivar</button>
+          <button id="reopenBtn"  class="btn btn-soft only-editor hidden">🗃 Reabrir</button>
+          <button id="deleteBtn"  class="btn btn-danger only-editor">🗑 Eliminar</button>
+          <button id="saveBtn"    class="btn only-editor">💾 Guardar</button>
+        </div>
+      </div>
+
+      <form id="caseForm" class="card">
+        <label>Título</label>
+        <input id="titulo" placeholder="Ex: Operação Eclipse" required />
+
+        <label>Responsável</label>
+        <input id="responsavel" placeholder="Ex: Agente Solano" />
+
+        <!-- Envolvidos -->
+        <div class="ms" id="ms-envolvidos">
+          <label>Envolvidos</label>
+          <div class="box">
+            <div class="chips"></div>
+            <div class="input-wrap">
+              <input type="text" placeholder="Pesquisar pessoas..." />
+              <div class="dropdown"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Veículos -->
+        <div class="ms" id="ms-veiculos">
+          <label>Veículos (opcional)</label>
+          <div class="box">
+            <div class="chips"></div>
+            <div class="input-wrap">
+              <input type="text" placeholder="Pesquisar veículos..." />
+              <div class="dropdown"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Facções -->
+        <div class="ms" id="ms-faccoes">
+          <label>Facções (opcional)</label>
+          <div class="box">
+            <div class="chips"></div>
+            <div class="input-wrap">
+              <input type="text" placeholder="Pesquisar facções..." />
+              <div class="dropdown"></div>
+            </div>
+          </div>
+        </div>
+
+        <label>Descrição</label>
+        <textarea id="descricao" placeholder="Detalhes do caso..."></textarea>
+
+        <label>Anexo (imagem ou PDF)</label>
+        <div class="file-row">
+          <input id="fileInput" type="file" accept="image/*,.pdf"/>
+          <button id="removeFileBtn" type="button" class="btn btn-soft hidden">Remover anexo</button>
+        </div>
+        <div id="filePreview" class="preview" style="display:none;"></div>
+      </form>
+    </div>
+  </div>
+
+  <!-- FIREBASE -->
   <script type="module">
     import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js";
-    import { getFirestore, doc, getDoc, updateDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
-    import { firebaseConfig } from "../../firebaseConfig.js";
+    import {
+      getFirestore, doc, getDoc, updateDoc, deleteDoc, collection, getDocs, serverTimestamp
+    } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
+    import {
+      getStorage, ref, uploadBytes, getDownloadURL, deleteObject
+    } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-storage.js";
+    import { firebaseConfig } from "../firebaseConfig.js";
 
-    const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
-    const db = getFirestore(app);
+    const app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
+    const db  = getFirestore(app);
+    const stg = getStorage(app);
 
-    const params = new URLSearchParams(window.location.search);
-    const caseId = params.get("id");
+    const qs = new URLSearchParams(location.search);
+    const id = qs.get("id");
+    if(!id) location.href = "ver.html";
 
-    const msg = document.getElementById("msg");
-    const codeInput = document.getElementById("caseCode");
-    const titleInput = document.getElementById("title");
-    const descInput = document.getElementById("description");
-    const suspectInput = document.getElementById("suspect");
-    const factionInput = document.getElementById("faction");
-    const vehicleInput = document.getElementById("vehicle");
+    // Elements
+    const tituloEl = document.getElementById("titulo");
+    const responsavelEl = document.getElementById("responsavel");
+    const descricaoEl = document.getElementById("descricao");
+    const archiveBtn = document.getElementById("archiveBtn");
+    const reopenBtn  = document.getElementById("reopenBtn");
+    const deleteBtn  = document.getElementById("deleteBtn");
+    const saveBtn    = document.getElementById("saveBtn");
+    const backBtn    = document.getElementById("backBtn");
 
-    async function loadCase() {
-      if (!caseId) { msg.textContent = "❌ ID não encontrado na URL."; return; }
-      const docRef = doc(db, "cases", caseId);
-      const snap = await getDoc(docRef);
-      if (!snap.exists()) { msg.textContent = "❌ Caso não encontrado."; return; }
-      const data = snap.data();
-      codeInput.value = data.code || "";
-      titleInput.value = data.title || "";
-      descInput.value = data.description || "";
-      suspectInput.value = data.suspect || "";
-      factionInput.value = data.faction || "";
-      vehicleInput.value = data.vehicle || "";
+    const fileInput  = document.getElementById("fileInput");
+    const filePreview= document.getElementById("filePreview");
+    const removeFileBtn = document.getElementById("removeFileBtn");
+
+    // Toast
+    function toast(msg,type="success"){
+      const t=document.createElement("div");
+      t.className=`aura-toast ${type}`;
+      t.innerHTML=`<span>${type==="success"?"✅":"⚠️"}</span><span>${msg}</span>`;
+      document.body.appendChild(t);
+      setTimeout(()=>{ t.style.opacity="0"; setTimeout(()=>t.remove(),260); }, 1900);
     }
-    loadCase();
-
-    async function setupAutocomplete(input, listElement, col, field1, field2) {
-      input.addEventListener("input", async () => {
-        const term = input.value.trim().toLowerCase();
-        if (!term) { listElement.style.display = "none"; return; }
-        const qSnap = await getDocs(collection(db, col));
-        let results = [];
-        qSnap.forEach(doc => {
-          const d = doc.data();
-          if ((d[field1] || "").toLowerCase().includes(term)) {
-            const detail = d[field2] ? ` — ${d[field2]}` : "";
-            results.push(`${d[field1]}${detail}`);
-          }
-        });
-        listElement.innerHTML = results.slice(0,10).map(r => `<div>${r}</div>`).join("");
-        listElement.style.display = results.length ? "block" : "none";
-        listElement.querySelectorAll("div").forEach(div => {
-          div.addEventListener("click", () => {
-            input.value = div.textContent.split(" — ")[0];
-            listElement.style.display = "none";
-          });
-        });
-      });
-      document.addEventListener("click", e => {
-        if (!listElement.contains(e.target) && e.target !== input) listElement.style.display = "none";
+    // Modal
+    function confirmModal({title="Confirmar", message="Tens a certeza?", okText="Confirmar", variant="primary"}){
+      return new Promise(resolve=>{
+        const wrap=document.createElement("div");
+        wrap.className="aura-modal-wrap";
+        wrap.innerHTML=`
+          <div class="aura-modal">
+            <h3>${title}</h3>
+            <p>${message}</p>
+            <div class="row">
+              <button class="aura-btn">Cancelar</button>
+              <button class="aura-btn ${variant==='danger'?'danger':'primary'}">${okText}</button>
+            </div>
+          </div>`;
+        document.body.appendChild(wrap);
+        const [c,o]=wrap.querySelectorAll("button");
+        const close=v=>{ wrap.remove(); resolve(v); };
+        c.onclick=()=>close(false); o.onclick=()=>close(true);
+        wrap.addEventListener("click",(e)=>{ if(e.target===wrap) close(false); });
       });
     }
 
-    setupAutocomplete(suspectInput, document.getElementById("suspectList"), "people", "name", "faction");
-    setupAutocomplete(factionInput, document.getElementById("factionList"), "facc", "name", "leader");
-    setupAutocomplete(vehicleInput, document.getElementById("vehicleList"), "vehicles", "model", "plate");
+    // Chips helper
+    function makeChipSelect(rootEl, options){
+      const chipsEl = rootEl.querySelector(".chips");
+      const inputEl = rootEl.querySelector("input");
+      const ddEl    = rootEl.querySelector(".dropdown");
+      const selected = [];
 
-    document.getElementById("saveBtn").addEventListener("click", async () => {
-      msg.textContent = "💾 Salvando alterações...";
-      try {
-        const docRef = doc(db, "cases", caseId);
-        await updateDoc(docRef, {
-          title: titleInput.value.trim(),
-          description: descInput.value.trim(),
-          suspect: suspectInput.value.trim(),
-          faction: factionInput.value.trim(),
-          vehicle: vehicleInput.value.trim()
+      function renderChips(){
+        chipsEl.innerHTML = "";
+        selected.forEach((lbl, idx)=>{
+          const chip = document.createElement("span");
+          chip.className="chip";
+          chip.innerHTML = `${lbl} <button type="button">&times;</button>`;
+          chip.querySelector("button").onclick = ()=>{ selected.splice(idx,1); renderChips(); };
+          chipsEl.appendChild(chip);
         });
-        msg.textContent = "✅ Caso atualizado com sucesso!";
-        setTimeout(()=> window.location.href="ver.html", 1200);
-      } catch (err) {
-        console.error(err);
-        msg.textContent = "❌ Erro ao atualizar: " + err.message;
+      }
+      function openDD(filter=""){
+        ddEl.classList.add("open");
+        const f = filter.toLowerCase().trim();
+        const avail = options
+          .map(o => (typeof o==="string" ? o : (o.label || o.name || o.titulo || o.modelo || o.placa || "")))
+          .filter(lbl => lbl && !selected.includes(lbl) && (!f || lbl.toLowerCase().includes(f)));
+        ddEl.innerHTML = avail.length ? "" : `<div class="opt">Sem resultados…</div>`;
+        avail.forEach(lbl=>{
+          const opt=document.createElement("div");
+          opt.className="opt";
+          opt.innerHTML = `<span>${lbl}</span>`;
+          opt.onclick = ()=>{ selected.push(lbl); renderChips(); inputEl.value=""; closeDD(); };
+          ddEl.appendChild(opt);
+        });
+      }
+      function closeDD(){ ddEl.classList.remove("open"); }
+
+      inputEl.addEventListener("focus", ()=> openDD(inputEl.value));
+      inputEl.addEventListener("input", ()=> openDD(inputEl.value));
+      document.addEventListener("click", (e)=>{ if(!rootEl.contains(e.target)) closeDD(); });
+
+      return {
+        getSelected: ()=> [...selected],
+        setOptions: (ops)=>{ options = ops || []; },
+        setSelected: (labels=[])=>{ selected.splice(0,selected.length,...labels); renderChips(); }
+      };
+    }
+
+    // Instâncias dos três selects
+    const msEnvolvidos = makeChipSelect(document.getElementById("ms-envolvidos"), []);
+    const msVeiculos   = makeChipSelect(document.getElementById("ms-veiculos"), []);
+    const msFaccoes    = makeChipSelect(document.getElementById("ms-faccoes"), []);
+
+    // Preload de listas (users+people / veiculos / facc)
+    function labelFrom(docData, fallbackId){
+      return (
+        docData.name ||
+        docData.titulo ||
+        docData.modelo ||
+        docData.placa ||
+        docData.alias ||
+        docData.code ||
+        fallbackId
+      );
+    }
+    async function loadOptions(){
+      try{
+        const [usersSnap, peopleSnap] = await Promise.all([
+          getDocs(collection(db,"users")),
+          getDocs(collection(db,"people"))
+        ]);
+        const envolv = [
+          ...usersSnap.docs.map(d=>labelFrom(d.data(), d.id)),
+          ...peopleSnap.docs.map(d=>labelFrom(d.data(), d.id)),
+        ].filter(Boolean).sort((a,b)=>a.localeCompare(b));
+        msEnvolvidos.setOptions(envolv);
+      }catch(e){ console.warn("Erro a carregar envolvidos", e); }
+
+      try{
+        const vSnap = await getDocs(collection(db,"veiculos"));
+        const vOps  = vSnap.docs.map(d=>labelFrom(d.data(), d.id)).filter(Boolean).sort((a,b)=>a.localeCompare(b));
+        msVeiculos.setOptions(vOps);
+      }catch(e){ msVeiculos.setOptions([]); }
+
+      try{
+        const fSnap = await getDocs(collection(db,"facc"));
+        const fOps  = fSnap.docs.map(d=>labelFrom(d.data(), d.id)).filter(Boolean).sort((a,b)=>a.localeCompare(b));
+        msFaccoes.setOptions(fOps);
+      }catch(e){ msFaccoes.setOptions([]); }
+    }
+
+    // Permissões
+    const isAdmin = localStorage.getItem("isAdmin")==="true";
+    const uRole   = (localStorage.getItem("userRole")||"").toLowerCase();
+    const canEdit = isAdmin || uRole==="investigador";
+    if(!canEdit){
+      document.querySelectorAll(".only-editor").forEach(el=>el.style.display="none");
+      document.querySelectorAll("input, textarea").forEach(el=>el.disabled=true);
+    }
+
+    backBtn.onclick = ()=> window.location.href="ver.html";
+
+    // Preview ficheiro local
+    fileInput.addEventListener("change", ()=>{
+      const f=fileInput.files?.[0];
+      if(!f){ filePreview.style.display="none"; filePreview.innerHTML=""; return; }
+      filePreview.style.display="flex";
+      if(f.type.startsWith("image/")){
+        const url=URL.createObjectURL(f);
+        filePreview.innerHTML = `<img src="${url}" alt="preview"><span class="fileinfo">${f.name} • ${(f.size/1024).toFixed(1)} KB</span>`;
+      }else{
+        filePreview.innerHTML = `<span class="fileinfo">📄 ${f.name} • ${(f.size/1024).toFixed(1)} KB</span>`;
+      }
+      removeFileBtn.classList.add("hidden"); // estamos a trocar por um novo
+    });
+
+    // Carregar caso
+    let currentData = null;
+    let currentFileURL = null; // photoURL existente
+    let currentFilePath = null; // path aproximado no storage (se conseguirmos inferir)
+    async function loadCase(){
+      await loadOptions();
+      const snap = await getDoc(doc(db,"casos",id));
+      if(!snap.exists()){ toast("Caso não encontrado.","error"); setTimeout(()=>location.href="ver.html",900); return; }
+      currentData = snap.data();
+
+      tituloEl.value = currentData.titulo || "";
+      responsavelEl.value = currentData.responsavel || "";
+      descricaoEl.value = currentData.descricao || "";
+
+      // estado → alternar botões
+      const estado = (currentData.estado || "ativo").toLowerCase();
+      if(estado==="arquivado"){
+        archiveBtn.classList.add("hidden");
+        reopenBtn.classList.remove("hidden");
+      } else {
+        archiveBtn.classList.remove("hidden");
+        reopenBtn.classList.add("hidden");
+      }
+
+      // chips
+      msEnvolvidos.setSelected(currentData.envolvidos || []);
+      msVeiculos.setSelected(currentData.veiculos || []);
+      msFaccoes.setSelected(currentData.faccoes || []);
+
+      // anexo existente
+      if(currentData.photoURL){
+        currentFileURL = currentData.photoURL;
+        filePreview.style.display="flex";
+        const isImg = /\.(png|jpe?g|gif|webp|bmp|svg)$/i.test(currentFileURL);
+        if(isImg){
+          filePreview.innerHTML = `<img src="${currentFileURL}" alt="anexo"><span class="fileinfo">${currentData.fileName || "imagem"}</span>`;
+        } else {
+          filePreview.innerHTML = `<span class="fileinfo">📄 ${currentData.fileName || "documento"}<br><a href="${currentFileURL}" target="_blank" style="color:#bfa7ff; text-decoration:underline;">Abrir</a></span>`;
+        }
+        removeFileBtn.classList.remove("hidden");
+      }
+    }
+
+    // Remover anexo atual (apenas do doc; se quiseres também apagar do Storage, tentamos)
+    removeFileBtn.addEventListener("click", async ()=>{
+      if(!canEdit){ toast("Sem permissão.","error"); return; }
+      const ok = await confirmModal({ title:"Remover anexo", message:"Desejas remover o anexo deste caso?", okText:"Remover", variant:"danger" });
+      if(!ok) return;
+      try{
+        // tentativa de apagar do storage se conseguirmos inferir o path
+        // (como gravámos `casos/{id}/{timestamp_nome}`, podemos tentar parsear pelo URL do storage,
+        // mas como o getDownloadURL é assinado, nem sempre dá. Vamos ao seguro: só limpamos o doc.)
+        await updateDoc(doc(db,"casos",id), { photoURL:"", fileName:"", fileType:"" });
+        currentFileURL = null;
+        fileInput.value = "";
+        filePreview.style.display="none";
+        filePreview.innerHTML = "";
+        removeFileBtn.classList.add("hidden");
+        toast("Anexo removido.");
+      }catch(e){ console.error(e); toast("Erro ao remover anexo: "+e.message,"error"); }
+    });
+
+    // Guardar alterações
+    saveBtn?.addEventListener("click", async (e)=>{
+      e.preventDefault();
+      if(!canEdit){ toast("Sem permissão para guardar.","error"); return; }
+
+      const ok = await confirmModal({ title:"Guardar alterações", message:"Confirmas guardar as alterações deste caso?", okText:"Guardar" });
+      if(!ok) return;
+
+      try{
+        const update = {
+          titulo: (tituloEl.value||"").trim(),
+          responsavel: (responsavelEl.value||"").trim(),
+          envolvidos: msEnvolvidos.getSelected(),
+          veiculos: msVeiculos.getSelected(),
+          faccoes: msFaccoes.getSelected(),
+          descricao: (descricaoEl.value||"").trim(),
+          updatedAt: serverTimestamp()
+        };
+
+        // se houver novo ficheiro, fazemos upload e atualizamos o doc
+        const f = fileInput.files?.[0];
+        if(f){
+          const safeName = f.name.replace(/[^\w.\-]+/g,"_");
+          const path = `casos/${id}/${Date.now()}_${safeName}`;
+          const sref = ref(stg, path);
+          await uploadBytes(sref, f);
+          const url = await getDownloadURL(sref);
+          update.photoURL = url;
+          update.fileName = f.name;
+          update.fileType = f.type || "";
+        }
+
+        await updateDoc(doc(db,"casos",id), update);
+        toast("Alterações guardadas!");
+      }catch(e){
+        console.error(e);
+        toast("Erro ao guardar: "+e.message, "error");
       }
     });
+
+    // Arquivar
+    archiveBtn?.addEventListener("click", async ()=>{
+      if(!canEdit){ toast("Sem permissão.","error"); return; }
+      const ok = await confirmModal({ title:"Arquivar caso", message:"Queres arquivar este caso?", okText:"Arquivar" });
+      if(!ok) return;
+      try{
+        await updateDoc(doc(db,"casos",id), { estado:"arquivado", updatedAt: serverTimestamp() });
+        toast("Caso arquivado!");
+        archiveBtn.classList.add("hidden");
+        reopenBtn.classList.remove("hidden");
+      }catch(e){ console.error(e); toast("Erro ao arquivar: "+e.message,"error"); }
+    });
+
+    // Reabrir
+    reopenBtn?.addEventListener("click", async ()=>{
+      if(!canEdit){ toast("Sem permissão.","error"); return; }
+      const ok = await confirmModal({ title:"Reabrir caso", message:"Desejas reabrir este caso?", okText:"Reabrir" });
+      if(!ok) return;
+      try{
+        await updateDoc(doc(db,"casos",id), { estado:"ativo", updatedAt: serverTimestamp() });
+        toast("Caso reaberto!");
+        reopenBtn.classList.add("hidden");
+        archiveBtn.classList.remove("hidden");
+      }catch(e){ console.error(e); toast("Erro ao reabrir: "+e.message,"error"); }
+    });
+
+    // Eliminar
+    deleteBtn?.addEventListener("click", async ()=>{
+      if(!canEdit){ toast("Sem permissão.","error"); return; }
+      const ok = await confirmModal({ title:"Eliminar caso", message:"Esta ação é permanente. Queres eliminar este caso?", okText:"Eliminar", variant:"danger" });
+      if(!ok) return;
+      try{
+        // tentativa opcional: remover ficheiro principal (não temos path exato; manter simples → só doc)
+        await deleteDoc(doc(db,"casos",id));
+        toast("Caso eliminado!");
+        setTimeout(()=> location.href="ver.html", 900);
+      }catch(e){ console.error(e); toast("Erro ao eliminar: "+e.message, "error"); }
+    });
+
+    // start
+    loadCase();
+  </script>
+
+  <!-- LOGOUT -->
+  <script>
+    (function(){
+      const logoutBtn=document.getElementById("logoutBtn");
+      if(logoutBtn) logoutBtn.onclick=()=>{
+        ["username","selectedAgent","userRole","userCode","isAdmin"].forEach(k=>localStorage.removeItem(k));
+        window.location.href="../select.html";
+      };
+    })();
   </script>
 </body>
 </html>
