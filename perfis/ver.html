@@ -214,6 +214,7 @@
     // Carregar perfis
     async function loadProfiles(){
       const snap = await getDocs(collection(db,"users"));
+      orderBy("createdAt", "asc")   // ou "desc" se quiseres mais novos em cima
       allProfiles = snap.docs.map(d => ({ id: d.id, ...d.data() }));
       render(allProfiles);
     }
