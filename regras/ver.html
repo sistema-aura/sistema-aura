@@ -3,163 +3,216 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Regras CDA — Sistema AURA 💜</title>
+  <title>Regras da Cidade — Sistema AURA 💜</title>
 
   <link rel="icon" href="../Aurinha.png" />
   <link rel="stylesheet" href="../style.css" />
 
   <style>
-    .page-container { padding: 2rem; max-width: 1200px; margin: 0 auto; }
+    .page-container {
+      padding: 2rem;
+    }
 
     .topbar {
-      display:flex; justify-content:space-between; align-items:center;
-      flex-wrap:wrap; gap:10px; margin-bottom:1.4rem;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-bottom:1.4rem;
     }
 
     .btn {
       background: linear-gradient(90deg,#9b4dff,#b86bff);
-      border:none; border-radius:10px; color:#fff; font-weight:600;
-      padding:8px 14px; cursor:pointer; transition:.2s;
+      border:none;
+      border-radius:10px;
+      padding:8px 14px;
+      color:#fff;
+      font-weight:600;
+      cursor:pointer;
       box-shadow:0 0 10px rgba(180,107,255,.25);
+      transition:.2s;
     }
-    .btn:hover { transform:translateY(-1px); box-shadow:0 10px 22px rgba(180,107,255,.35); }
+    .btn:hover {
+      transform:translateY(-1px);
+      box-shadow:0 10px 22px rgba(180,107,255,.35);
+    }
     .btn-soft {
+      background:rgba(255,255,255,.08);
+      border:1px solid rgba(255,255,255,.08);
+    }
+
+    .layout {
+      display:grid;
+      grid-template-columns: minmax(220px, 260px) minmax(0, 1fr);
+      gap:1.5rem;
+      align-items:flex-start;
+    }
+
+    /* Índice de categorias */
+    .sidebar-regras {
+      background:rgba(255,255,255,.04);
+      border-radius:16px;
+      padding:1rem;
+      border:1px solid rgba(255,255,255,.06);
+      box-shadow:0 10px 24px rgba(180,107,255,.18);
+      max-height:calc(100vh - 180px);
+      overflow:auto;
+    }
+    .sidebar-regras h2 {
+      margin-top:0;
+      font-size:1.05rem;
+      margin-bottom:0.6rem;
+    }
+    .cat-list {
+      display:flex;
+      flex-direction:column;
+      gap:6px;
+    }
+    .cat-btn {
+      width:100%;
+      text-align:left;
+      border:none;
+      border-radius:10px;
+      padding:.45rem .65rem;
+      background:transparent;
+      color:#fff;
+      cursor:pointer;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:8px;
+      font-size:.92rem;
+      transition:.15s;
+    }
+    .cat-main {
+      display:flex;
+      align-items:center;
+      gap:6px;
+    }
+    .cat-btn span.emoji {
+      font-size:1.1rem;
+      filter:drop-shadow(0 0 6px rgba(180,107,255,.4));
+    }
+    .cat-badge {
+      font-size:.78rem;
+      padding:2px 7px;
+      border-radius:999px;
+      background:rgba(255,255,255,.08);
+      border:1px solid rgba(255,255,255,.06);
+    }
+    .cat-btn:hover {
       background:rgba(255,255,255,.06);
-      border:1px solid rgba(255,255,255,.14);
+      transform:translateX(2px);
+    }
+    .cat-btn.active {
+      background:rgba(180,107,255,.2);
+      box-shadow:0 8px 20px rgba(180,107,255,.35);
+    }
+
+    /* Área principal: pesquisa + cards */
+    .main-regras {
+      display:flex;
+      flex-direction:column;
+      gap:1rem;
     }
 
     .searchbar {
-      margin:.5rem 0 1.5rem;
-      display:flex; gap:10px; align-items:center;
+      display:flex;
+      align-items:center;
+      gap:10px;
       background:rgba(255,255,255,.06);
       border-radius:14px;
-      padding:.6rem .9rem;
-      box-shadow:0 0 14px rgba(180,107,255,.25);
+      padding:.75rem 1rem;
+      box-shadow:0 0 12px rgba(180,107,255,.25);
     }
-    .searchbar span{ font-size:1.2rem; }
-    .searchbar input{
-      flex:1; border:none; outline:none;
-      background:transparent; color:#fff;
+    .searchbar span.icon {
+      font-size:1.1rem;
+    }
+    .searchbar input {
+      flex:1;
+      border:none;
+      outline:none;
+      background:transparent;
+      color:#fff;
       font-size:1rem;
     }
 
-    .rules-layout{
-      display:grid;
-      grid-template-columns: minmax(220px,260px) minmax(0,1fr);
-      gap:18px;
-    }
-
-    @media(max-width:900px){
-      .rules-layout{
-        grid-template-columns: 1fr;
-      }
-    }
-
-    .rules-index{
-      position:sticky;
-      top:1.5rem;
-      align-self:flex-start;
-      background:rgba(255,255,255,.04);
-      border-radius:16px;
-      border:1px solid rgba(255,255,255,.08);
-      padding:10px 12px;
-      max-height:75vh;
-      overflow:auto;
-      box-shadow:0 8px 18px rgba(180,107,255,.12);
-    }
-    .rules-index h3{
-      margin:0 0 .3rem;
-      font-size:.95rem;
-      opacity:.9;
-    }
-    .rules-index small{
-      display:block;
-      margin-bottom:.5rem;
-      opacity:.75;
-      font-size:.8rem;
-    }
-    .rules-index ul{
-      list-style:none;
-      margin:0;
-      padding:0;
+    .search-meta {
       display:flex;
-      flex-direction:column;
-      gap:2px;
-      font-size:.9rem;
-    }
-    .rules-index li button{
-      width:100%; text-align:left;
-      border:none; background:transparent;
-      color:#ddd; padding:4px 4px;
-      border-radius:8px; cursor:pointer;
+      justify-content:space-between;
+      gap:10px;
+      flex-wrap:wrap;
       font-size:.88rem;
-    }
-    .rules-index li button:hover{
-      background:rgba(255,255,255,.08);
-      color:#fff;
-    }
-    .rules-index li button.active{
-      background:rgba(180,107,255,.25);
-      color:#fff;
-      box-shadow:0 0 10px rgba(180,107,255,.35);
+      opacity:.85;
     }
 
-    .rules-content{
+    .results-wrap {
       display:flex;
       flex-direction:column;
-      gap:14px;
+      gap:.75rem;
     }
 
-    .rule-section{
+    .rule-card {
       background:rgba(255,255,255,.05);
-      border-radius:16px;
-      border:1px solid rgba(255,255,255,.08);
-      padding:14px 16px;
-      box-shadow:0 8px 18px rgba(180,107,255,.12);
+      border-radius:14px;
+      padding:.85rem 1rem;
+      border:1px solid rgba(255,255,255,.06);
+      box-shadow:0 8px 18px rgba(180,107,255,.18);
     }
-    .rule-section h2{
-      margin:0 0 .2rem;
-      font-size:1.1rem;
-    }
-    .rule-section .subtitle{
-      margin:0 0 .5rem;
-      font-size:.85rem;
-      opacity:.8;
-    }
-
-    .rule-item{
-      margin:.45rem 0;
-      font-size:.9rem;
-      line-height:1.45;
-    }
-    .rule-item b{ color:#fff; }
-
-    .muted{ opacity:.75; font-size:.85rem; }
-
-    .pill{
-      display:inline-flex;
+    .rule-header {
+      display:flex;
+      justify-content:space-between;
       align-items:center;
-      gap:4px;
-      font-size:.75rem;
-      padding:2px 8px;
+      gap:10px;
+      margin-bottom:.35rem;
+      flex-wrap:wrap;
+    }
+    .rule-title {
+      display:flex;
+      align-items:center;
+      gap:8px;
+      font-weight:600;
+      font-size:.98rem;
+    }
+    .rule-code {
+      font-size:.78rem;
+      padding:2px 7px;
       border-radius:999px;
       background:rgba(255,255,255,.06);
-      border:1px solid rgba(255,255,255,.09);
-      margin-left:4px;
+      border:1px solid rgba(255,255,255,.08);
+      opacity:.9;
     }
-
-    .no-results{
-      margin-top:.5rem;
+    .rule-cat-label {
+      font-size:.80rem;
+      opacity:.7;
+    }
+    .rule-body {
+      white-space:pre-line;
       font-size:.9rem;
-      opacity:.8;
+      opacity:.92;
+      margin:0;
+      line-height:1.5;
     }
 
-    .fade-out{ opacity:0; transition:opacity .18s ease; }
-    .fade-in{ opacity:1; transition:opacity .18s ease; }
+    .muted { opacity:.75; }
+
+    @media (max-width: 900px){
+      .layout {
+        grid-template-columns: 1fr;
+      }
+      .sidebar-regras {
+        max-height:none;
+        order:2;
+      }
+      .main-regras {
+        order:1;
+      }
+    }
   </style>
 </head>
 <body>
-  <!-- SIDEBAR -->
+  <!-- SIDEBAR AURA -->
   <div class="sidebar">
     <h2 class="logo">SISTEMA AURA</h2>
     <span id="agentNameDisplay" class="agent-display">Agente: -</span>
@@ -174,8 +227,8 @@
       <li><a href="../veiculos/ver.html" class="navlink"><span class="icon">🏎️</span><span class="label">Veículos</span></a></li>
       <li><a href="../facc/ver.html" class="navlink"><span class="icon">⚔️</span><span class="label">Facções</span></a></li>
       <li><a href="../perimetro/ver.html" class="navlink"><span class="icon">📍</span><span class="label">Perímetro de Ações</span></a></li>
+      <li><a href="../regras/ver.html" class="navlink active"><span class="icon">📚</span><span class="label">Regras</span></a></li>
       <li><a href="../reunioes/ver.html" class="navlink"><span class="icon">🗓️</span><span class="label">Reuniões</span></a></li>
-      <li><a href="../regras/ver.html" class="navlink active"><span class="icon">📚</span><span class="label">Regras CDA</span></a></li>
     </ul>
 
     <button id="logoutBtn">Sair</button>
@@ -184,632 +237,197 @@
   <!-- CONTEÚDO -->
   <div class="main-content">
     <div class="page-container">
+
       <div class="topbar">
-        <div>
-          <h1 style="margin:0;">Regras Cidade dos Anjos</h1>
-          <p class="muted">Baseadas no documento oficial — organizadas por categorias e com pesquisa global.</p>
-        </div>
-        <div style="display:flex;gap:8px;flex-wrap:wrap;">
-          <button class="btn btn-soft" id="backDash">⬅ Voltar ao Dashboard</button>
-          <button class="btn btn-soft" id="scrollTopBtn">⬆ Topo</button>
+        <h1>Regras da Cidade</h1>
+        <div style="display:flex; gap:8px; flex-wrap:wrap;">
+          <button id="backBtn" class="btn btn-soft">⬅️ Voltar ao Dashboard</button>
         </div>
       </div>
 
-      <!-- PESQUISA GLOBAL -->
-      <div class="searchbar">
-        <span>🔎</span>
-        <input id="searchInput" placeholder="Pesquisar em TODAS as regras (ex: safe, assalto, PM, sequestro...)" />
-      </div>
-      <div id="searchInfo" class="muted"></div>
-
-      <div class="rules-layout">
-        <!-- ÍNDICE LATERAL -->
-        <aside class="rules-index">
-          <h3>Índice Geral</h3>
-          <small>Clica para ir direto à secção. A pesquisa funciona em tudo.</small>
-          <ul id="indexList">
-            <li><button data-target="sec-termos">Termos de Uso & Gerais</button></li>
-            <li><button data-target="sec-discord">Regras Discord</button></li>
-            <li><button data-target="sec-banimentos">Banimentos & Advertências</button></li>
-            <li><button data-target="sec-basicas">Regras Básicas</button></li>
-            <li><button data-target="sec-cidade">Regras da Cidade</button></li>
-            <li><button data-target="sec-acoes-gerais">Regras Gerais de Ações</button></li>
-            <li><button data-target="sec-acoes-rua">Ações de Rua</button></li>
-            <li><button data-target="sec-corrida">Corrida Ilegal</button></li>
-            <li><button data-target="sec-registradora">Caixa Registradora</button></li>
-            <li><button data-target="sec-atm">Caixa Eletrônico ATM</button></li>
-            <li><button data-target="sec-ammunation">Ammu / Tatuagem / Roupas</button></li>
-            <li><button data-target="sec-departamento">Loja de Departamento</button></li>
-            <li><button data-target="sec-barbearia">Barbearia</button></li>
-            <li><button data-target="sec-desmanche">Desmanche & Boosting</button></li>
-            <li><button data-target="sec-assaltos">Assaltos</button></li>
-            <li><button data-target="sec-propriedades">Roubo a Propriedades</button></li>
-            <li><button data-target="sec-acoes-grandes">Ações Grandes — Geral</button></li>
-            <li><button data-target="sec-joalheria">Joalheria</button></li>
-            <li><button data-target="sec-bancos-menores">Bancos Menores / Paleto</button></li>
-            <li><button data-target="sec-banco-central">Banco Central</button></li>
-            <li><button data-target="sec-transferencia">Transferência Penitenciária</button></li>
-            <li><button data-target="sec-invasao-org">Invasões (Org x Org)</button></li>
-            <li><button data-target="sec-invasao-pm">Invasão / Pacificação PM</button></li>
-            <li><button data-target="sec-humane">Humane</button></li>
-            <li><button data-target="sec-acoes-medias">Ações Médias (Madeira, Açougue, etc.)</button></li>
-            <li><button data-target="sec-sequestros">Sequestros</button></li>
-            <li><button data-target="sec-pichacao">Remoção de Pichação</button></li>
-            <li><button data-target="sec-gangues">Gangues & Setagem</button></li>
-            <li><button data-target="sec-gravidez">Gravidez RP</button></li>
-            <li><button data-target="sec-paramedicos">Regras para Paramédicos</button></li>
-          </ul>
+      <div class="layout">
+        <!-- ÍNDICE / CATEGORIAS -->
+        <aside class="sidebar-regras">
+          <h2>Índice</h2>
+          <p class="muted" style="font-size:.8rem; margin-bottom:.6rem;">
+            Clica numa categoria para ver apenas as regras daquele tema.
+          </p>
+          <div id="catList" class="cat-list"></div>
         </aside>
 
-        <!-- CONTEÚDO DAS REGRAS -->
-        <div class="rules-content" id="rulesContent">
-
-          <!-- TERMOS / GERAIS -->
-          <section class="rule-section" id="sec-termos">
-            <h2>Termos de Uso & Informações Gerais</h2>
-            <p class="subtitle">
-              Jogando na Cidade dos Anjos, assumes todas as regras abaixo e futuras alterações.
-            </p>
-            <div class="rule-item">
-              <b>Termo geral:</b> Ao jogar no servidor Cidade dos Anjos, o jogador
-              concorda com todos os termos deste documento e com qualquer alteração futura.
-            </div>
-            <div class="rule-item">
-              <b>Responsabilidade da staff:</b> Todas as regras estão sujeitas à análise
-              da equipe de STAFF. Qualquer violação pode gerar advertência ou banimento.
-            </div>
-            <div class="rule-item">
-              <b>Dúvidas e tickets:</b> Qualquer dúvida deve ser tratada via ticket de
-              dúvidas no Discord oficial.
-            </div>
-            <div class="rule-item">
-              <b>Empréstimos e transações:</b> Emprestar itens, carros, casas ou qualquer bem
-              é responsabilidade exclusiva do jogador. A staff não se responsabiliza por perdas.
-            </div>
-            <div class="rule-item">
-              <b>Marcas do mundo real:</b> É proibido usar marcas, logotipos, nomes ou qualquer
-              material relacionado a empresas do mundo real sem aprovação da staff.
-            </div>
-            <div class="rule-item">
-              <b>Conteúdos proibidos:</b> O servidor não admite preconceito, comportamento tóxico,
-              pornografia, pedofilia, linguagem chula e afins. Cada jogador responde por seus próprios atos.
-            </div>
-            <div class="rule-item">
-              <b>Mapa/props (mods):</b> O direito de uso de mapas/props é do servidor. O líder de
-              organização somente usa enquanto for líder. Saindo da liderança, o uso é revogado.
-            </div>
-          </section>
-
-          <!-- DISCORD -->
-          <section class="rule-section" id="sec-discord">
-            <h2>Regras do Discord</h2>
-            <p class="subtitle">Aplicam-se a todos os canais e interações no Discord da cidade.</p>
-            <div class="rule-item"><b>Respeito à staff:</b> Aceitar decisões de administradores e moderadores.</div>
-            <div class="rule-item"><b>Respeito geral:</b> Proibido qualquer tipo de preconceito (racismo, machismo, homofobia, xenofobia, etc.).</div>
-            <div class="rule-item"><b>Assuntos ilegais:</b> Proibido tratar de assuntos ilegais contrários às leis brasileiras.</div>
-            <div class="rule-item"><b>Comércio:</b> Proibido qualquer tipo de comércio dentro do Discord, salvo autorização expressa.</div>
-            <div class="rule-item"><b>Privacidade:</b> Proibido divulgar dados pessoais seus ou de terceiros (nome completo, documentos, endereço, etc.).</div>
-            <div class="rule-item"><b>Conteúdo impróprio:</b> Proibido conteúdo pornográfico ou semelhante.</div>
-            <div class="rule-item"><b>Flood / troll:</b> Proibido atrapalhar chats de texto/voz.</div>
-            <div class="rule-item"><b>Conversa entre maior e menor:</b> Proibida conversa de cunho pessoal entre maiores e menores de idade.</div>
-            <div class="rule-item"><b>Assédio:</b> Proibido qualquer tipo de assédio.</div>
-            <div class="rule-item"><b>Tickets:</b> Devem ter propósito claro e, em regra, conter vídeo ou prints para análise.</div>
-            <div class="rule-item"><b>Obrigatoriedade:</b> Para jogar no servidor é obrigatório estar no Discord nas calls (civil 1,2,3).</div>
-          </section>
-
-          <!-- BANIMENTOS -->
-          <section class="rule-section" id="sec-banimentos">
-            <h2>Banimentos & Advertências</h2>
-            <p class="subtitle">Consequências por violar as regras.</p>
-            <div class="rule-item">
-              <b>Registro público:</b> Todos os banimentos e advertências são divulgados
-              nas salas específicas do Discord.
-            </div>
-            <div class="rule-item">
-              <b>Advertências:</b> Duram 30 dias. Após esse período, o jogador pode pedir
-              remoção via ticket.
-            </div>
-            <div class="rule-item">
-              <b>Quantidade:</b> Podem ser aplicadas várias advertências por caso, ou advertência verbal.
-            </div>
-            <div class="rule-item">
-              <b>3 advertências:</b> Ao atingir 3 advertências, o jogador pode ser banido
-              temporária ou permanentemente. Caso não seja com 3, na próxima será.
-            </div>
-            <div class="rule-item">
-              <b>Banimento indeterminado (exemplos):</b> divulgação de outros servidores, uso de cheats,
-              comércio de itens por dinheiro real, estar em discords de cheats, preconceito, desrespeito à staff,
-              ghost, estorno de doação, abuso de bugs, RP incompatível, assédios, RP de suicídio, etc.
-            </div>
-            <div class="rule-item">
-              <b>Desban:</b> Alguns banimentos indeterminados não têm direito a retorno. Ver com staff via ticket.
-            </div>
-          </section>
-
-          <!-- REGRAS BÁSICAS -->
-          <section class="rule-section" id="sec-basicas">
-            <h2>Regras Básicas</h2>
-            <p class="subtitle">Fundamentais para o RP da cidade.</p>
-
-            <div class="rule-item">
-              <b>1º Anti-RP:</b> Proibido qualquer Anti-RP: RDM, VDM, powergaming, metagaming, falta de amor à vida,
-              ghosting, cheating, aimbot, combat logging, macros/keybinds, exploração de bugs/exploits ou mods que dêem vantagem.
-            </div>
-            <div class="rule-item">
-              <b>2º Preconceito e temas pesados:</b> Proibido qualquer preconceito (direto ou indireto) e temas como
-              abuso sexual e suicídio. Puníveis com banimento grave.
-            </div>
-            <div class="rule-item">
-              <b>3º Respeito:</b> Respeito entre todos, independente de cargo ou função.
-            </div>
-            <div class="rule-item">
-              <b>4º Discurso de ódio:</b> Proibido discurso de ódio, incitação e flaming.
-            </div>
-            <div class="rule-item">
-              <b>5º Menores:</b> Menores de idade não podem jogar na cidade.
-            </div>
-            <div class="rule-item">
-              <b>6º Dupla vida ilegal:</b> Não é permitido ter mais de um personagem registrado em organizações ilegais.
-            </div>
-          </section>
-
-          <!-- REGRAS DA CIDADE -->
-          <section class="rule-section" id="sec-cidade">
-            <h2>Regras da Cidade</h2>
-            <p class="subtitle">Comportamento geral em qualquer situação.</p>
-
-            <div class="rule-item">
-              <b>1º Amor à vida:</b> O jogador deve prezar pela vida do personagem, evitando riscos
-              absurdos. Falta de amor à vida é passível de ban (3, 7, 15 ou 30 dias).
-            </div>
-            <div class="rule-item">
-              <b>2º Interpretação contínua:</b> Sempre em RP, evitar falar “em off”. Toda ação tem reação,
-              e o jogo é coletivo.
-            </div>
-            <div class="rule-item">
-              <b>3º Combat-logging:</b> Proibido sair do jogo para evitar consequências. Se cair, avisar
-              sempre que possível.
-            </div>
-            <div class="rule-item">
-              <b>4º Safe-zones:</b> Proibido camperar, agredir ou assaltar em safe-zones ou farms legais,
-              salvo situações previstas (jogador abusando de safe para fugir, etc.).
-            </div>
-            <div class="rule-item">
-              <b>5º Viaturas PM:</b> Proibido roubar viaturas, salvo em fuga após vitória em ação,
-              apenas para fugir até garagem.
-            </div>
-            <div class="rule-item">
-              <b>6º Chamados de serviço:</b> Proibido abrir chamado só para assaltar/sequestrar
-              e obrigatório informar motivo.
-            </div>
-            <div class="rule-item">
-              <b>7º Coma & memória:</b> Ao entrar em coma/finalizado, o personagem esquece os
-              eventos relacionados ao conflito (com detalhes nas sub-regras).
-            </div>
-            <div class="rule-item">
-              <b>8º /gg:</b> Ao usar /gg, é finalizado e esquece fatos referentes à ação.
-            </div>
-            <div class="rule-item">
-              <b>12º Forçar RP:</b> Proibido forçar RP (ex: empinar moto na frente da PM para chamar atenção).
-            </div>
-            <div class="rule-item">
-              <b>18º PM x Bandido:</b> Personagens “bandidos” não podem virar PM e vice-versa.
-            </div>
-            <div class="rule-item">
-              <b>21º Veículos de profissão:</b> Devem ser usados apenas para o trabalho legal.
-            </div>
-            <div class="rule-item">
-              <b>38º Metas de facções/empregos:</b> Membros de facções/empregos têm metas mínimas
-              de horas jogadas semanais; civis não.
-            </div>
-            <!-- (Se quiseres depois metemos TODAS as sub-regras aqui, mas o núcleo está) -->
-          </section>
-
-          <!-- REGRAS GERAIS DE AÇÕES -->
-          <section class="rule-section" id="sec-acoes-gerais">
-            <h2>Regras Gerais de Ações</h2>
-            <p class="subtitle">Valem para qualquer tipo de ação RP.</p>
-
-            <div class="rule-item"><b>1º</b> Após morrer, deve silenciar qualquer comunicação (chat, rádio, etc.).</div>
-            <div class="rule-item"><b>2º</b> Proibido chamar SAMU durante ação.</div>
-            <div class="rule-item"><b>3º</b> Em assaltos com refém, maioria dos bandidos deve ficar dentro do local.</div>
-            <div class="rule-item"><b>4º</b> Proibido colocar veículos dentro do local do roubo ou bloquear entradas.</div>
-            <div class="rule-item"><b>5º</b> /acao só para congelar/encerrar ações.</div>
-            <div class="rule-item"><b>6º</b> Ações de rua não podem ser congeladas; em ações fechadas, cada lado tem 1 pausa de até 3 min antes do PVP.</div>
-            <div class="rule-item"><b>10º</b> Perímetro de ação: até 2 quadras em todas as direções.</div>
-            <div class="rule-item"><b>11º/12º</b> Proibido sair e voltar na mesma ação. “Ação finalizada” segue regras de /acao e ausência de resposta.</div>
-            <div class="rule-item"><b>20º</b> Só quem participou da ação pode lootar ou loteá-la.</div>
-            <div class="rule-item"><b>22º</b> Fugir no máximo 15 min; depois disso PM pode furar pneus, e em certos casos ativar código 5.</div>
-          </section>
-
-          <!-- AÇÕES DE RUA -->
-          <section class="rule-section" id="sec-acoes-rua">
-            <h2>Ações de Rua</h2>
-            <p class="subtitle">Conflitos abertos em via pública.</p>
-            <div class="rule-item">
-              <b>51º</b> Proibido chamar SAMU, todas as armas liberadas, limite de 30 bandidos e 35 PMs,
-              reforço tem 5 min após a 1ª troca de tiros, fuga máx. 15 min.
-            </div>
-          </section>
-
-          <!-- CORRIDA ILEGAL -->
-          <section class="rule-section" id="sec-corrida">
-            <h2>Corrida Ilegal</h2>
-            <p class="subtitle">Regras específicas para fuga e perseguição relacionada a corrida.</p>
-            <div class="rule-item">
-              <b>52º</b> Prioridade é fugir, não trocar tiro; máx. 2 viaturas (2 motos = 1 viatura);
-              fuga até 15 min; depois disso PM pode PIT.
-            </div>
-          </section>
-
-          <!-- CAIXA REGISTRADORA -->
-          <section class="rule-section" id="sec-registradora">
-            <h2>Caixa Registradora</h2>
-            <p class="subtitle">Assaltos simples.</p>
-            <div class="rule-item">
-              <b>53º</b> Fuga sempre priorizada; bandidos apenas pistolas; PM com arma que estiver; não transformar em ação de rua;
-              bandidos 1–2, PM 2–4; sem helicóptero; fuga até 15 min.
-            </div>
-          </section>
-
-          <!-- ATM -->
-          <section class="rule-section" id="sec-atm">
-            <h2>Caixa Eletrônico (ATM)</h2>
-            <div class="rule-item">
-              <b>54º</b> Priorizar fuga, evitar bait; PM aguarda se o bandido estiver pegando grana; armas livres (o que estiver); fuga até 15 min; bandidos 1–3, PM 2–6; proibido virar ação de rua.
-            </div>
-          </section>
-
-          <!-- AMMU / TATTOO / ROUPAS -->
-          <section class="rule-section" id="sec-ammunation">
-            <h2>Ammunation / Loja de Tatuagem / Loja de Roupas</h2>
-            <div class="rule-item">
-              <b>55º</b> Apenas pistolas; bandidos 1–2; PM 2–2; sem helicóptero; negociação obrigatória; refém só para armamento;
-              armas negociáveis: mini-SMG (Tec-9, Skorpion, Koch V9); todos dentro do local; 1 colete por pessoa; civis podem participar; proibido virar ação de rua.
-            </div>
-          </section>
-
-          <!-- LOJA DE DEPARTAMENTO -->
-          <section class="rule-section" id="sec-departamento">
-            <h2>Loja de Departamento</h2>
-            <div class="rule-item">
-              <b>56º</b> PM rusha; bandidos 3–4; PM 4–5; sem águia; 1 colete; todos com pistolas; negociação obrigatória;
-              refém só para armamento; não render negociador; regras de posicionamento (nº de bandidos fora/dentro); armas negociáveis: mini-SMG; civis podem participar.
-            </div>
-          </section>
-
-          <!-- BARBEARIA -->
-          <section class="rule-section" id="sec-barbearia">
-            <h2>Barbearia</h2>
-            <div class="rule-item">
-              <b>57º</b> Uso de armas brancas/soco; bandidos 1–2; PM 2–2; sem águia; proibido facas; sem refém;
-              todos dentro inicialmente, mas troca acontece fora após negociação; civis podem participar.
-            </div>
-          </section>
-
-          <!-- DESMANCHE / BOOSTING -->
-          <section class="rule-section" id="sec-desmanche">
-            <h2>Desmanche / Boosting</h2>
-            <div class="rule-item">
-              <b>58º</b> Bandidos 2–6; PM 2–8; helicóptero permitido; 1 colete; só pistolas (sem pistola automática);
-              civis podem participar.
-            </div>
-          </section>
-
-          <!-- ASSALTOS -->
-          <section class="rule-section" id="sec-assaltos">
-            <h2>Assaltos</h2>
-            <div class="rule-item">
-              <b>59º</b> Assaltos apenas entre 00:00–5:00 (horário da cidade) para bens/dinheiro;
-              várias profissões não podem ser assaltadas em serviço; máximo 4 participantes; se virar troca de tiros,
-              pode virar ação de rua; sem helicóptero; um grupo por facção ao mesmo tempo.
-            </div>
-            <div class="rule-item">
-              <b>60º Reforços:</b> só podem ser chamados em troca de tiros com PM/outros grupos ou após 1º disparo das vítimas;
-              reforço tem 5 min para chegar.
-            </div>
-          </section>
-
-          <!-- ROUBO A PROPRIEDADES -->
-          <section class="rule-section" id="sec-propriedades">
-            <h2>Roubo a Propriedades</h2>
-            <div class="rule-item">
-              <b>61º</b> Bandidos 1–8; PM 2–8; dono da casa 1–8 (conta como bandido se defender);
-              sem helicóptero; 1 colete; apenas pistolas; civis podem participar; proibido marcar pixel no TP;
-              ambos lados devem permitir o teleporte e dar até 5 segundos para posicionar.
-            </div>
-          </section>
-
-          <!-- AÇÕES GRANDES - GERAL -->
-          <section class="rule-section" id="sec-acoes-grandes">
-            <h2>Ações Grandes — Geral</h2>
-            <div class="rule-item">
-              <b>62º</b> Todas as ações grandes devem ser marcadas via ticket com a staff, para organização,
-              dúvidas e acompanhamento.
-            </div>
-            <div class="rule-item">
-              <b>71º</b> Em ações grandes, a PM deve ter número igual ou superior de policiais em relação aos bandidos.
-            </div>
-          </section>
-
-          <!-- JOALHERIA -->
-          <section class="rule-section" id="sec-joalheria">
-            <h2>Joalheria</h2>
-            <div class="rule-item">
-              <b>63º</b> Bandidos 6–8; PM 9–11; águia permitida; civis não participam; negociação obrigatória;
-              maioria dos bandidos dentro; reféns sem limite (bom senso); armamento pesado; 1 colete.
-            </div>
-          </section>
-
-          <!-- BANCOS MENORES -->
-          <section class="rule-section" id="sec-bancos-menores">
-            <h2>Bancos Menores / Paleto</h2>
-            <div class="rule-item">
-              <b>64º</b> Bandidos 6–8; PM 9–11; maioria dentro; águia permitida; civis não participam;
-              negociação obrigatória; reféns sem limite (bom senso); armamento pesado; 1 colete.
-            </div>
-          </section>
-
-          <!-- BANCO CENTRAL -->
-          <section class="rule-section" id="sec-banco-central">
-            <h2>Banco Central</h2>
-            <div class="rule-item">
-              <b>65º</b> Bandidos 10–14; PM 16–19; águia permitida; civis não; negociação obrigatória;
-              armamento pesado; 1 colete; maioria dos bandidos dentro; fuga com dinheiro pode ser negociada;
-              proibição de estourar pneus em determinadas fases, etc.
-            </div>
-          </section>
-
-          <!-- TRANSFERÊNCIA -->
-          <section class="rule-section" id="sec-transferencia">
-            <h2>Transferência para Penitenciária</h2>
-            <div class="rule-item">
-              <b>66º</b> PM avalia contingente; bandidos máx. 15; PM máx. 20; só Banco Central pode ser transferido;
-              armamento pesado; 1 colete; aliados podem completar contingente dentro das regras.
-            </div>
-          </section>
-
-          <!-- INVASÃO ORG -->
-          <section class="rule-section" id="sec-invasao-org">
-            <h2>Invasões (Org x Org)</h2>
-            <div class="rule-item">
-              <b>67º</b> Invasão marcada via ticket com 16h de antecedência; janelas 21h–00h; invasores 15–30,
-              defensores até 30; uso apenas de infos in-RP; derrotado fica 48h sem voltar ao território; vencedor pode usar local por 12h; várias regras de zona azul/vermelha e W.O.
-            </div>
-            <div class="rule-item">
-              <b>68º</b> Proibido invadir zonas vermelhas sem marcar invasão, salvo exceções; punições avaliadas caso a caso.
-            </div>
-          </section>
-
-          <!-- INVASÃO PM -->
-          <section class="rule-section" id="sec-invasao-pm">
-            <h2>Invasão / Pacificação PM</h2>
-            <div class="rule-item">
-              <b>69º</b> PM anuncia no /acao com 60 min de antecedência e nº de integrantes; PM 20–33;
-              defensores até 30 (+ aliados se PM tiver muito efetivo); uso apenas de informações in-RP;
-              apreensão de itens se investigação; derrotados 48h sem voltar; W.O., baú bloqueado, etc.
-            </div>
-          </section>
-
-          <!-- HUMANE -->
-          <section class="rule-section" id="sec-humane">
-            <h2>Humane</h2>
-            <div class="rule-item">
-              <b>70º</b> Bandidos 15–20; PM 18–25; águia permitida; civis não participam;
-              pneus não podem ser estourados (salvo fuga); negociação obrigatória; armamento pesado, 1 colete; maioria dos bandidos na área; fuga com dinheiro negociável.
-            </div>
-          </section>
-
-          <!-- AÇÕES MÉDIAS -->
-          <section class="rule-section" id="sec-acoes-medias">
-            <h2>Ações Médias</h2>
-            <p class="subtitle">Madeireira, Açougue, Galinheiro, Aeroporto Norte, Doca, Ferro-Velho.</p>
-            <div class="rule-item"><b>72º Madeireira:</b> 8 bandidos, 10 PM; negociação obrigatória; refém só para armamento; molotov/fumaça permitidos; pistolas + Tec-9; civis podem; sem helicóptero; 1 colete.</div>
-            <div class="rule-item"><b>73º Açougue:</b> 7 bandidos, 10 PM; mesma lógica de negociação, refém, molotov/fumaça; pistolas + 12; civis podem; 1 colete; restrições de perímetro.</div>
-            <div class="rule-item"><b>74º Galinheiro:</b> 8 bandidos, 10 PM; pistolas; molotov/fumaça; PM pode usar trilhos apenas no primeiro rush; civis podem; 1 colete; restrições de rotação.</div>
-            <div class="rule-item"><b>75º Aeroporto Norte:</b> 8 bandidos, 10 PM; pistolas; molotov/fumaça; sem helicóptero; civis podem; 1 colete; PM na zona azul, bandidos na vermelha.</div>
-            <div class="rule-item"><b>76º Doca:</b> 8 bandidos, 10 PM; pistolas; molotov/fumaça; helicóptero permitido; civis podem; 1 colete.</div>
-            <div class="rule-item"><b>77º Ferro-Velho:</b> 5 bandidos, 7 PM; pistolas + SMG; molotov/fumaça; sem helicóptero; civis podem; 1 colete.</div>
-          </section>
-
-          <!-- SEQUESTROS -->
-          <section class="rule-section" id="sec-sequestros">
-            <h2>Sequestros</h2>
-            <div class="rule-item">
-              <b>78º Horários:</b> Sequestros por dinheiro/itens só entre 21h e 5h; sequestros por RP pessoal/facção podem ser em qualquer horário.
-            </div>
-            <div class="rule-item">
-              <b>Valores:</b> Máx. 50k por civil, 100k para 2+ vítimas no total; proibido valores absurdos ou insistência repetitiva.
-            </div>
-            <div class="rule-item">
-              <b>RP obrigatório:</b> Sequestradores e vítimas devem interpretar; ninguém é obrigado a abrir valor exato em conta.
-            </div>
-            <div class="rule-item">
-              <b>Servidores públicos:</b> Só podem ser sequestrados com motivo plausível e prova em vídeo.
-            </div>
-            <div class="rule-item">
-              <b>Limite de sequestradores:</b> Para subtração de bens, máx. 4 sequestradores.
-            </div>
-          </section>
-
-          <!-- REMOÇÃO DE PICHAÇÃO -->
-          <section class="rule-section" id="sec-pichacao">
-            <h2>Ação de Remoção de Pichação</h2>
-            <div class="rule-item">
-              Gangues/PM podem remover pichações de outras gangues (sem invadir zona vermelha). A ação
-              é 10x10 no máximo, com notificação à gangue que teve o grafite removido e tempo limite
-              para responder. Somente armas brancas podem ser usadas na disputa.
-            </div>
-          </section>
-
-          <!-- GANGUES & SETAGEM -->
-          <section class="rule-section" id="sec-gangues">
-            <h2>Gangues & Setagem</h2>
-            <div class="rule-item">
-              <b>Único vínculo:</b> Uma pessoa não pode estar associada a múltiplas gangues ao mesmo tempo.
-            </div>
-            <div class="rule-item">
-              <b>Troca de gangue:</b> Exige remover a associação anterior.
-            </div>
-            <div class="rule-item">
-              <b>Fachadas:</b> Membros só podem ser atribuídos a fachadas da própria gangue (não podem
-              trabalhar em fachada de outra gangue).
-            </div>
-          </section>
-
-          <!-- GRAVIDEZ RP -->
-          <section class="rule-section" id="sec-gravidez">
-            <h2>RP de Gravidez</h2>
-            <p class="subtitle">Roleplay sensível, com regras próprias.</p>
-            <div class="rule-item">
-              Qualquer cidadã pode fazer esse RP, mas só com aprovação da staff. O tema é levado muito a sério.
-            </div>
-            <div class="rule-item">
-              Gestação mínima de 2 semanas, com 1–3 consultas semanais pagas ao médico.
-            </div>
-            <div class="rule-item">
-              Após 1 semana de gestação, é obrigatório usar roupas de grávida.
-            </div>
-            <div class="rule-item">
-              Grávidas não podem participar de ações com armas de fogo (salvo exceção liberada pela staff).
-            </div>
-            <div class="rule-item">
-              Se o casal se separar, o RP não termina; ambos devem continuar acompanhando a gravidez.
-            </div>
-          </section>
-
-          <!-- PARAMÉDICOS -->
-          <section class="rule-section" id="sec-paramedicos">
-            <h2>Regras para Paramédicos</h2>
-            <div class="rule-item">
-              <b>49º</b> Se bandidos vencerem, SAMU reanima bandidos primeiro e PM depois. Se PM vencer,
-              reanima PM primeiro e depois bandidos, para prisões.
-            </div>
-            <div class="rule-item">
-              <b>50º</b> Tratamento prioritário aos policiais em caso de vitória deles, salvo situações
-              médicas graves (grávidas, cirurgias), informando à PM o motivo da prioridade.
-            </div>
-          </section>
-
-          <div id="noResults" class="no-results" style="display:none;">
-            ❌ Nenhuma regra encontrada com esse termo. Tenta outras palavras (ex: “safe”, “assalto”, “pm”, “sequestro”).
+        <!-- PESQUISA + REGRAS -->
+        <section class="main-regras">
+          <div class="searchbar">
+            <span class="icon">🔎</span>
+            <input id="searchInput" placeholder="Pesquisar por número, título ou texto da regra..." />
           </div>
-        </div>
+
+          <div class="search-meta">
+            <span id="searchInfo" class="muted">Mostrando todas as categorias.</span>
+            <span id="resultCount" class="muted"></span>
+          </div>
+
+          <div id="resultsWrap" class="results-wrap"></div>
+        </section>
       </div>
+
     </div>
   </div>
 
-  <!-- SCRIPT PESQUISA + ÍNDICE -->
-  <script>
-    // Perfil + logout
-    (function(){
-      const agent = localStorage.getItem("selectedAgent") || "Desconhecido";
-      const agEl = document.getElementById("agentNameDisplay");
-      if (agEl) agEl.textContent = `Agente: ${agent}`;
+  <!-- SCRIPT PRINCIPAL -->
+  <script type="module">
+    import { REGRAS_CATEGORIAS } from "./data.js";
 
-      const logoutBtn = document.getElementById("logoutBtn");
-      if (logoutBtn){
-        logoutBtn.addEventListener("click", ()=>{
-          ["username","selectedAgent","userRole","userCode","isAdmin"].forEach(k=>localStorage.removeItem(k));
-          window.location.href="../select.html";
-        });
-      }
-    })();
-
-    // Navegação topo
-    document.getElementById("backDash").onclick = ()=> window.location.href="../dashboard.html";
-    document.getElementById("scrollTopBtn").onclick = ()=> window.scrollTo({top:0,behavior:"smooth"});
-
+    const catListEl = document.getElementById("catList");
     const searchInput = document.getElementById("searchInput");
-    const rulesContent = document.getElementById("rulesContent");
+    const resultsWrap = document.getElementById("resultsWrap");
     const searchInfo = document.getElementById("searchInfo");
-    const noResultsEl = document.getElementById("noResults");
-    const sections = Array.from(document.querySelectorAll(".rule-section"));
-    const blocks = Array.from(document.querySelectorAll(".rule-item"));
-    const indexButtons = Array.from(document.querySelectorAll(".rules-index button"));
+    const resultCount = document.getElementById("resultCount");
 
-    // Clique no índice
-    indexButtons.forEach(btn=>{
-      btn.addEventListener("click", ()=>{
-        const id = btn.dataset.target;
-        const sec = document.getElementById(id);
-        if(!sec) return;
-        sec.scrollIntoView({behavior:"smooth", block:"start"});
-        indexButtons.forEach(b=>b.classList.remove("active"));
-        btn.classList.add("active");
-      });
-    });
+    // Flatten para facilitar pesquisa
+    const allItems = REGRAS_CATEGORIAS.flatMap(cat =>
+      cat.items.map(item => ({
+        ...item,
+        categoryId: cat.id,
+        categoryLabel: cat.label,
+        emoji: cat.emoji
+      }))
+    );
 
-    // Realçar secção ativa ao fazer scroll leve
-    let scrollTimeout = null;
-    window.addEventListener("scroll", ()=>{
-      if(scrollTimeout) cancelAnimationFrame(scrollTimeout);
-      scrollTimeout = requestAnimationFrame(()=>{
-        let best = null, bestOffset = Infinity;
-        sections.forEach(sec=>{
-          const rect = sec.getBoundingClientRect();
-          const offset = Math.abs(rect.top - 120);
-          if(offset < bestOffset){
-            bestOffset = offset;
-            best = sec;
+    let activeCategory = null; // id ou null
+    let currentResults = [];
+
+    function buildCategoryIndex() {
+      catListEl.innerHTML = "";
+      REGRAS_CATEGORIAS.forEach(cat => {
+        const count = cat.items.length;
+        const btn = document.createElement("button");
+        btn.className = "cat-btn";
+        btn.dataset.catId = cat.id;
+        btn.innerHTML = `
+          <div class="cat-main">
+            <span class="emoji">${cat.emoji}</span>
+            <span>${cat.label}</span>
+          </div>
+          <span class="cat-badge">${count}</span>
+        `;
+        btn.addEventListener("click", () => {
+          // toggle
+          if (activeCategory === cat.id) {
+            activeCategory = null;
+          } else {
+            activeCategory = cat.id;
           }
+          updateActiveCategoryButton();
+          applyFilters();
         });
-        if(best){
-          const id = best.id;
-          indexButtons.forEach(b=>{
-            b.classList.toggle("active", b.dataset.target===id);
-          });
-        }
+        catListEl.appendChild(btn);
       });
-    });
+      updateActiveCategoryButton();
+    }
 
-    // Pesquisa global
-    let debounce = null;
-    searchInput.addEventListener("input", ()=>{
-      if(debounce) clearTimeout(debounce);
-      debounce = setTimeout(()=> runSearch(), 160);
-    });
+    function updateActiveCategoryButton() {
+      const buttons = catListEl.querySelectorAll(".cat-btn");
+      buttons.forEach(btn => {
+        const id = btn.dataset.catId;
+        btn.classList.toggle("active", id === activeCategory);
+      });
+    }
 
-    function runSearch(){
-      const q = (searchInput.value || "").trim().toLowerCase();
-      let totalShown = 0;
-
-      if(!q){
-        // Mostrar tudo
-        sections.forEach(sec => {
-          sec.style.display = "";
-          Array.from(sec.querySelectorAll(".rule-item")).forEach(item=>{
-            item.style.display = "";
-          });
-        });
-        noResultsEl.style.display = "none";
-        searchInfo.textContent = "";
+    function renderRules(list) {
+      resultsWrap.innerHTML = "";
+      if (!list.length) {
+        resultsWrap.innerHTML = `<p class="muted">Nenhuma regra encontrada com esses filtros.</p>`;
+        resultCount.textContent = "";
         return;
       }
 
-      sections.forEach(sec=>{
-        let secHasMatch = false;
-        const items = Array.from(sec.querySelectorAll(".rule-item"));
-        items.forEach(item=>{
-          const txt = item.textContent.toLowerCase();
-          const match = txt.includes(q);
-          item.style.display = match ? "" : "none";
-          if(match) {
-            secHasMatch = true;
-            totalShown++;
-          }
-        });
-        sec.style.display = secHasMatch ? "" : "none";
+      list.forEach(rule => {
+        const card = document.createElement("div");
+        card.className = "rule-card";
+        card.innerHTML = `
+          <div class="rule-header">
+            <div class="rule-title">
+              <span class="rule-code">${rule.code || "—"}</span>
+              <span>${rule.title}</span>
+            </div>
+            <div class="rule-cat-label">
+              ${rule.emoji || ""} ${rule.categoryLabel || ""}
+            </div>
+          </div>
+          <p class="rule-body">${rule.body}</p>
+        `;
+        resultsWrap.appendChild(card);
       });
 
-      if(totalShown === 0){
-        noResultsEl.style.display = "";
-        searchInfo.textContent = `Nenhuma regra encontrada para: "${q}"`;
-      } else {
-        noResultsEl.style.display = "none";
-        searchInfo.textContent = `Encontradas ${totalShown} ocorrências para: "${q}"`;
-      }
+      resultCount.textContent = `${list.length} regra${list.length === 1 ? "" : "s"} encontrada${list.length === 1 ? "" : "s"}.`;
     }
+
+    function applyFilters() {
+      const q = (searchInput.value || "").trim().toLowerCase();
+
+      let base = allItems;
+      if (activeCategory) {
+        base = base.filter(r => r.categoryId === activeCategory);
+      }
+
+      if (!q) {
+        // sem pesquisa, só por categoria
+        currentResults = base;
+        searchInfo.textContent = activeCategory
+          ? `Mostrando regras da categoria "${REGRAS_CATEGORIAS.find(c => c.id === activeCategory)?.label}".`
+          : "Mostrando todas as categorias.";
+        renderRules(currentResults);
+        return;
+      }
+
+      // filtro por texto
+      currentResults = base.filter(r => {
+        const hay = `${r.code || ""} ${r.title || ""} ${r.body || ""}`.toLowerCase();
+        return hay.includes(q);
+      });
+
+      searchInfo.textContent = activeCategory
+        ? `Pesquisa por "${q}" dentro da categoria "${REGRAS_CATEGORIAS.find(c => c.id === activeCategory)?.label}".`
+        : `Pesquisa por "${q}" em todas as categorias.`;
+
+      renderRules(currentResults);
+    }
+
+    // Eventos
+    let debounce = null;
+    searchInput.addEventListener("input", () => {
+      if (debounce) clearTimeout(debounce);
+      debounce = setTimeout(applyFilters, 200);
+    });
+
+    // Inicialização
+    buildCategoryIndex();
+    currentResults = allItems;
+    renderRules(currentResults);
+
+    // Texto inicial
+    searchInfo.textContent = "Mostrando todas as categorias.";
+  </script>
+
+  <!-- PERFIL + LOGOUT -->
+  <script>
+    (function(){
+      const agent = localStorage.getItem("selectedAgent") || "Desconhecido";
+      const disp = document.getElementById("agentNameDisplay");
+      if (disp) disp.textContent = `Agente: ${agent}`;
+
+      const backBtn = document.getElementById("backBtn");
+      if (backBtn) backBtn.onclick = () => window.location.href = "../dashboard.html";
+
+      const logoutBtn = document.getElementById("logoutBtn");
+      if (logoutBtn) {
+        logoutBtn.onclick = () => {
+          ["username","selectedAgent","userRole","userCode","isAdmin"].forEach(k => localStorage.removeItem(k));
+          window.location.href = "../select.html";
+        };
+      }
+    })();
   </script>
 </body>
 </html>
