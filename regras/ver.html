@@ -1,15 +1,17 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Regras — Sistema AURA 💜</title>
+  <title>Regras da Cidade — Sistema AURA 💜</title>
 
   <link rel="icon" href="../Aurinha.png" />
   <link rel="stylesheet" href="../style.css" />
 
   <style>
-    .page-container { padding: 2rem; max-width: 1100px; margin: 0 auto; }
+    .page-container {
+      padding: 2rem;
+    }
 
     .topbar {
       display:flex;
@@ -19,8 +21,6 @@
       flex-wrap:wrap;
       margin-bottom:1.4rem;
     }
-
-    .actions { display:flex; gap:8px; flex-wrap:wrap; }
 
     .btn {
       background: linear-gradient(90deg,#9b4dff,#b86bff);
@@ -32,7 +32,6 @@
       cursor:pointer;
       box-shadow:0 0 10px rgba(180,107,255,.25);
       transition:.2s;
-      font-size:.9rem;
     }
     .btn:hover {
       transform:translateY(-1px);
@@ -40,22 +39,95 @@
     }
     .btn-soft {
       background:rgba(255,255,255,.08);
-      border:1px solid rgba(255,255,255,.1);
+      border:1px solid rgba(255,255,255,.08);
+    }
+
+    .layout {
+      display:grid;
+      grid-template-columns: minmax(220px, 260px) minmax(0, 1fr);
+      gap:1.5rem;
+      align-items:flex-start;
+    }
+
+    /* Índice de categorias */
+    .sidebar-regras {
+      background:rgba(255,255,255,.04);
+      border-radius:16px;
+      padding:1rem;
+      border:1px solid rgba(255,255,255,.06);
+      box-shadow:0 10px 24px rgba(180,107,255,.18);
+      max-height:calc(100vh - 180px);
+      overflow:auto;
+    }
+    .sidebar-regras h2 {
+      margin-top:0;
+      font-size:1.05rem;
+      margin-bottom:0.6rem;
+    }
+    .cat-list {
+      display:flex;
+      flex-direction:column;
+      gap:6px;
+    }
+    .cat-btn {
+      width:100%;
+      text-align:left;
+      border:none;
+      border-radius:10px;
+      padding:.45rem .65rem;
+      background:transparent;
+      color:#fff;
+      cursor:pointer;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:8px;
+      font-size:.92rem;
+      transition:.15s;
+    }
+    .cat-main {
+      display:flex;
+      align-items:center;
+      gap:6px;
+    }
+    .cat-btn span.emoji {
+      font-size:1.1rem;
+      filter:drop-shadow(0 0 6px rgba(180,107,255,.4));
+    }
+    .cat-badge {
+      font-size:.78rem;
+      padding:2px 7px;
+      border-radius:999px;
+      background:rgba(255,255,255,.08);
+      border:1px solid rgba(255,255,255,.06);
+    }
+    .cat-btn:hover {
+      background:rgba(255,255,255,.06);
+      transform:translateX(2px);
+    }
+    .cat-btn.active {
+      background:rgba(180,107,255,.2);
+      box-shadow:0 8px 20px rgba(180,107,255,.35);
+    }
+
+    /* Área principal: pesquisa + cards */
+    .main-regras {
+      display:flex;
+      flex-direction:column;
+      gap:1rem;
     }
 
     .searchbar {
       display:flex;
       align-items:center;
       gap:10px;
-      margin: 0 0 1rem;
-      padding:.7rem 1rem;
-      border-radius:14px;
       background:rgba(255,255,255,.06);
-      box-shadow:0 0 14px rgba(180,107,255,.25);
+      border-radius:14px;
+      padding:.75rem 1rem;
+      box-shadow:0 0 12px rgba(180,107,255,.25);
     }
-    .searchbar span {
+    .searchbar span.icon {
       font-size:1.1rem;
-      opacity:.9;
     }
     .searchbar input {
       flex:1;
@@ -66,146 +138,81 @@
       font-size:1rem;
     }
 
-    .filter-row {
-      display:flex;
-      flex-wrap:wrap;
-      gap:8px;
-      margin-bottom:1rem;
-    }
-    .filter-chip {
-      padding:6px 10px;
-      border-radius:999px;
-      border:1px solid rgba(255,255,255,.18);
-      background:rgba(20,0,40,.7);
-      font-size:.8rem;
-      cursor:pointer;
-      opacity:.85;
-      transition:.18s;
-    }
-    .filter-chip:hover {
-      transform:translateY(-1px);
-      box-shadow:0 8px 16px rgba(180,107,255,.25);
-    }
-    .filter-chip.active {
-      background:linear-gradient(135deg,#b46bff,#9b4dff);
-      border-color:transparent;
-      opacity:1;
-    }
-
-    .counter {
-      font-size:.85rem;
-      opacity:.8;
-      margin-bottom:.6rem;
-    }
-
-    .rules-container {
-      display:flex;
-      flex-direction:column;
-      gap:10px;
-    }
-
-    .rule-section {
-      background:rgba(255,255,255,.05);
-      border-radius:16px;
-      border:1px solid rgba(255,255,255,.08);
-      overflow:hidden;
-      box-shadow:0 10px 22px rgba(180,107,255,.15);
-    }
-
-    .section-header {
-      padding:.9rem 1.1rem;
+    .search-meta {
       display:flex;
       justify-content:space-between;
-      align-items:center;
-      cursor:pointer;
-    }
-    .section-header h2 {
-      font-size:1rem;
-      margin:0;
-      display:flex;
-      align-items:center;
-      gap:6px;
-    }
-    .section-header small {
-      opacity:.7;
-      font-weight:400;
-      font-size:.8rem;
-    }
-    .section-toggle {
-      font-size:1.2rem;
-      opacity:.8;
-      transition:.18s;
-    }
-    .section-header:hover .section-toggle {
-      transform:translateY(-1px);
+      gap:10px;
+      flex-wrap:wrap;
+      font-size:.88rem;
+      opacity:.85;
     }
 
-    .section-body {
-      max-height:0;
-      overflow:hidden;
-      transition:max-height .25s ease;
-    }
-    .section-body-inner {
-      padding: .4rem 1.1rem 1rem;
+    .results-wrap {
       display:flex;
       flex-direction:column;
-      gap:.6rem;
+      gap:.75rem;
     }
 
     .rule-card {
-      padding:.6rem .7rem;
-      border-radius:10px;
-      background:rgba(0,0,0,.18);
+      background:rgba(255,255,255,.05);
+      border-radius:14px;
+      padding:.85rem 1rem;
       border:1px solid rgba(255,255,255,.06);
-      font-size:.9rem;
+      box-shadow:0 8px 18px rgba(180,107,255,.18);
     }
-    .rule-card h3 {
-      margin:0 0 .25rem;
-      font-size:.92rem;
-    }
-    .rule-card p {
-      margin:0;
-      line-height:1.35;
-      opacity:.9;
-      white-space:pre-line;
-    }
-
-    .muted { opacity:.8; font-size:.85rem; }
-    .tag {
-      display:inline-flex;
+    .rule-header {
+      display:flex;
+      justify-content:space-between;
       align-items:center;
-      gap:4px;
+      gap:10px;
+      margin-bottom:.35rem;
+      flex-wrap:wrap;
+    }
+    .rule-title {
+      display:flex;
+      align-items:center;
+      gap:8px;
+      font-weight:600;
+      font-size:.98rem;
+    }
+    .rule-code {
+      font-size:.78rem;
       padding:2px 7px;
       border-radius:999px;
-      background:rgba(0,0,0,.3);
-      font-size:.75rem;
-      opacity:.85;
+      background:rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.08);
+      opacity:.9;
+    }
+    .rule-cat-label {
+      font-size:.80rem;
+      opacity:.7;
+    }
+    .rule-body {
+      white-space:pre-line;
+      font-size:.9rem;
+      opacity:.92;
+      margin:0;
+      line-height:1.5;
     }
 
-    /* Toast simples p/ futuro se quiseres usar */
-    .aura-toast{
-      position:fixed;
-      right:16px;
-      bottom:16px;
-      z-index:1200;
-      display:flex;
-      gap:10px;
-      align-items:center;
-      background:rgba(20,0,40,.95);
-      border:1px solid rgba(255,255,255,.08);
-      padding:.7rem 1rem;
-      border-radius:12px;
-      color:#fff;
-      box-shadow:0 10px 24px rgba(180,107,255,.35);
-      animation:fadeIn .15s ease;
-      font-size:.85rem;
+    .muted { opacity:.75; }
+
+    @media (max-width: 900px){
+      .layout {
+        grid-template-columns: 1fr;
+      }
+      .sidebar-regras {
+        max-height:none;
+        order:2;
+      }
+      .main-regras {
+        order:1;
+      }
     }
-    @keyframes fadeIn { from{opacity:0} to{opacity:1} }
   </style>
 </head>
-
 <body>
-  <!-- SIDEBAR -->
+  <!-- SIDEBAR AURA -->
   <div class="sidebar">
     <h2 class="logo">SISTEMA AURA</h2>
     <span id="agentNameDisplay" class="agent-display">Agente: -</span>
@@ -220,8 +227,8 @@
       <li><a href="../veiculos/ver.html" class="navlink"><span class="icon">🏎️</span><span class="label">Veículos</span></a></li>
       <li><a href="../facc/ver.html" class="navlink"><span class="icon">⚔️</span><span class="label">Facções</span></a></li>
       <li><a href="../perimetro/ver.html" class="navlink"><span class="icon">📍</span><span class="label">Perímetro de Ações</span></a></li>
+      <li><a href="../regras/ver.html" class="navlink active"><span class="icon">📚</span><span class="label">Regras</span></a></li>
       <li><a href="../reunioes/ver.html" class="navlink"><span class="icon">🗓️</span><span class="label">Reuniões</span></a></li>
-      <li><a href="../regras/ver.html" class="navlink active"><span class="icon">📚</span><span class="label">Regras Cidade</span></a></li>
     </ul>
 
     <button id="logoutBtn">Sair</button>
@@ -230,222 +237,197 @@
   <!-- CONTEÚDO -->
   <div class="main-content">
     <div class="page-container">
+
       <div class="topbar">
-        <h1>Regras — Cidade dos Anjos</h1>
-        <div class="actions">
-          <button class="btn btn-soft" id="backBtn">⬅ Voltar ao Dashboard</button>
-          <button class="btn btn-soft" id="openDocBtn">📄 Abrir Documento Original</button>
+        <h1>Regras da Cidade</h1>
+        <div style="display:flex; gap:8px; flex-wrap:wrap;">
+          <button id="backBtn" class="btn btn-soft">⬅️ Voltar ao Dashboard</button>
         </div>
       </div>
 
-      <div class="searchbar">
-        <span>🔎</span>
-        <input id="searchInput" placeholder="Pesquisar por palavra-chave (ex: safezone, sequestro, joalheria...)" />
-      </div>
+      <div class="layout">
+        <!-- ÍNDICE / CATEGORIAS -->
+        <aside class="sidebar-regras">
+          <h2>Índice</h2>
+          <p class="muted" style="font-size:.8rem; margin-bottom:.6rem;">
+            Clica numa categoria para ver apenas as regras daquele tema.
+          </p>
+          <div id="catList" class="cat-list"></div>
+        </aside>
 
-      <div class="filter-row" id="filterRow">
-        <!-- preenchido via JS -->
-      </div>
+        <!-- PESQUISA + REGRAS -->
+        <section class="main-regras">
+          <div class="searchbar">
+            <span class="icon">🔎</span>
+            <input id="searchInput" placeholder="Pesquisar por número, título ou texto da regra..." />
+          </div>
 
-      <div class="counter" id="counter"></div>
+          <div class="search-meta">
+            <span id="searchInfo" class="muted">Mostrando todas as categorias.</span>
+            <span id="resultCount" class="muted"></span>
+          </div>
 
-      <div class="rules-container" id="rulesContainer">
-        <!-- conteúdo das regras vem de data.js -->
+          <div id="resultsWrap" class="results-wrap"></div>
+        </section>
       </div>
 
     </div>
   </div>
 
-  <!-- LÓGICA (usa ficheiro externo de dados) -->
+  <!-- SCRIPT PRINCIPAL -->
   <script type="module">
     import { REGRAS_CATEGORIAS } from "./data.js";
 
-    const searchInput   = document.getElementById("searchInput");
-    const filterRow     = document.getElementById("filterRow");
-    const rulesContainer= document.getElementById("rulesContainer");
-    const counter       = document.getElementById("counter");
+    const catListEl = document.getElementById("catList");
+    const searchInput = document.getElementById("searchInput");
+    const resultsWrap = document.getElementById("resultsWrap");
+    const searchInfo = document.getElementById("searchInfo");
+    const resultCount = document.getElementById("resultCount");
 
-    const backBtn       = document.getElementById("backBtn");
-    const openDocBtn    = document.getElementById("openDocBtn");
+    // Flatten para facilitar pesquisa
+    const allItems = REGRAS_CATEGORIAS.flatMap(cat =>
+      cat.items.map(item => ({
+        ...item,
+        categoryId: cat.id,
+        categoryLabel: cat.label,
+        emoji: cat.emoji
+      }))
+    );
 
-    backBtn.onclick = () => window.location.href = "../dashboard.html";
-    openDocBtn.onclick = () => {
-      // link do Google Docs com as regras oficiais
-      window.open("https://docs.google.com/document/d/106zptZpOR-hvGcg0t4AAVx3E4fVGy8M6k0j2GBuJBY8/edit", "_blank");
-    };
+    let activeCategory = null; // id ou null
+    let currentResults = [];
 
-    // PERFIL + LOGOUT
-    (function(){
-      const agent = localStorage.getItem("selectedAgent") || "Desconhecido";
-      const el = document.getElementById("agentNameDisplay");
-      if (el) el.textContent = `Agente: ${agent}`;
-
-      const logoutBtn = document.getElementById("logoutBtn");
-      if (logoutBtn) {
-        logoutBtn.addEventListener("click", () => {
-          ["username","selectedAgent","userRole","userCode","isAdmin"].forEach(k => localStorage.removeItem(k));
-          window.location.href = "../select.html";
-        });
-      }
-    })();
-
-    // Criar filtros (chips)
-    let activeCategory = "all";
-
-    function buildFilters() {
-      const allChip = document.createElement("button");
-      allChip.className = "filter-chip active";
-      allChip.dataset.filter = "all";
-      allChip.textContent = "Todos";
-      filterRow.appendChild(allChip);
-
-      allChip.addEventListener("click", () => {
-        setActiveFilter("all");
-      });
-
+    function buildCategoryIndex() {
+      catListEl.innerHTML = "";
       REGRAS_CATEGORIAS.forEach(cat => {
-        const chip = document.createElement("button");
-        chip.className = "filter-chip";
-        chip.dataset.filter = cat.id;
-        chip.textContent = cat.label;
-        filterRow.appendChild(chip);
-
-        chip.addEventListener("click", () => {
-          setActiveFilter(cat.id);
-        });
-      });
-    }
-
-    function setActiveFilter(id) {
-      activeCategory = id;
-      document.querySelectorAll(".filter-chip").forEach(ch => {
-        ch.classList.toggle("active", ch.dataset.filter === id);
-      });
-      applyFilters();
-    }
-
-    // Render inicial das secções
-    function buildSections() {
-      rulesContainer.innerHTML = "";
-
-      REGRAS_CATEGORIAS.forEach(cat => {
-        const sec = document.createElement("section");
-        sec.className = "rule-section";
-        sec.dataset.categoryId = cat.id;
-
-        const header = document.createElement("div");
-        header.className = "section-header";
-        header.innerHTML = `
-          <h2>${cat.emoji || "📂"} ${cat.label}</h2>
-          <div class="section-toggle">＋</div>
+        const count = cat.items.length;
+        const btn = document.createElement("button");
+        btn.className = "cat-btn";
+        btn.dataset.catId = cat.id;
+        btn.innerHTML = `
+          <div class="cat-main">
+            <span class="emoji">${cat.emoji}</span>
+            <span>${cat.label}</span>
+          </div>
+          <span class="cat-badge">${count}</span>
         `;
-
-        const body = document.createElement("div");
-        body.className = "section-body";
-
-        const inner = document.createElement("div");
-        inner.className = "section-body-inner";
-
-        // cards de regras
-        cat.items.forEach((rule, idx) => {
-          const card = document.createElement("div");
-          card.className = "rule-card";
-
-          const textSearch = [
-            cat.label,
-            rule.code || "",
-            rule.title || "",
-            rule.body || ""
-          ].join(" ").toLowerCase();
-
-          card.dataset.search = textSearch;
-
-          card.innerHTML = `
-            <h3>${rule.code ? rule.code + " — " : ""}${rule.title || "Regra"}</h3>
-            <p>${rule.body || ""}</p>
-          `;
-
-          inner.appendChild(card);
-        });
-
-        body.appendChild(inner);
-        sec.appendChild(header);
-        sec.appendChild(body);
-        rulesContainer.appendChild(sec);
-
-        // abre/fecha secção
-        header.addEventListener("click", () => {
-          const isOpen = body.style.maxHeight && body.style.maxHeight !== "0px";
-          if (isOpen) {
-            body.style.maxHeight = "0px";
-            header.querySelector(".section-toggle").textContent = "＋";
+        btn.addEventListener("click", () => {
+          // toggle
+          if (activeCategory === cat.id) {
+            activeCategory = null;
           } else {
-            body.style.maxHeight = body.scrollHeight + "px";
-            header.querySelector(".section-toggle").textContent = "－";
+            activeCategory = cat.id;
           }
+          updateActiveCategoryButton();
+          applyFilters();
         });
+        catListEl.appendChild(btn);
+      });
+      updateActiveCategoryButton();
+    }
 
-        // por padrão: abre primeiras duas secções
-        // (se quiser tudo fechado, só apagar este bloco)
-        setTimeout(() => {
-          if (["geral","discord"].includes(cat.id)) {
-            body.style.maxHeight = body.scrollHeight + "px";
-            header.querySelector(".section-toggle").textContent = "－";
-          }
-        }, 0);
+    function updateActiveCategoryButton() {
+      const buttons = catListEl.querySelectorAll(".cat-btn");
+      buttons.forEach(btn => {
+        const id = btn.dataset.catId;
+        btn.classList.toggle("active", id === activeCategory);
+      });
+    }
+
+    function renderRules(list) {
+      resultsWrap.innerHTML = "";
+      if (!list.length) {
+        resultsWrap.innerHTML = `<p class="muted">Nenhuma regra encontrada com esses filtros.</p>`;
+        resultCount.textContent = "";
+        return;
+      }
+
+      list.forEach(rule => {
+        const card = document.createElement("div");
+        card.className = "rule-card";
+        card.innerHTML = `
+          <div class="rule-header">
+            <div class="rule-title">
+              <span class="rule-code">${rule.code || "—"}</span>
+              <span>${rule.title}</span>
+            </div>
+            <div class="rule-cat-label">
+              ${rule.emoji || ""} ${rule.categoryLabel || ""}
+            </div>
+          </div>
+          <p class="rule-body">${rule.body}</p>
+        `;
+        resultsWrap.appendChild(card);
       });
 
-      applyFilters(); // aplica filtro + conta
+      resultCount.textContent = `${list.length} regra${list.length === 1 ? "" : "s"} encontrada${list.length === 1 ? "" : "s"}.`;
     }
 
     function applyFilters() {
-      const term = (searchInput.value || "").toLowerCase().trim();
-      let visibleCards = 0;
+      const q = (searchInput.value || "").trim().toLowerCase();
 
-      document.querySelectorAll(".rule-section").forEach(sec => {
-        const catId = sec.dataset.categoryId;
-        const isCategoryVisible = (activeCategory === "all" || activeCategory === catId);
+      let base = allItems;
+      if (activeCategory) {
+        base = base.filter(r => r.categoryId === activeCategory);
+      }
 
-        let sectionHasVisible = false;
+      if (!q) {
+        // sem pesquisa, só por categoria
+        currentResults = base;
+        searchInfo.textContent = activeCategory
+          ? `Mostrando regras da categoria "${REGRAS_CATEGORIAS.find(c => c.id === activeCategory)?.label}".`
+          : "Mostrando todas as categorias.";
+        renderRules(currentResults);
+        return;
+      }
 
-        // cada card
-        sec.querySelectorAll(".rule-card").forEach(card => {
-          const matchesCategory = isCategoryVisible;
-          const matchesSearch = !term || card.dataset.search.includes(term);
-
-          const show = matchesCategory && matchesSearch;
-          card.style.display = show ? "block" : "none";
-          if (show) {
-            sectionHasVisible = true;
-            visibleCards++;
-          }
-        });
-
-        sec.style.display = sectionHasVisible ? "block" : "none";
-
-        // Ajusta altura se estava aberto
-        const body = sec.querySelector(".section-body");
-        if (sectionHasVisible && body.style.maxHeight && body.style.maxHeight !== "0px") {
-          body.style.maxHeight = body.scrollHeight + "px";
-        }
+      // filtro por texto
+      currentResults = base.filter(r => {
+        const hay = `${r.code || ""} ${r.title || ""} ${r.body || ""}`.toLowerCase();
+        return hay.includes(q);
       });
 
-      if (!term && activeCategory === "all") {
-        counter.textContent = "";
-      } else {
-        counter.textContent = visibleCards
-          ? `Mostrando ${visibleCards} regras para o filtro/pesquisa atual.`
-          : "Nenhuma regra encontrada para este filtro/pesquisa.";
-      }
+      searchInfo.textContent = activeCategory
+        ? `Pesquisa por "${q}" dentro da categoria "${REGRAS_CATEGORIAS.find(c => c.id === activeCategory)?.label}".`
+        : `Pesquisa por "${q}" em todas as categorias.`;
+
+      renderRules(currentResults);
     }
 
+    // Eventos
+    let debounce = null;
     searchInput.addEventListener("input", () => {
-      applyFilters();
+      if (debounce) clearTimeout(debounce);
+      debounce = setTimeout(applyFilters, 200);
     });
 
-    // iniciar
-    buildFilters();
-    buildSections();
+    // Inicialização
+    buildCategoryIndex();
+    currentResults = allItems;
+    renderRules(currentResults);
+
+    // Texto inicial
+    searchInfo.textContent = "Mostrando todas as categorias.";
+  </script>
+
+  <!-- PERFIL + LOGOUT -->
+  <script>
+    (function(){
+      const agent = localStorage.getItem("selectedAgent") || "Desconhecido";
+      const disp = document.getElementById("agentNameDisplay");
+      if (disp) disp.textContent = `Agente: ${agent}`;
+
+      const backBtn = document.getElementById("backBtn");
+      if (backBtn) backBtn.onclick = () => window.location.href = "../dashboard.html";
+
+      const logoutBtn = document.getElementById("logoutBtn");
+      if (logoutBtn) {
+        logoutBtn.onclick = () => {
+          ["username","selectedAgent","userRole","userCode","isAdmin"].forEach(k => localStorage.removeItem(k));
+          window.location.href = "../select.html";
+        };
+      }
+    })();
   </script>
 </body>
 </html>
