@@ -705,19 +705,26 @@ IX – PM começa na região azul; bandidos na vermelha.`
      {
         code: "78º",
         title: "Assalto à Ilha do Cartel",
-        body: `I - Número de bandidos: 10 bandidos no total.
-II - Número de policiais: 10 policiais no total.
-III - Sem uso de reféns.
-IV - Uso de Molotovs e Granadas: É permitido o uso de molotovs e granadas de fumaça durante a ação.
-V - Armamento permitido (obrigatório): Somente SMG podem ser utilizadas durante a ação.
-VI - Pode ser utilizado 2 helicópteros pela PM e bandidos. Pode ser utilizado barcos.
-VII - Colete: Cada participante pode usar apenas 1 colete, sendo proibido o uso de colete reserva.
-VIII - Caso haja disparos a PM não precisa negociar.
+        body: `
+       • - Número de bandidos: 10 bandidos no total.
+       • - Número de policiais: 10 policiais no total.
+I - Sem uso de reféns.
+II - Uso de Molotovs e Granadas: É permitido o uso de molotovs e granadas de fumaça durante a ação.
+III - Armamento permitido (obrigatório): Somente SMG podem ser utilizadas durante a ação.
+IV - Apenas gangues podem participar
+V - Pode ser utilizado 2 helicópteros pela PM e bandidos. Pode ser utilizado barcos.
+VI - Colete: Cada participante pode usar apenas 1 colete, sendo proibido o uso de colete reserva.
+VII - Caso haja disparos a PM não precisa negociar.
 IX - A PM terá até 10 minutos para chegar após o primeiro disparo.
 
 Observação importante:
-Apenas 1 grupo por gangue poderá participar da ação, com o limite máximo de 10 membros únicos por organização criminosa.
-O local é PVP liberado!`
+• Apenas 1 grupo por gangue poderá participar da ação, com o limite máximo de 10 membros únicos por organização criminosa.
+• Ou seja, somente uma equipe de cada facção está autorizada a comparecer - não será permitido múltiplos times da mesma gangue.
+• Organizações rivais poderão se encontrar no local da ação e disputar entre si pelo controle do loot. Preparem-se para o confronto!
+
+O local é PVP liberado!
+Não pode formar times!
+As informações para o assalto ser concluido será passada em RP pela Máfia Caruso!`
       },
       {
         code: "79º",
