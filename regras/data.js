@@ -747,46 +747,47 @@ IX - A PM pode intervir a qualquer momento para restabelecer a energia da cidade
         code: "80º",
         title: "Interpetação Carro-Forte",
         body:'I – Número de bandidos: 8 bandidos no total.
-'II – Número de seguranças: 10 Seguranças no total.
-'III – Sem uso de reféns.
-'IV – Armamento Permitido (obrigatório): SMG, Pistolas e Tec-9 podem ser utilizadas durante a ação.
-'V – Colete: Cada participante pode usar apenas 1 colete, sendo proibido o uso de colete reserva.
-'VI – A PM não poderá participar. (inicialmente na fase de teste)
-'VII – O looting está liberado. Caso os bandidos vençam, deverão acionar o hospital para atender os Arcanjos. Se os Arcanjos saírem vitoriosos, os bandidos poderão seguir para o necrotério.
-'VIII – Chegará uma notificação para as lideranças de cada gangue, quem aceitar primeiro será direcionado para a missão.
-'IX – O looting está liberado. Caso os bandidos vençam, deverão acionar o hospital para atender os Arcanjos. Se os Arcanjos saírem vitoriosos, os bandidos poderão seguir para o necrotério.
-'X – Proibido o uso de Helicópteros.
+II – Número de seguranças: 10 Seguranças no total.
+III – Sem uso de reféns.
+IV – Armamento Permitido (obrigatório): SMG, Pistolas e Tec-9 podem ser utilizadas durante a ação.
+V – Colete: Cada participante pode usar apenas 1 colete, sendo proibido o uso de colete reserva.
+VI – A PM não poderá participar. (inicialmente na fase de teste)
+VII – O looting está liberado. Caso os bandidos vençam, deverão acionar o hospital para atender os Arcanjos. Se os Arcanjos saírem vitoriosos, os bandidos poderão seguir para o necrotério.
+VIII – Chegará uma notificação para as lideranças de cada gangue, quem aceitar primeiro será direcionado para a missão.
+IX – O looting está liberado. Caso os bandidos vençam, deverão acionar o hospital para atender os Arcanjos. Se os Arcanjos saírem vitoriosos, os bandidos poderão seguir para o necrotério.
+X – Proibido o uso de Helicópteros.
 
-'Não haverá prisões em nenhum dos casos.
+Não haverá prisões em nenhum dos casos.'
           },
       {
         code: "80 - 2º",
         title: "Transporte Carro-Forte",
         body:'I – Número de bandidos: 6 bandidos no total.
-'II – Número de seguranças: 8 Seguranças no total.
-'III – Sem uso de reféns.
-'IV – Armamento Permitido (obrigatório): SMG, Pistolas e Tec-9 podem ser utilizadas durante a ação.
-'V – Colete: Cada participante pode usar apenas 1 colete, sendo proibido o uso de colete reserva.
-'VI – A PM não poderá participar. (inicialmente na fase de teste)
-'VII – Uso de até 1 helicóptero permitido.
-'VIII – Chegará uma notificação para as lideranças de cada gangue, quem aceitar primeiro será direcionado para a missão.
-'IX – O looting está liberado. Caso os bandidos vençam, deverão acionar o hospital para atender os Arcanjos. Se os Arcanjos saírem vitoriosos, os bandidos poderão seguir para o necrotério.
+II – Número de seguranças: 8 Seguranças no total.
+III – Sem uso de refens.
+IV – Armamento Permitido (obrigatório): SMG, Pistolas e Tec-9 podem ser utilizadas durante a ação.
+V – Colete: Cada participante pode usar apenas 1 colete, sendo proibido o uso de colete reserva.
+VI – A PM não poderá participar. (inicialmente na fase de teste)
+VII – Uso de até 1 helicóptero permitido.
+VIII – Chegará uma notificação para as lideranças de cada gangue, quem aceitar primeiro será direcionado para a missão.
+IX – O looting está liberado. Caso os bandidos vençam, deverão acionar o hospital para atender os Arcanjos. Se os Arcanjos saírem vitoriosos, os bandidos poderão seguir para o necrotério.'
           },
       {
         code: "80 - 3º",
         title: "Coleta em lojas",
         body:'I – Limite de participantes:
 
-'Bandidos: mínimo de 3 e máximo de 4.
+Bandidos: mínimo de 3 e máximo de 4.
 
-'Arcanjos: mínimo de 4 e máximo de 5.
+Arcanjos: mínimo de 4 e máximo de 5.
 
-'II – Proibido o uso de águia (helicóptero) durante a ação.
-'III – Máximo de 1 colete por participante da ação. Não é permitido colete reserva.
-'IV – Todos devem usar pistolas durante a ação.
-'V – Os bandidos já podem chegar atirando.
-'VI – A PM não poderá participar. (inicialmente na fase de teste)
-'VII – Chegará uma notificação para as lideranças de cada gangue, quem aceitar primeiro será direcionado para a missão. VIII – O looting está liberado. Caso os bandidos vençam, deverão acionar o hospital para atender os Arcanjos. Se os Arcanjos saírem vitoriosos, os bandidos poderão seguir para o necrotério.
+II – Proibido o uso de águia (helicóptero) durante a ação.
+III – Máximo de 1 colete por participante da ação. Não é permitido colete reserva.
+IV – Todos devem usar pistolas durante a ação.
+V – Os bandidos já podem chegar atirando.
+VI – A PM não poderá participar. (inicialmente na fase de teste)
+VII – Chegará uma notificação para as lideranças de cada gangue, quem aceitar primeiro será direcionado para a missão. 
+VIII – O looting está liberado. Caso os bandidos vençam, deverão acionar o hospital para atender os Arcanjos. Se os Arcanjos saírem vitoriosos, os bandidos poderão seguir para o necrotério.'
       }
     ]
   },          
