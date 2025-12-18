@@ -703,7 +703,38 @@ IX – PM começa na região azul; bandidos na vermelha.`
       }
     ]
   },
+{
+  code: "78º",
+  title: "Assalto à Ilha do Cartel",
+  body:
+`I - Número de bandidos: 10 bandidos no total.
+II - Número de policiais: 10 policiais no total.
+III - Sem uso de reféns.
+IV - Uso de Molotovs e Granadas: É permitido o uso de molotovs e granadas de fumaça durante a ação.
+V - Armamento permitido (obrigatório): Somente SMG podem ser utilizadas durante a ação.
+VI - Pode ser utilizado 2 helicópteros pela PM e bandidos. Pode ser utilizado barcos.
+VII - Colete: Cada participante pode usar apenas 1 colete, sendo proibido o uso de colete reserva.
+VIII - Caso haja disparos a PM não precisa negociar.
+IX - A PM terá até 10 minutos para chegar após o primeiro disparo.
 
+Observação importante:
+Apenas 1 grupo por gangue poderá participar da ação, com o limite máximo de 10 membros únicos por organização criminosa.
+O local é PVP liberado!`
+},
+{
+  code: "79º",
+  title: "Blackout na Cidade",
+  body:
+`I - Número de bandidos: Até 8 bandidos no total.
+II - Número de policiais: Até 8 policiais no total.
+III - Sem uso de reféns.
+IV - Armamento permitido (obrigatório): Somente pistolas podem ser utilizadas durante a ação.
+V - Apenas gangues podem participar.
+VI - Pode ser utilizado 1 helicóptero pela PM e bandidos.
+VII - Colete: Cada participante pode usar apenas 1 colete, sendo proibido o uso de colete reserva.
+VIII - Caso haja disparos a PM não precisa negociar.
+IX - A PM pode intervir a qualquer momento para restabelecer a energia da cidade.`
+},
   // =======================
   // SEQUESTROS
   // =======================
