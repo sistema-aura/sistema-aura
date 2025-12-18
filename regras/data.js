@@ -269,7 +269,7 @@ Após chegar na garagem:
 
 Chamados devem sempre ter motivo coerente com o RP.`
       }
-      // 👉 Aqui podes ir completando fácil se quiseres com as regras 7º a 47º.
+      // 👉 Completa 7º a 47º quando quiseres
     ]
   },
 
@@ -537,8 +537,8 @@ II – A staff ajuda a organizar, tirar dúvidas e garantir que tudo esteja dent
 • Armamento pesado; 1 colete por participante.
 • Maioria dos bandidos deve ficar dentro até início da ação.
 • Fuga com o dinheiro pode ser negociada previamente.
-• Pneus dos carros (de ambos) não podem ser estourados durante a fuga (apenas em regras específicas depois).`
-• Entre o mínimo quatro e até no máximo sete bandidos devem permanecer do lado de fora do banco, nas imediações e mantendo-se escondidos; o restante da equipe poderá permanecer dentro do estabelecimento.
+• Pneus dos carros (de ambos) não podem ser estourados durante a fuga (apenas em regras específicas depois).
+• Entre o mínimo 4 e até no máximo 7 bandidos devem permanecer do lado de fora do banco, nas imediações e escondidos; o restante pode permanecer dentro do estabelecimento.`
       },
       {
         code: "70º",
@@ -704,11 +704,19 @@ IX – PM começa na região azul; bandidos na vermelha.`
       }
     ]
   },
-{
-  code: "78º",
-  title: "Assalto à Ilha do Cartel",
-  body:
-`I - Número de bandidos: 10 bandidos no total.
+
+  // =======================
+  // AÇÕES ARCANJOS (NOVAS)
+  // =======================
+  {
+    id: "acoes_arcanjos",
+    label: "Ações Arcanjos",
+    emoji: "🪽",
+    items: [
+      {
+        code: "78º",
+        title: "Assalto à Ilha do Cartel",
+        body: `I - Número de bandidos: 10 bandidos no total.
 II - Número de policiais: 10 policiais no total.
 III - Sem uso de reféns.
 IV - Uso de Molotovs e Granadas: É permitido o uso de molotovs e granadas de fumaça durante a ação.
@@ -721,12 +729,11 @@ IX - A PM terá até 10 minutos para chegar após o primeiro disparo.
 Observação importante:
 Apenas 1 grupo por gangue poderá participar da ação, com o limite máximo de 10 membros únicos por organização criminosa.
 O local é PVP liberado!`
-},
-{
-  code: "79º",
-  title: "Blackout na Cidade",
-  body:
-`I - Número de bandidos: Até 8 bandidos no total.
+      },
+      {
+        code: "79º",
+        title: "Blackout na Cidade",
+        body: `I - Número de bandidos: Até 8 bandidos no total.
 II - Número de policiais: Até 8 policiais no total.
 III - Sem uso de reféns.
 IV - Armamento permitido (obrigatório): Somente pistolas podem ser utilizadas durante a ação.
@@ -735,7 +742,10 @@ VI - Pode ser utilizado 1 helicóptero pela PM e bandidos.
 VII - Colete: Cada participante pode usar apenas 1 colete, sendo proibido o uso de colete reserva.
 VIII - Caso haja disparos a PM não precisa negociar.
 IX - A PM pode intervir a qualquer momento para restabelecer a energia da cidade.`
-},
+      }
+    ]
+  },
+
   // =======================
   // SEQUESTROS
   // =======================
@@ -745,7 +755,7 @@ IX - A PM pode intervir a qualquer momento para restabelecer a energia da cidade
     emoji: "🧷",
     items: [
       {
-        code: "78º",
+        code: "78º (Sequestro)",
         title: "Regra de Sequestro (Resumo)",
         body: `• Sequestros para pedir dinheiro/itens: entre 21:00 e 05:00.
 • Sequestros por motivos pessoais, ações ou pendências de facção: qualquer horário (desde que RP faça sentido).
