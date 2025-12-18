@@ -538,6 +538,7 @@ II – A staff ajuda a organizar, tirar dúvidas e garantir que tudo esteja dent
 • Maioria dos bandidos deve ficar dentro até início da ação.
 • Fuga com o dinheiro pode ser negociada previamente.
 • Pneus dos carros (de ambos) não podem ser estourados durante a fuga (apenas em regras específicas depois).`
+• Entre o mínimo quatro e até no máximo sete bandidos devem permanecer do lado de fora do banco, nas imediações e mantendo-se escondidos; o restante da equipe poderá permanecer dentro do estabelecimento.
       },
       {
         code: "70º",
