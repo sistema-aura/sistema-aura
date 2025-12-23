@@ -12,7 +12,7 @@ def autenticado():
 # 🔹 Página inicial redireciona para o index.html
 @app.route("/")
 def home():
-    return redirect("/index.html")
+    return redirect("/select.html")
 
 # 🔹 Serve o index.html diretamente
 @app.route("/index.html")
