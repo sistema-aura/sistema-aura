@@ -3,16 +3,14 @@ import os
 
 app = Flask(__name__)
 
-# Caminho da pasta do teu site
+# ✅ Diretório base — o mesmo onde está o app.py e os HTMLs
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
-SITE_FOLDER = os.path.join(BASE_DIR, "sistema-aura")
+SITE_FOLDER = BASE_DIR
 
-# 🔐 Verifica se o utilizador tem o cookie de sessão (simples)
 def autenticado():
     token = request.cookies.get("session_token")
     return token is not None
 
-# Protege todas as rotas
 @app.route("/<path:caminho>")
 def proteger(caminho):
     if not autenticado():
@@ -25,7 +23,6 @@ def proteger(caminho):
 
     return "Página não encontrada", 404
 
-# Página inicial
 @app.route("/")
 def home():
     return redirect("/index.html")
