@@ -8,67 +8,71 @@
   <link rel="icon" href="Aurinha.png" />
   <link rel="stylesheet" href="style.css" />
 
-<!-- Firebase -->
-<script type="module">
-  import { app, db } from "./firebaseConfig.js";
-  import { collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
+  <!-- Firebase -->
+  <script type="module">
+    import { app, db } from "./firebaseConfig.js";
+    import { collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
 
-  document.addEventListener("DOMContentLoaded", async () => {
-    const username = localStorage.getItem("username");
-    const userDisplay = document.getElementById("userDisplay");
-    const loginBtn = document.getElementById("loginBtn");
-    const passwordInput = document.getElementById("password");
+    document.addEventListener("DOMContentLoaded", async () => {
+      const username = localStorage.getItem("username");
+      const userDisplay = document.getElementById("userDisplay");
+      const loginBtn = document.getElementById("loginBtn");
+      const passwordInput = document.getElementById("password");
 
-    if (!username) {
-      alert("Nenhum usuário selecionado. Volte para a tela anterior.");
-      window.location.href = "select.html";
-      return;
-    }
-
-    userDisplay.textContent = username;
-
-    loginBtn.addEventListener("click", async () => {
-      const senha = passwordInput.value.trim();
-      if (!senha) {
-        alert("Digite sua senha!");
+      if (!username) {
+        alert("Nenhum usuário selecionado. Volte para a tela anterior.");
+        window.location.href = "select.html";
         return;
       }
 
-      try {
-        // procura pelo nome no Firestore
-        const q = query(collection(db, "users"), where("name", "==", username));
-        const snapshot = await getDocs(q);
+      userDisplay.textContent = username;
 
-        if (snapshot.empty) {
-          alert("Usuário não encontrado!");
+      loginBtn.addEventListener("click", async () => {
+        const senha = passwordInput.value.trim();
+        if (!senha) {
+          alert("Digite sua senha!");
           return;
         }
 
-        const userData = snapshot.docs[0].data();
+        try {
+          const q = query(collection(db, "users"), where("name", "==", username));
+          const snapshot = await getDocs(q);
 
-        if (userData.password === senha) {
-          // ✅ Guarda permissões no localStorage de forma padronizada
-          localStorage.setItem("selectedAgent", username);
-          localStorage.setItem("userRole", userData.role ? userData.role.toLowerCase() : "");
-          localStorage.setItem("userTag", userData.tag || "");
-          localStorage.setItem("userCode", userData.code || "");
-          localStorage.setItem("isAdmin", userData.isAdmin === true ? "true" : "false");
+          if (snapshot.empty) {
+            alert("Usuário não encontrado!");
+            return;
+          }
 
-          // compatibilidade com páginas antigas
-          localStorage.setItem("username", username);
+          const userData = snapshot.docs[0].data();
 
-          // Vai para o dashboard
-          window.location.href = "dashboard.html";
-        } else {
-          alert("Senha incorreta! Tente novamente.");
+          if (userData.password === senha) {
+
+            // 🔐 ADIÇÃO: Criar token de sessão simples
+            const sessionToken = crypto.randomUUID();
+            document.cookie = `session_token=${sessionToken}; path=/`;
+
+            // Guardar info no localStorage
+            localStorage.setItem("selectedAgent", username);
+            localStorage.setItem("userRole", userData.role ? userData.role.toLowerCase() : "");
+            localStorage.setItem("userTag", userData.tag || "");
+            localStorage.setItem("userCode", userData.code || "");
+            localStorage.setItem("isAdmin", userData.isAdmin === true ? "true" : "false");
+
+            localStorage.setItem("username", username);
+
+            // Redirecionar para o dashboard
+            window.location.href = "dashboard.html";
+
+          } else {
+            alert("Senha incorreta! Tente novamente.");
+          }
+        } catch (err) {
+          console.error(err);
+          alert("Erro ao verificar login. Verifique sua conexão.");
         }
-      } catch (err) {
-        console.error(err);
-        alert("Erro ao verificar login. Verifique sua conexão.");
-      }
+      });
     });
-  });
-</script>
+  </script>
 
   <style>
     body {
