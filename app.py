@@ -1,33 +1,21 @@
 from flask import Flask, request, redirect, send_from_directory
-import firebase_admin
-from firebase_admin import credentials, auth
 import os
 
-# 🔹 Inicializar Flask
 app = Flask(__name__)
 
-# 🔹 Firebase Admin SDK
-cred = credentials.Certificate("firebase-adminsdk.json")
-firebase_admin.initialize_app(cred)
-
+# Caminho da pasta do teu site
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 SITE_FOLDER = os.path.join(BASE_DIR, "sistema-aura-main")
 
-# 🔐 Função de verificação do token
-def verificar_token():
-    token = request.cookies.get("token")
-    if not token:
-        return False
-    try:
-        auth.verify_id_token(token)
-        return True
-    except:
-        return False
+# 🔐 Verifica se o utilizador tem o cookie de sessão (simples)
+def autenticado():
+    token = request.cookies.get("session_token")
+    return token is not None
 
-# 🔒 Protege todas as páginas do site
+# Protege todas as rotas
 @app.route("/<path:caminho>")
 def proteger(caminho):
-    if not verificar_token():
+    if not autenticado():
         return redirect("/index.html")
 
     caminho_absoluto = os.path.join(SITE_FOLDER, caminho)
@@ -44,4 +32,3 @@ def home():
 
 if __name__ == "__main__":
     app.run(debug=True)
-
