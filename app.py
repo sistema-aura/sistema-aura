@@ -9,7 +9,7 @@ BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 def autenticado():
     return request.cookies.get("session_token") is not None
 
-# 🔹 Página inicial redireciona para o index.html
+# 🔹 Página inicial redireciona para select.html para garantir escolha de utilizador
 @app.route("/")
 def home():
     return redirect("/select.html")
@@ -19,10 +19,15 @@ def home():
 def index():
     return send_from_directory(BASE_DIR, "index.html")
 
-# 🔒 Protege todas as outras páginas HTML
+# 🔹 Serve o select.html diretamente
+@app.route("/select.html")
+def select():
+    return send_from_directory(BASE_DIR, "select.html")
+
+# 🔒 Protege todas as outras páginas HTML (exceto index.html e select.html)
 @app.route("/<path:ficheiro>")
 def proteger(ficheiro):
-    if ficheiro.endswith(".html") and ficheiro != "index.html":
+    if ficheiro.endswith(".html") and ficheiro not in ["index.html", "select.html"]:
         if not autenticado():
             return redirect("/index.html")
 
@@ -33,7 +38,6 @@ def proteger(ficheiro):
 
     return "Ficheiro não encontrado", 404
 
-# ✅ Flask será iniciado com gunicorn no Render (não precisa do .run())
-# mas deixamos esta linha para testes locais
+# ✅ Flask será iniciado com gunicorn no Render
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
