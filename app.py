@@ -6,7 +6,7 @@ app.secret_key = 'segredo_super_secreto'
 
 # Caminho absoluto para os ficheiros do site
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
-STATIC_FOLDER = os.path.join(BASE_DIR, 'sistema-aura-main')
+STATIC_FOLDER = os.path.join(BASE_DIR, 'sistema-aura')
 
 @app.route('/')
 def raiz():
